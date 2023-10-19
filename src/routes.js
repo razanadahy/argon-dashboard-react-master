@@ -21,13 +21,13 @@ var routes = [
     component: <Icons />,
     layout: "/admin",
   },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: "ni ni-pin-3 text-orange",
-    component: <Maps />,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/maps",
+  //   name: "Maps",
+  //   icon: "ni ni-pin-3 text-orange",
+  //   component: <Maps />,
+  //   layout: "/admin",
+  // },
   {
     path: "/user-profile",
     name: "User Profile",
@@ -56,40 +56,6 @@ var routes = [
     component: <Register />,
     layout: "/auth",
   },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
-    layout: "/auth",
-  },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
-    layout: "/auth",
-  },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
-    layout: "/auth",
-  },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
-    layout: "/auth",
-  },
-  {
-    path: "/register",
-    name: "Register",
-    icon: "ni ni-circle-08 text-pink",
-    component: <Register />,
-    layout: "/auth",
-  },
+
 ];
 export default routes;
