@@ -56,7 +56,6 @@ const Sidebar = (props) => {
             );
         });
     };
-
     const { bgColor, routes, logo } = props;
     let navbarBrandProps;
     if (logo && logo.innerLink) {
@@ -86,7 +85,7 @@ const Sidebar = (props) => {
                     <span className="navbar-toggler-icon" />
                 </button>
                 {logo ? (
-                    <NavbarBrand className="pt-0 my-0 p-0 mx-auto" {...navbarBrandProps}>
+                    <NavbarBrand className="pt-3 my-0 p-0 mx-auto " {...navbarBrandProps}>
                         <img
                             alt={logo.imgAlt}
                             className="navbar-brand-img"
