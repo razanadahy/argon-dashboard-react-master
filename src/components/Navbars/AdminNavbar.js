@@ -1,113 +1,91 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.3
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import { Link } from "react-router-dom";
-// reactstrap components
-import {
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Form,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Input,
-  InputGroup,
-  Navbar,
-  Nav,
-  Container,
-  Media,
-} from "reactstrap";
+import {DropdownMenu, DropdownItem, UncontrolledDropdown, DropdownToggle, Navbar, Nav, Container, Media,} from "reactstrap";
+import 'font-awesome/css/font-awesome.min.css'
 
 const AdminNavbar = (props) => {
-  console.log(props)
   return (
-    <>
-      <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
-        <Container fluid>
+      <>
+          <Navbar className="navbar-top navbar-dark navbar" expand="md" id="navbar-main">
+              <Container fluid>
+                  <Link className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" to="/">{props.brandText}</Link>
+                  <Nav className="align-items-center d-none d-md-flex" navbar>
+                      <UncontrolledDropdown nav>
+                          <DropdownToggle className="pr-0" nav>
+                              <Media className="align-items-center pr-3">
+                                  <span className="avatar avatar-sm bg-translucent-default rounded-circle">
+                                      <i className="fa-regular fa-bell fs-16"/>
+                                  </span>
+                                  <span className="badge badge-warning rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(20px,-10px)'}}>105</span>
+                              </Media>
+                          </DropdownToggle>
+                          <DropdownMenu className="dropdown-menu-arrow" right>
+                              <DropdownItem className="text-sm text-muted m-0" header tag="div">
+                                  <h6 className="text-start m-0">Vous avez <strong className="text-danger ">13</strong> notification(s)</h6>
+                              </DropdownItem>
+                              <DropdownItem to="/admin/user-profile" tag="div" style={{width: '500px'}}>
+                                  <div className="align-items-center d-flex row">
+                                      <div className="col-3"><img alt="..." className="avatar rounded-circle"
+                                                                         src="/argon-dashboard-pro-react/static/media/team-1.fa5a7ac2.jpg"/>
+                                      </div>
+                                      <div className="col-9 ml--2">
+                                          <div className="d-flex justify-content-between align-items-center">
+                                              <div><h4 className="mb-0 text-sm">John Snow</h4></div>
+                                              <div className="text-right text-muted"><small>2 hrs ago</small></div>
+                                          </div>
+                                          <p className="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p></div>
+                                  </div>
+                              </DropdownItem>
+                              <DropdownItem to="/admin/user-profile" tag="div" >
+                                  <div className="align-items-center d-flex row">
+                                      <div className="col-3"><img alt="..." className="avatar rounded-circle" src="/argon-dashboard-pro-react/static/media/team-1.fa5a7ac2.jpg"/></div>
+                                      <div className="col-9 ml--2">
+                                          <div className="d-flex justify-content-between align-items-center">
+                                              <div><h4 className="mb-0 text-sm">John Snow</h4></div>
+                                              <div className="text-right text-muted"><small>2 hrs ago</small></div>
+                                          </div>
+                                          <p className="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p></div>
+                                  </div>
+                              </DropdownItem>
+                              <DropdownItem divider />
+                              <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                                  <i className="ni ni-user-run" />
+                                  <span>Déconnection</span>
+                              </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                      <UncontrolledDropdown nav>
+                          <DropdownToggle className="pr-0" nav>
+                              <Media className="align-items-center">
+                                  <span className="avatar avatar-sm bg-translucent-info rounded-circle">
+                                      <i className="fa fa-m"/>
+                                  </span>
+                                  <Media className="ml-2 d-none d-lg-block">
+                                      <span className="mb-0 text-sm font-weight-bold">
+                                        Utilisateur
+                                      </span>
+                                  </Media>
+                            </Media>
+                          </DropdownToggle>
+                          <DropdownMenu className="dropdown-menu-arrow" right>
+                              <DropdownItem className="noti-title" header tag="div">
+                                    <h6 className="text-overflow m-0">Welcome!</h6>
+                              </DropdownItem>
+                              <DropdownItem to="/admin/user-profile" tag={Link}>
+                                  <i className="ni ni-single-02" />
+                                  <span>Mon profile</span>
+                              </DropdownItem>
 
-          <Link
-            className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
-            to="/"
-          >
-            {props.brandText}
-          </Link>
-
-          <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-            <FormGroup className="mb-0">
-              <InputGroup className="input-group-alternative">
-                <InputGroupAddon addonType="prepend">
-                  <InputGroupText>
-                    <i className="fas fa-search" />
-                  </InputGroupText>
-                </InputGroupAddon>
-                <Input placeholder="Search" type="text" />
-              </InputGroup>
-            </FormGroup>
-          </Form>
-          <Nav className="align-items-center d-none d-md-flex" navbar>
-            <UncontrolledDropdown nav>
-              <DropdownToggle className="pr-0" nav>
-                <Media className="align-items-center">
-                  <span className="avatar avatar-sm rounded-circle">
-                    <img
-                      alt="..."
-                      src={require("../../assets/img/theme/team-4-800x800.jpg")}
-                    />
-                  </span>
-                  <Media className="ml-2 d-none d-lg-block">
-                    <span className="mb-0 text-sm font-weight-bold">
-                      Jessica Jones
-                    </span>
-                  </Media>
-                </Media>
-              </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-arrow" right>
-                <DropdownItem className="noti-title" header tag="div">
-                  <h6 className="text-overflow m-0">Welcome!</h6>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-single-02" />
-                  <span>My profile</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-settings-gear-65" />
-                  <span>Settings</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-calendar-grid-58" />
-                  <span>Activity</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-support-16" />
-                  <span>Support</span>
-                </DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-                  <i className="ni ni-user-run" />
-                  <span>Logout</span>
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </Nav>
-        </Container>
-      </Navbar>
-    </>
+                              <DropdownItem divider />
+                              <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                                  <i className="ni ni-user-run" />
+                                  <span>Déconnection</span>
+                              </DropdownItem>
+                          </DropdownMenu>
+                      </UncontrolledDropdown>
+                  </Nav>
+              </Container>
+          </Navbar>
+      </>
   );
 };
 

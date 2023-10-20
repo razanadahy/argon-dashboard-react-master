@@ -15,3 +15,7 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: #1459dc;
 }
+
+.fs-16{
+    font-size: 18px !important;
+}

@@ -3,6 +3,12 @@
 // modifier classes to be applied on an abosolute positioned element
 // use it next to .position-absolute class
 //
+$spacers: (
+	small-0: 20px,
+	small: 20vh,
+	medium: 50vh,
+	large: 75vh,
+);
 
 @each $size, $value in $spacers {
 	.top-#{$size} {

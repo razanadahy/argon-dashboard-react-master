@@ -14885,7 +14885,7 @@ button.section-darker:focus {
 }
 
 .right-1 {
-  right: 0.25rem;
+  right: 0.25rem !important;
 }
 
 .bottom-1 {

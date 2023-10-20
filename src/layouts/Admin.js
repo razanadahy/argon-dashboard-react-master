@@ -65,6 +65,12 @@ const Admin = (props) => {
                     <AdminFooter />
                 </Container>
             </div>
+            <div className="position-fixed bottom-small-0 right-small-0">
+                <button type="button" className="btn btn-white rounded-circle" style={{width: '50px', height: '50px'}}>
+                    <span className="badge bg-translucent-danger rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(5px,5px)'}}><strong>5</strong></span>
+                    <i className="fa-solid fa-bolt mx-auto my-auto"/>
+                </button>
+            </div>
         </>
     );
 };

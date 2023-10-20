@@ -34,9 +34,6 @@ import {
 
 const Sidebar = (props) => {
     const [collapseOpen, setCollapseOpen] = useState();
-    const activeRoute = (routeName) => {
-        return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
-    };
     const toggleCollapse = () => {
         setCollapseOpen((data) => !data);
     };
@@ -100,21 +97,10 @@ const Sidebar = (props) => {
 
                 <Collapse navbar isOpen={collapseOpen}>
                     <Nav navbar>{createLinks(routes)}</Nav>
+
                     <hr className="my-3" />
                     <Nav className="mb-md-3" navbar>
                         <NavItem>
-                        {/*    <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/overview?ref=adr-admin-sidebar">*/}
-                        {/*        <i className="ni ni-spaceship" />*/}
-                        {/*        Getting started*/}
-                        {/*    </NavLink>*/}
-                        {/*</NavItem>*/}
-                        {/*<NavItem>*/}
-                        {/*    <NavLink href="https://demos.creative-tim.com/argon-dashboard-react/#/documentation/colors?ref=adr-admin-sidebar">*/}
-                        {/*        <i className="ni ni-palette" />*/}
-                        {/*        Foundation*/}
-                        {/*    </NavLink>*/}
-                        {/*</NavItem>*/}
-                        {/*<NavItem>*/}
                             <NavLink href="#">
                                 <i className="ni ni-ui-04" />
                                 Mes top Prios
