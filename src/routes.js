@@ -1,10 +1,10 @@
 import Index from "views/Index.js";
-import Profile from "views/examples/Profile.js";
-import Maps from "views/examples/Maps.js";
-import Register from "views/examples/Register.js";
-import Login from "views/examples/Login.js";
-import Tables from "views/examples/Tables.js";
-import Icons from "views/examples/Icons.js";
+import Profile from "views/Admin/Profile.js";
+import Maps from "views/Admin/Maps.js";
+import Register from "views/Admin/Register.js";
+import Login from "views/Admin/Login.js";
+import Tables from "views/Admin/Tables.js";
+import Icons from "views/Admin/Icons.js";
 
 var routes = [
   {
@@ -42,7 +42,6 @@ var routes = [
     component: <Profile />,
     layout: "/admin",
   },
-
   {
     path: "/login",
     name: "Login",
