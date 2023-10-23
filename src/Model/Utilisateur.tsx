@@ -42,9 +42,9 @@ export  default class Utilisateur {
         form.append("email",email)
         const utilisateur=new Utilisateur(-500,type,email,'')
         try {
-            const response = await fetch(BaseUrl("inscription"), {
-                method: "POST",
-                body: form
+            const response = await fetch("inscription", {
+             //   method: "POST",
+                //  body: form,
             });
             if (response.ok) {
                 const ut = await response.json()
