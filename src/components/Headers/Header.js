@@ -7,8 +7,8 @@ const Header = () => {
             <Container fluid>
                 <div className="header-body">
                     <Row>
-                        <Col lg="6" xl="3">
-                            <Card className="card-stats mb-4 mb-xl-0">
+                        <Col lg="6" xl="3" className="pb-2">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100">
                                 <CardBody>
                                     <Row>
                                       <div className="col">
@@ -37,8 +37,8 @@ const Header = () => {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col lg="6" xl="3">
-                            <Card className="card-stats mb-4 mb-xl-0">
+                        <Col lg="6" xl="3" className="pb-2">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100">
                                 <CardBody>
                                     <Row>
                                       <div className="col">
@@ -65,8 +65,8 @@ const Header = () => {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col lg="6" xl="3">
-                            <Card className="card-stats mb-4 mb-xl-0">
+                        <Col lg="6" xl="3" className="pb-2">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100">
                                 <CardBody>
                                     <Row>
                                         <div className="col">
@@ -93,8 +93,8 @@ const Header = () => {
                                 </CardBody>
                             </Card>
                         </Col>
-                        <Col lg="6" xl="3">
-                            <Card className="card-stats mb-4 mb-xl-0">
+                        <Col lg="6" xl="3" className="pb-2">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100">
                                 <CardBody>
                                     <Row>
                                       <div className="col">
@@ -112,12 +112,12 @@ const Header = () => {
                                         </div>
                                       </Col>
                                     </Row>
-                                    <p className="mt-3 mb-0 text-muted text-sm">
-                                      <span className="text-success mr-2">
-                                        <i className="fas fa-arrow-up" /> 12%
-                                      </span>
-                                      <span className="text-nowrap">Rapport fini/restant</span>
-                                    </p>
+                                    {/*<p className="mt-3 mb-0 text-muted text-sm">*/}
+                                    {/*  <span className="text-success mr-2">*/}
+                                    {/*    <i className="fas fa-arrow-up" /> 12%*/}
+                                    {/*  </span>*/}
+                                    {/*  <span className="text-nowrap">Rapport fini/restant</span>*/}
+                                    {/*</p>*/}
                                 </CardBody>
                             </Card>
                         </Col>
