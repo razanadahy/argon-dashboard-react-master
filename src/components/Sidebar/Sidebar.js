@@ -56,7 +56,9 @@ const Sidebar = (props) => {
             );
         });
     };
+
     const { bgColor, routes, logo } = props;
+
     let navbarBrandProps;
     if (logo && logo.innerLink) {
         navbarBrandProps = {
@@ -71,11 +73,7 @@ const Sidebar = (props) => {
     }
 
     return (
-        <Navbar
-            className="navbar-vertical fixed-left navbar-light bg-white"
-            expand="md"
-            id="sidenav-main"
-        >
+        <Navbar className="navbar-vertical fixed-left navbar-light bg-white" expand="md" id="sidenav-main">
             <Container fluid>
                 <button
                     className="navbar-toggler"
