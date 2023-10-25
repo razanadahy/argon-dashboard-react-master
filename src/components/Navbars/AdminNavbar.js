@@ -1,6 +1,10 @@
 import {Link, useNavigate} from "react-router-dom";
 import {DropdownMenu, DropdownItem, UncontrolledDropdown, DropdownToggle, Navbar, Nav, Container, Media,} from "reactstrap";
 import 'font-awesome/css/font-awesome.min.css'
+import {useEffect, useState} from "react";
+import {Stomp} from "@stomp/stompjs";
+import {UrlBase} from "../../Config.ts";
+import SockJS from 'sockjs-client';
 
 const AdminNavbar = (props) => {
     function getFirstLetter(userName) {
@@ -12,7 +16,67 @@ const AdminNavbar = (props) => {
         event.preventDefault()
         props.navigate("/login")
     }
-    
+
+    const [lenNotif,setLenNotif]=useState(0)
+    const [socket,setSocket]=useState(null)
+    const [view,setView]=useState(false)
+
+    useEffect(()=>{
+        //select de tous les notification
+        const stomp = Stomp.over(new SockJS(UrlBase('ws')));
+        stomp.debug=()=>{}
+        stomp.connect({}, () => {
+            stomp.subscribe(`/client/messages/1`,(f)=>{
+                const body = f.body;
+                console.log(body)
+                const messagesData = JSON.parse(body);
+                if (Array.isArray(messagesData)) {
+                    // const messagesArray = messagesData.map(data => {
+                    //     return new Message(
+                    //         data.idMessage ,
+                    //         data.typeMessage ,
+                    //         data.dateMessage ,
+                    //         data.sender ,
+                    //         data.receiver ,
+                    //         data.texte,
+                    //         data.vue ,
+                    //         data.tompony
+                    //     );
+                    // });
+                    // setMessages(messagesArray);
+                }
+            })
+
+            // stomp.subscribe(`/client/allMessage/${utilisateur.id}/${utilisateur.type}`,(mes)=>{
+            //     const body = mes.body;
+            //     const messagesData = JSON.parse(body);
+            //     if (Array.isArray(messagesData)) {
+            //         const messagesArray = messagesData.map(data => {
+            //             return new Message(
+            //                 data.idMessage ,
+            //                 data.typeMessage ,
+            //                 data.dateMessage ,
+            //                 data.sender ,
+            //                 data.receiver ,
+            //                 data.texte,
+            //                 data.vue ,
+            //                 data.tompony
+            //             );
+            //         });
+            //         setAllMessage(messagesArray);
+            //     }
+            // })
+        });
+
+        setSocket(stomp);
+        return () => {
+            if (stomp.connected) {
+                stomp.disconnect();
+            }
+        };
+
+    },[])
+
     
     return (
           <>
@@ -26,12 +90,14 @@ const AdminNavbar = (props) => {
                                       <span className="avatar avatar-sm bg-white rounded-circle">
                                           <i className="fa-solid fa-bell text-default fs-16"/>
                                       </span>
-                                      <span className="badge bg-danger text-gray-dark rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(20px,-10px)'}}>105</span>
+                                      {lenNotif>0 && (
+                                          <span className="badge bg-danger text-gray-dark rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(20px,-10px)'}}>{lenNotif}</span>
+                                      )}
                                   </Media>
                               </DropdownToggle>
                               <DropdownMenu className="dropdown-menu-arrow" right>
                                   <DropdownItem className="text-sm text-muted m-0" header tag="div">
-                                      <h3 className="text-start text-sm text-capitalize m-0">Vous avez <strong className="text-danger ">13</strong> notification(s)</h3>
+                                      <h3 className="text-start text-sm text-capitalize m-0">Vous avez <strong className="text-danger ">{lenNotif}</strong> nouvelle notification(s)</h3>
                                   </DropdownItem>
                                   <DropdownItem to="/admin/user-profile" tag="div" style={{width: '500px'}}>
                                       <div className="align-items-center d-flex row">

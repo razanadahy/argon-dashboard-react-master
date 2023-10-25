@@ -24,10 +24,9 @@ const Admin = (props) => {
             return
         }
         setUserName(JSON.parse(localStorage.getItem("user")).name)
-        console.log(JSON.parse(localStorage.getItem("user")).token)
-        TypeTraitement.list(JSON.parse(localStorage.getItem("user")).token).then((response)=>{
-            console.log(response)
-        })
+        // TypeTraitement.list(JSON.parse(localStorage.getItem("user")).token).then((response)=>{
+        //     console.log(response)
+        // })
     }, [location]);
 
     const getRoutes = (routes) => {
