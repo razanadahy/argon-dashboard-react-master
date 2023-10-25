@@ -38,22 +38,18 @@ export  default class Utilisateur {
         form.append("mdp",mdp)
         form.append("type",type)
         form.append("email",email)
-        const utilisateur=new Utilisateur(-500,type,email,'')
         try {
-            const response = await fetch("inscription", {
-                // method: "POST",
-                // body: form,
+            const response = await fetch(UrlBase("inscription"), {
+                method: "POST",
+                body: form,
             });
             if (response.ok) {
-                const ut = await response.json()
-                return new Utilisateur(ut.id, ut.type, ut.email, "")
+                return true
             } else {
-                console.log(response.status)
-                return utilisateur
+                return false
             }
         } catch (error) {
-            console.log(error)
-            return utilisateur
+            return undefined
         }
     }
 }

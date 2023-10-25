@@ -84,7 +84,7 @@ const Login = () => {
                                     <div className="text-center text-muted mb-4">
                                         {/*<h2 className="text-capitalize">Project follow up</h2>*/}
                                         <Media>
-                                            <img src={logo} alt="..." width={350} height={100}/>
+                                            <img src={logo} alt="..." width={320} height={80.8}/>
                                         </Media>
                                     </div>
                                     <Form role="form" onSubmit={(event)=>handleSubmit(event)} method="post">
@@ -125,7 +125,7 @@ const Login = () => {
                                             </div>
                                         )}
                                         <Row>
-                                            <Col>
+                                            <Col className="col-6">
                                                 {loading ? (
                                                         <button type="button" className="btn btn-primary btn-wrapper" style={{width: '90%'}}>
                                                             <div className="spinner-border text-lighter spinner-border-sm" role="status">
@@ -134,8 +134,8 @@ const Login = () => {
                                                         </button>
                                                 ): ( <button type="submit" className="btn btn-primary btn-wrapper" style={{width: '90%'}}>Se connecter</button>)}
                                             </Col>
-                                            <Col className="text-lg-center text-end">
-                                                <button type="button" className="btn btn-warning" style={{width: '90%'}}>S'inscrire</button>
+                                            <Col className="text-lg-center text-end col-6">
+                                                <button type="button" onClick={()=>navigate("/inscription")} className="btn btn-warning" style={{width: '90%'}}>S'inscrire</button>
                                             </Col>
                                         </Row>
                                     </Form>

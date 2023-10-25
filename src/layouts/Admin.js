@@ -28,26 +28,8 @@ const Admin = (props) => {
         TypeTraitement.list(JSON.parse(localStorage.getItem("user")).token).then((response)=>{
             console.log(response)
         })
-
-
     }, [location]);
 
-    async function f() {
-        const response = await fetch(BaseUrlMain("traitement"), {
-            method: "get",
-            headers: {
-                // "Content-Type": "application/json",
-                "Authorization": `Bearer ${JSON.parse(localStorage.getItem("user")).token}`
-            },
-        });
-
-        if (response.status === 200) {
-            const data = await response.json();
-            console.log(data)
-        } else {
-            console.log(response)
-        }
-    }
     const getRoutes = (routes) => {
         return routes.map((prop, key) => {
             if (prop.layout === "/admin") {
@@ -93,7 +75,7 @@ const Admin = (props) => {
                 </Container>
             </div>
             <div className="position-fixed bottom-small-0 right-small-0">
-                <button onClick={f} type="button" className="btn btn-white rounded-circle" style={{width: '50px', height: '50px'}}>
+                <button type="button" className="btn btn-white rounded-circle" style={{width: '50px', height: '50px'}}>
                     <span className="badge bg-translucent-danger rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(5px,5px)'}}><strong>5</strong></span>
                     <i className="fa-solid fa-bolt mx-auto my-auto"/>
                 </button>
