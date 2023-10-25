@@ -1,4 +1,4 @@
-import {UrlBase} from "../Config";
+import {UrlBase} from "../Config.ts";
 
 export  default class Utilisateur {
     id: number
@@ -13,24 +13,22 @@ export  default class Utilisateur {
         this.mdp=mdp;
     }
 
-    static async  login(type, email, mdp) {
-        const utilisateur=new Utilisateur(-200,type,email,'')
+    static async  login(email, mdp) {
         try {
             const response = await fetch(UrlBase("login"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(new Utilisateur(-100,type,email,mdp)),
+                body: JSON.stringify(new Utilisateur(-100,100,email,mdp)),
             });
             if (response.ok) {
-                const ut= await response.json()
-                return new Utilisateur(ut.id,type,email,"")
+                return  await response.json()
             } else {
-                return utilisateur
+                return false
             }
         } catch (error) {
-            return utilisateur
+            return undefined
         }
     }
 
@@ -43,8 +41,8 @@ export  default class Utilisateur {
         const utilisateur=new Utilisateur(-500,type,email,'')
         try {
             const response = await fetch("inscription", {
-             //   method: "POST",
-                //  body: form,
+                // method: "POST",
+                // body: form,
             });
             if (response.ok) {
                 const ut = await response.json()

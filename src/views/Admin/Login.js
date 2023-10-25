@@ -1,21 +1,67 @@
-import {Button, Card, CardHeader, CardBody, FormGroup, Form, Input, InputGroupAddon, InputGroupText, InputGroup, Row, Col, Container,} from "reactstrap";
-import React, {useEffect} from "react";
+import {
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    FormGroup,
+    Form,
+    Input,
+    InputGroupAddon,
+    InputGroupText,
+    InputGroup,
+    Row,
+    Col,
+    Container,
+    Media,
+} from "reactstrap";
+import React, {useEffect, useState} from "react";
+import Utilisateur from "../../Model/Utilisateur.tsx";
+import {useNavigate} from "react-router-dom";
+import logo from '../../assets/img/brand/logo-no-background.png'
 
 const Login = () => {
+    const mainContent = React.useRef(null);
+    const navigate=useNavigate()
+    useEffect(() => {
+        document.body.classList.add("bg-default");
+        document.documentElement.scrollTop = 0;
+        document.scrollingElement.scrollTop = 0;
+        mainContent.current.scrollTop = 0;
 
-  const mainContent = React.useRef(null);
+        localStorage.clear()
+        return () => {
+            document.body.classList.remove("bg-default");
+        };
+    }, []);
 
-  useEffect(() => {
-    document.body.classList.add("bg-default");
+    const [user,setUser]=useState('')
+    const [mdp,setMdp]=useState('')
+    const [loading,setLoading]=useState(false)
+    const [response,setResponse]=useState(null)
 
-    document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-    mainContent.current.scrollTop = 0;
-    return () => {
-      document.body.classList.remove("bg-default");
-    };
-  }, []);
-
+    function handleSubmit(event) {
+        event.preventDefault()
+        setLoading(true)
+        Utilisateur.login(user, mdp).then((response)=>{
+            if (response===undefined){
+                setResponse("Connection refusée")
+            }else if (response===false){
+                setResponse("Mot de passe ou email incorrect.")
+            }else{
+                localStorage.setItem("user",JSON.stringify(response))
+                if (response.type===1){
+                    navigate("/admin")
+                }else{
+                    navigate("/auth")
+                }
+                setResponse(null)
+            }
+        }).finally(()=>{
+            setUser('')
+            setMdp('')
+            setLoading(false)
+        })
+    }
 
     return (
         <>
@@ -36,9 +82,12 @@ const Login = () => {
                             <Card className="bg-secondary shadow border-0">
                                 <CardBody className="px-lg-5 py-lg-5">
                                     <div className="text-center text-muted mb-4">
-                                        <h2 className="text-capitalize">Project follow up</h2>
+                                        {/*<h2 className="text-capitalize">Project follow up</h2>*/}
+                                        <Media>
+                                            <img src={logo} alt="..." width={350} height={100}/>
+                                        </Media>
                                     </div>
-                                    <Form role="form">
+                                    <Form role="form" onSubmit={(event)=>handleSubmit(event)} method="post">
                                         <FormGroup className="mb-3">
                                             <InputGroup className="input-group-alternative">
                                                 <InputGroupAddon addonType="prepend">
@@ -46,7 +95,7 @@ const Login = () => {
                                                         <i className="ni ni-email-83" />
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input placeholder="Email or UserName" type="text" autoComplete="off"/>
+                                                <Input placeholder="Email or UserName" value={user} onChange={(event)=>setUser(event.target.value)} type="text" autoComplete="off"/>
                                             </InputGroup>
                                         </FormGroup>
                                         <FormGroup>
@@ -56,7 +105,7 @@ const Login = () => {
                                                         <i className="ni ni-lock-circle-open" />
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input placeholder="Password" type="password" autoComplete="new-password"/>
+                                                <Input placeholder="Password" type="password" value={mdp} onChange={(event)=>setMdp(event.target.value)} autoComplete="new-password"/>
                                             </InputGroup>
                                         </FormGroup>
                                         <FormGroup>
@@ -67,11 +116,25 @@ const Login = () => {
                                             </InputGroup>
 
                                         </FormGroup>
+                                        {response && (
+                                            <div className="alert alert-danger  alert-dismissible fade show" role="alert">
+                                                {response}
+                                                <button type="button" onClick={()=>setResponse(null)} className="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        )}
                                         <Row>
-                                            <Col md="6" lg="6" xs="12">
-                                                <button type="button" className="btn btn-primary btn-wrapper" style={{width: '90%'}}>Se connecter</button>
+                                            <Col>
+                                                {loading ? (
+                                                        <button type="button" className="btn btn-primary btn-wrapper" style={{width: '90%'}}>
+                                                            <div className="spinner-border text-lighter spinner-border-sm" role="status">
+                                                                <span className="sr-only">Loading...</span>
+                                                            </div>
+                                                        </button>
+                                                ): ( <button type="submit" className="btn btn-primary btn-wrapper" style={{width: '90%'}}>Se connecter</button>)}
                                             </Col>
-                                            <Col className="text-end" md="6" lg="6" xs="12">
+                                            <Col className="text-lg-center text-end">
                                                 <button type="button" className="btn btn-warning" style={{width: '90%'}}>S'inscrire</button>
                                             </Col>
                                         </Row>
