@@ -1,8 +1,31 @@
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
+import {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import StatistiqueHeader from "../../Model/StatistiqueHeader.tsx";
 
 const Header = () => {
-  return (
-      <>
+    const location=useLocation()
+    const [encours,setEncours]=useState(new StatistiqueHeader(0,0))
+    const [prios,setPrios]=useState(new StatistiqueHeader(0,0))
+
+    useEffect(()=>{
+        const token=JSON.parse(localStorage.getItem("user")).token
+        StatistiqueHeader.enCours(token).then((response)=>{
+            if (response!==null){
+                setEncours(response)
+            }
+        })
+        StatistiqueHeader.prios(token).then((response)=>{
+            if (response!==null){
+                setPrios(response)
+            }
+        })
+    },[location])
+
+
+
+    return (
+        <>
         <div className="header bg-gradient-info pb-8 pt-5 pt-md-7">
             <Container fluid>
                 <div className="header-body">
@@ -19,7 +42,7 @@ const Header = () => {
                                           Nos Projet en cours
                                         </CardTitle>
                                         <span className="h2 font-weight-bold mb-0">
-                                        350,897
+                                        {encours.total}
                                       </span>
                                       </div>
                                       <Col className="col-auto">
@@ -29,9 +52,16 @@ const Header = () => {
                                       </Col>
                                     </Row>
                                     <p className="mt-3 mb-0 text-muted text-sm">
-                                        <span className="text-success mr-2">
-                                          <i className="fa fa-arrow-up" /> 3.48%
-                                        </span>{" "}
+                                        {encours.pourcentage>=0 ? (
+                                            <span className="text-success mr-2">
+                                                <i className="fa fa-arrow-up" /> {encours.pourcentage}%
+                                            </span>
+                                        ) : (
+                                            <span className="text-danger mr-2">
+                                                <i className="fa fa-arrow-down" /> {-encours.pourcentage}%
+                                            </span>
+                                        )}
+
                                         <span className="text-nowrap">Depuis le mois dernier</span>
                                     </p>
                                 </CardBody>
@@ -48,7 +78,7 @@ const Header = () => {
                                         >
                                           Projets top prios
                                         </CardTitle>
-                                        <span className="h2 font-weight-bold mb-0">2,356</span>
+                                        <span className="h2 font-weight-bold mb-0">{prios.total}</span>
                                       </div>
                                       <Col className="col-auto">
                                         <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -57,10 +87,10 @@ const Header = () => {
                                       </Col>
                                     </Row>
                                     <p className="mt-3 mb-0 text-muted text-sm">
-                                      {/*<span className="text-danger mr-2">*/}
-                                      {/*    <i className="fas fa-arrow-down" /> 3.48%*/}
-                                      {/*</span>*/}
-                                      <span className="text-nowrap">Les projets à finir cette semaine</span>
+                                      <span className="text-danger mr-2 font-weight-bold">
+                                        <strong>{prios.pourcentage}</strong>
+                                      </span>
+                                      <span className="text-nowrap"> à finir cette semaine</span>
                                     </p>
                                 </CardBody>
                             </Card>
@@ -125,8 +155,8 @@ const Header = () => {
                 </div>
             </Container>
         </div>
-      </>
-  );
+        </>
+    );
 };
 
 export default Header;
