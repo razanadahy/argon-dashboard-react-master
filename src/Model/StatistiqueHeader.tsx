@@ -56,4 +56,24 @@ export default class StatistiqueHeader {
             return null
         }
     }
+
+    static async tiket(token) {
+        try {
+            const response = await fetch(UrlBase("statistique/tiket"), {
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                return new StatistiqueHeader(data.total,data.last);
+            } else {
+                return null
+            }
+        }catch (e) {
+            return null
+        }
+    }
 }

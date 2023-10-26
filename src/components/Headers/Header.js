@@ -7,6 +7,7 @@ const Header = () => {
     const location=useLocation()
     const [encours,setEncours]=useState(new StatistiqueHeader(0,0))
     const [prios,setPrios]=useState(new StatistiqueHeader(0,0))
+    const [tiket,setTiket]=useState(new StatistiqueHeader(0,0))
 
     useEffect(()=>{
         const token=JSON.parse(localStorage.getItem("user")).token
@@ -18,6 +19,11 @@ const Header = () => {
         StatistiqueHeader.prios(token).then((response)=>{
             if (response!==null){
                 setPrios(response)
+            }
+        })
+        StatistiqueHeader.tiket(token).then((response)=>{
+            if (response!==null){
+                setTiket(response)
             }
         })
     },[location])
@@ -106,7 +112,7 @@ const Header = () => {
                                           >
                                             Mes tikets ouverts
                                           </CardTitle>
-                                          <span className="h2 font-weight-bold mb-0">924</span>
+                                          <span className="h2 font-weight-bold mb-0">{tiket.total}</span>
                                         </div>
                                         <Col className="col-auto">
                                           <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
@@ -116,7 +122,7 @@ const Header = () => {
                                     </Row>
                                     <p className="mt-3 mb-0 text-muted text-sm">
                                       <span className="text-warning mr-2">
-                                        <i className="fas fa-arrow-down" /> 1.10%
+                                        <i className="fas fa-arrow-down" />{tiket.pourcentage}%
                                       </span>
                                       <span className="text-nowrap">depuis le mois dernier</span>
                                     </p>
