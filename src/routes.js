@@ -1,10 +1,8 @@
 import Index from "views/Index.js";
 import Profile from "views/Admin/Profile.js";
-import Maps from "views/Admin/Maps.js";
-import Register from "views/Admin/Register.js";
-import Login from "views/Admin/Login.js";
 import Tables from "views/Admin/Tables.js";
 import Icons from "views/Admin/Icons.js";
+import Developpeur from "./views/Admin/Developpeur";
 
 var routes = [
   {
@@ -17,22 +15,29 @@ var routes = [
   {
     path: "/icons",
     name: "Liste des projets",
-    icon: "ni ni-planet text-blue",
+    icon: "ni ni-bullet-list-67 text-indigo",
     component: <Icons />,
     layout: "/admin",
   },
   {
-    path: "/maps",
+    path: "/developpeurs",
     name: "Développeurs",
-    icon: "ni ni-pin-3 text-orange",
-    component: <Maps />,
+    icon: "ni fa-solid fa-users text-orange",
+    component: <Developpeur/>,
     layout: "/admin",
   },
   {
     path: "/tables",
     name: "Tous les tikets",
-    icon: "ni ni-bullet-list-67 text-red",
+    icon: "ni fa-regular fa-rectangle-list text-red",
     component: <Tables />,
+    layout: "/admin",
+  },
+  {
+    path: "/tikets",
+    name: "Mes tikets",
+    icon: "ni fa-regular fa-bookmark text-blue",
+    component: <Icons />,
     layout: "/admin",
   },
   {

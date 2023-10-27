@@ -54,7 +54,7 @@ const Header = () => {
                 <div className="header-body">
                     <Row>
                         <Col lg="6" xl="3" className="pb-2">
-                            <Card className="card-stats mb-4 mb-xl-0 h-100">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100 clickable">
                                 <CardBody>
                                     <Row>
                                       <div className="col">
@@ -91,7 +91,7 @@ const Header = () => {
                             </Card>
                         </Col>
                         <Col lg="6" xl="3" className="pb-2">
-                            <Card className="card-stats mb-4 mb-xl-0 h-100">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100 clickable">
                                 <CardBody>
                                     <Row>
                                       <div className="col">
@@ -119,7 +119,7 @@ const Header = () => {
                             </Card>
                         </Col>
                         <Col lg="6" xl="3" className="pb-2">
-                            <Card className="card-stats mb-4 mb-xl-0 h-100">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100 clickable">
                                 <CardBody>
                                     <Row>
                                         <div className="col">
@@ -153,7 +153,7 @@ const Header = () => {
                             </Card>
                         </Col>
                         <Col lg="6" xl="3" className="pb-2">
-                            <Card className="card-stats mb-4 mb-xl-0 h-100">
+                            <Card className="card-stats mb-4 mb-xl-0 h-100 clickable">
                                 <CardBody>
                                     <Row>
                                       <div className="col">
