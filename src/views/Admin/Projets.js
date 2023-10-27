@@ -22,14 +22,12 @@ import {
     DropdownItem,
     CardFooter, Pagination, PaginationItem, PaginationLink,
 } from "reactstrap";
+
 import {useEffect, useState} from "react";
 import userBlanck from '../../assets/img/icons/bl.png'
-import NoHeader from "../../components/Headers/NoHeader";
-import {useNavigate} from "react-router-dom";
-import {Next} from "../../Config.ts";
+import Header from "../../components/Headers/Header";
 
-const Developpeur = () => {
-    const navigate=useNavigate()
+const Projets = () => {
     // const [name,setName]=useState("")
     // useEffect(()=>{
     //     const user=JSON.parse(localStorage.getItem("user"))
@@ -40,8 +38,9 @@ const Developpeur = () => {
 
     return (
         <>
-            <NoHeader/>
-            <Container className="mt--8" fluid>
+            <Header/>
+            <Container className="mt--7" fluid>
+
                 <Row>
                     <div className="col">
                         <Card className="shadow">
@@ -80,9 +79,9 @@ const Developpeur = () => {
                                                 />
                                             </a>
                                             <Media>
-                                              <span className="mb-0 text-sm">
-                                                Argon Design System
-                                              </span>
+                                          <span className="mb-0 text-sm">
+                                            Argon Design System
+                                          </span>
                                             </Media>
                                         </Media>
                                     </th>
@@ -106,7 +105,7 @@ const Developpeur = () => {
                                         </div>
                                     </td>
                                     <td className="text-right">
-                                        <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{Next("developpeur/view",null,navigate)}}>
+                                        <button type={"button"} className="btn-icon-only btn text-darker" >
                                             <i className="fas fa-eye" />
                                         </button>
                                     </td>
@@ -173,4 +172,4 @@ const Developpeur = () => {
     );
 };
 
-export default Developpeur;
+export default Projets;

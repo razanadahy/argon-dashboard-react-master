@@ -3,6 +3,7 @@ import Profile from "views/Admin/Profile.js";
 import Tables from "views/Admin/Tables.js";
 import Icons from "views/Admin/Icons.js";
 import Developpeur from "./views/Admin/Developpeur";
+import Projets from "./views/Admin/Projets";
 
 var routes = [
   {
@@ -13,10 +14,10 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/icons",
+    path: "/projets",
     name: "Liste des projets",
     icon: "ni ni-bullet-list-67 text-indigo",
-    component: <Icons />,
+    component: <Projets />,
     layout: "/admin",
   },
   {

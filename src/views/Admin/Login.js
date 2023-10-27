@@ -27,8 +27,8 @@ const Login = () => {
         document.documentElement.scrollTop = 0;
         document.scrollingElement.scrollTop = 0;
         mainContent.current.scrollTop = 0;
-
         localStorage.clear()
+        setClickEye(true)
         return () => {
             document.body.classList.remove("bg-default");
         };
@@ -38,6 +38,8 @@ const Login = () => {
     const [mdp,setMdp]=useState('')
     const [loading,setLoading]=useState(false)
     const [response,setResponse]=useState(null)
+
+    const [clickEye,setClickEye]=useState(true)
 
     function handleSubmit(event) {
         event.preventDefault()
@@ -105,7 +107,14 @@ const Login = () => {
                                                         <i className="ni ni-lock-circle-open" />
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input placeholder="Password" type="password" value={mdp} onChange={(event)=>setMdp(event.target.value)} autoComplete="new-password"/>
+                                                <Input placeholder="Password" type={clickEye ? "password" : "text"} value={mdp} onChange={(event)=>setMdp(event.target.value)} autoComplete="new-password"/>
+                                                <InputGroupAddon addonType="prepend">
+                                                    <InputGroupText>
+                                                        <i className={`ni fas ${!clickEye ? "fa-eye-slash" : "fa-eye"} clickable`} onClick={()=>{
+                                                            setClickEye((prevent)=>!prevent)
+                                                        }}/>
+                                                    </InputGroupText>
+                                                </InputGroupAddon>
                                             </InputGroup>
                                         </FormGroup>
                                         <FormGroup>

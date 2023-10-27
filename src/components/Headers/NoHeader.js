@@ -4,7 +4,7 @@ const NoHeader = () => {
 
     return (
         <>
-            <div className="header pb-8 pt-lg-8  d-flex align-items-center bg-gradient-info" style={{minHeight: "300px", backgroundSize: "cover",}}>
+            <div className="header pb-8 pt-lg-8  d-flex align-items-center bg-gradient-info" style={{minHeight: "200px", backgroundSize: "cover",}}>
                 {/*<span className="mask bg-gradient-default opacity-8" />*/}
                 {/*<Container className="d-flex align-items-center" fluid>*/}
                 {/*    <Row>*/}

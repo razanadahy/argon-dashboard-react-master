@@ -6,8 +6,7 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
-import {TypeTraitement} from "../Model/TypeTraitement.tsx";
-import {BaseUrlMain} from "../Config.ts";
+import ViewDeveloppeur from "../views/Admin/ViewDeveloppeur";
 
 const Admin = (props) => {
     const mainContent = React.useRef(null);
@@ -67,6 +66,7 @@ const Admin = (props) => {
                 />
                 <Routes>
                     {getRoutes(routes)}
+                    <Route path="/developpeur/view" element={<ViewDeveloppeur/>} />
                     <Route path="*" element={<Navigate to="/admin/index" replace />} />
                 </Routes>
                 <Container fluid>
