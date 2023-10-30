@@ -1,4 +1,5 @@
 import { UrlBase} from "../Config.ts";
+import Jira from "./Jira";
 
 export default class ProjectView {
     idProjet: number
@@ -8,9 +9,10 @@ export default class ProjectView {
     nomType:string
     prios: boolean
     nomEtat: string
+    jira: Jira
 
 
-    constructor(idProjet: number, dateCreation: Date, deadlines: Date, nomProjet: string, nomType: string, prios: boolean, nomEtat: string) {
+    constructor(idProjet: number, dateCreation: Date, deadlines: Date, nomProjet: string, nomType: string, prios: boolean, nomEtat: string, jira: Jira) {
         this.idProjet = idProjet;
         this.dateCreation = dateCreation;
         this.deadlines = deadlines;
@@ -18,6 +20,7 @@ export default class ProjectView {
         this.nomType = nomType;
         this.prios = prios;
         this.nomEtat = nomEtat;
+        this.jira = jira;
     }
 
     static async all(token) {
