@@ -21,6 +21,7 @@ root.render(
             <Route path="/login" element={<Login/>}/>
             <Route path="/inscription" element={<Inscription/>}/>
             <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/admin/" element={<Navigate to="/admin/index" replace />} />
         </Routes>
   </BrowserRouter>
 );

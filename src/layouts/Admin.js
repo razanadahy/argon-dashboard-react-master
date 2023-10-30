@@ -42,7 +42,7 @@ const Admin = (props) => {
     const getBrandText = (path) => {
         for (let i = 0; i < routes.length; i++) {
             if (location?.pathname.indexOf(routes[i].layout + routes[i].path) !== -1) {
-                return routes[i].name;
+                return routes[i];
             }
         }
     };
@@ -66,7 +66,6 @@ const Admin = (props) => {
                 />
                 <Routes>
                     {getRoutes(routes)}
-                    <Route path="/developpeur/view" element={<ViewDeveloppeur/>} />
                     <Route path="*" element={<Navigate to="/admin/index" replace />} />
                 </Routes>
                 <Container fluid>

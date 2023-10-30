@@ -82,7 +82,7 @@ const AdminNavbar = (props) => {
           <>
               <Navbar className="navbar-top navbar-dark navbar" expand="md" id="navbar-main">
                   <Container fluid>
-                      <Link className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" to="#">{props.brandText}</Link>
+                      <Link className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" to={`/admin${props.brandText.path}`}>{props.brandText.name}</Link>
                       <Nav className="align-items-center d-none d-md-flex" navbar>
                           <UncontrolledDropdown nav>
                               <DropdownToggle className="pr-0" nav>
@@ -109,7 +109,8 @@ const AdminNavbar = (props) => {
                                                   <div><h4 className="mb-0 text-sm">John Snow</h4></div>
                                                   <div className="text-right text-muted"><small>2 hrs ago</small></div>
                                               </div>
-                                              <p className="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p></div>
+                                              <p className="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
+                                          </div>
                                       </div>
                                   </DropdownItem>
                                   <DropdownItem to="/admin/user-profile" tag="div" >

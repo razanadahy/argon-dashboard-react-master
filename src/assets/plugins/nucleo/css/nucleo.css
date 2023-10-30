@@ -23,7 +23,11 @@ License - nucleoapp.com/license/
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.font{
+  font: normal normal normal 14px/1 NucleoIcons;
+  font-size: inherit;
+  text-rendering: auto;
+}
 /*------------------------
   change icon size
 -------------------------*/

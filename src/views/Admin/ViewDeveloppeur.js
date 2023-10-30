@@ -24,7 +24,7 @@ import {
 } from "reactstrap";
 import {useEffect, useState} from "react";
 import userBlanck from '../../assets/img/icons/bl.png'
-import NoHeader from "../../components/Headers/NoHeader";
+import InfoPersoHeader from "../../components/Headers/InfoPersoHeader";
 
 const ViewDeveloppeur = () => {
     // const [name,setName]=useState("")
@@ -37,7 +37,7 @@ const ViewDeveloppeur = () => {
 
     return (
         <>
-            <NoHeader/>
+            <InfoPersoHeader/>
             <Container className="mt--8" fluid>
                 <>
                     <Row>
@@ -80,7 +80,6 @@ const ViewDeveloppeur = () => {
                                 <CardBody className="pt-0 pt-md-4">
                                     <Row>
                                         <div className="col">
-                                            //en developpement
                                             <div className="card-profile-stats d-flex justify-content-center mt-md-5">
                                                 <div>
                                                     <span className="heading">22</span>
@@ -115,197 +114,100 @@ const ViewDeveloppeur = () => {
                         </Col>
                         <Col className="order-xl-1" xl="8">
                             <Card className="bg-secondary shadow">
-                                <CardHeader className="bg-white border-0">
-                                    <Row className="align-items-center">
-                                        <Col xs="8">
-                                            <h3 className="mb-0">Mon Compte</h3>
-                                        </Col>
-                                        <Col className="text-right" xs="4">
-                                            <Button
-                                                color="primary"
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                                size="sm"
-                                            >
-                                                Settings
-                                            </Button>
-                                        </Col>
-                                    </Row>
+                                <CardHeader className="border-0 row m-0">
+                                    <div className="col-6 text-start">
+                                        <h3 className="mb-0">Ses Tickets</h3>
+                                    </div>
+                                    <div className="col-6 d-flex justify-content-end">
+                                        <div className="input-group-merge input-group">
+                                            <input placeholder="search" type="search" className="form-control"/>
+                                        </div>
+                                    </div>
                                 </CardHeader>
-                                <CardBody>
-                                    <Form>
-                                        <h6 className="heading-small text-muted mb-4">
-                                            User information
-                                        </h6>
-                                        <div className="pl-lg-4">
-                                            <Row>
-                                                <Col lg="6">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-username"
-                                                        >
-                                                            Username
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            defaultValue="lucky.jesse"
-                                                            id="input-username"
-                                                            placeholder="Username"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col lg="6">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-email"
-                                                        >
-                                                            Email address
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            id="input-email"
-                                                            placeholder="jesse@example.com"
-                                                            type="email"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col lg="6">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-first-name"
-                                                        >
-                                                            First name
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            defaultValue="Lucky"
-                                                            id="input-first-name"
-                                                            placeholder="First name"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col lg="6">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-last-name"
-                                                        >
-                                                            Last name
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            defaultValue="Jesse"
-                                                            id="input-last-name"
-                                                            placeholder="Last name"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                        <hr className="my-4" />
-                                        {/* Address */}
-                                        <h6 className="heading-small text-muted mb-4">
-                                            Contact information
-                                        </h6>
-                                        <div className="pl-lg-4">
-                                            <Row>
-                                                <Col md="12">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-address"
-                                                        >
-                                                            Address
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                                                            id="input-address"
-                                                            placeholder="Home Address"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col lg="4">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-city"
-                                                        >
-                                                            City
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            defaultValue="New York"
-                                                            id="input-city"
-                                                            placeholder="City"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col lg="4">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-country"
-                                                        >
-                                                            Country
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            defaultValue="United States"
-                                                            id="input-country"
-                                                            placeholder="Country"
-                                                            type="text"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                                <Col lg="4">
-                                                    <FormGroup>
-                                                        <label
-                                                            className="form-control-label"
-                                                            htmlFor="input-country"
-                                                        >
-                                                            Postal code
-                                                        </label>
-                                                        <Input
-                                                            className="form-control-alternative"
-                                                            id="input-postal-code"
-                                                            placeholder="Postal code"
-                                                            type="number"
-                                                        />
-                                                    </FormGroup>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                        <hr className="my-4" />
-                                        {/* Description */}
-                                        <h6 className="heading-small text-muted mb-4">About me</h6>
-                                        <div className="pl-lg-4">
-                                            <FormGroup>
-                                                <label>About Me</label>
-                                                <Input
-                                                    className="form-control-alternative"
-                                                    placeholder="A few words about you ..."
-                                                    rows="4"
-                                                    defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
-                              Open Source."
-                                                    type="textarea"
-                                                />
-                                            </FormGroup>
-                                        </div>
-                                    </Form>
-                                </CardBody>
+                                <Table className="align-items-center table-flush" responsive>
+                                    <thead className="thead-light">
+                                    <tr className="font">
+                                        <th scope="col">Projet <i className="fa fa-sort"/></th>
+                                        <th scope="col">Reference</th>
+                                        <th scope="col">Url</th>
+                                        <th scope="col">Etat <i className="fa fa-sort"/></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                                    <span className="mb-0 text-sm">
+                                                    Argon Design System
+                                                  </span>
+                                        </th>
+                                        <td><a href="" target="_blank" rel="noopener noreferrer">Reference</a></td>
+                                        <td>
+                                            <Badge color="" className="badge-dot mr-4">
+                                                <i className="bg-warning" />
+                                                pending
+                                            </Badge>
+                                        </td>
+                                        <td>
+                                            <a href="" target="_blank" rel="noopener noreferrer">Reference</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </Table>
+                                {/*<CardBody>*/}
+                                {/*    */}
+                                {/*</CardBody>*/}
+                                <CardFooter className="py-4">
+                                    <nav aria-label="...">
+                                        <Pagination
+                                            className="pagination justify-content-end mb-0"
+                                            listClassName="justify-content-end mb-0"
+                                        >
+                                            <PaginationItem className="disabled">
+                                                <PaginationLink
+                                                    href="#pablo"
+                                                    onClick={(e) => e.preventDefault()}
+                                                    tabIndex="-1"
+                                                >
+                                                    <i className="fas fa-angle-left" />
+                                                    <span className="sr-only">Previous</span>
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                            <PaginationItem className="active">
+                                                <PaginationLink
+                                                    href="#pablo"
+                                                    onClick={(e) => e.preventDefault()}
+                                                >
+                                                    1
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <PaginationLink
+                                                    href="#pablo"
+                                                    onClick={(e) => e.preventDefault()}
+                                                >
+                                                    2 <span className="sr-only">(current)</span>
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <PaginationLink
+                                                    href="#pablo"
+                                                    onClick={(e) => e.preventDefault()}
+                                                >
+                                                    3
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <PaginationLink
+                                                    href="#pablo"
+                                                    onClick={(e) => e.preventDefault()}
+                                                >
+                                                    <i className="fas fa-angle-right" />
+                                                    <span className="sr-only">Next</span>
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                        </Pagination>
+                                    </nav>
+                                </CardFooter>
                             </Card>
                         </Col>
                     </Row>

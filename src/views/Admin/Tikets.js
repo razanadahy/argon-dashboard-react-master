@@ -1,35 +1,22 @@
 //https://docs.google.com/document/d/1v_d5NnLB_6SHEkrNZcW8iRDHM4pKt7fv/edit?pli=1#heading=h.1ci93xb
 
 import {
-    Button,
     Card,
     CardHeader,
     CardBody,
-    FormGroup,
-    Form,
-    Input,
     Container,
     Row,
     Col,
     Table,
-    Media,
     Badge,
-    UncontrolledTooltip,
-    Progress,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
+
     CardFooter, Pagination, PaginationItem, PaginationLink,
 } from "reactstrap";
 import {useEffect, useState} from "react";
 import userBlanck from '../../assets/img/icons/bl.png'
-import NoHeader from "../../components/Headers/NoHeader";
-import {useNavigate} from "react-router-dom";
-import {Next} from "../../Config.ts";
+import Header from "../../components/Headers/Header";
 
-const Developpeur = () => {
-    const navigate=useNavigate()
+const Tikets = ({utilisateur}) => {
     // const [name,setName]=useState("")
     // useEffect(()=>{
     //     const user=JSON.parse(localStorage.getItem("user"))
@@ -40,16 +27,16 @@ const Developpeur = () => {
 
     return (
         <>
-            <NoHeader/>
-            <Container className="mt--8" fluid>
+            <Header/>
+            <Container className="mt--7" fluid>
                 <Row>
-                    <div className="col">
-                        <Card className="shadow">
+                    <Col xl="12">
+                        <Card className="bg-secondary shadow">
                             <CardHeader className="border-0 row m-0">
-                                <div className="col-8 text-start">
-                                    <h3 className="mb-0">Liste de tous les développeurs</h3>
+                                <div className="col-6 text-start">
+                                    <h3 className="mb-0">Ses Tickets</h3>
                                 </div>
-                                <div className="col-4 d-flex justify-content-end">
+                                <div className="col-6 d-flex justify-content-end">
                                     <div className="input-group-merge input-group">
                                         <input placeholder="search" type="search" className="form-control"/>
                                     </div>
@@ -57,36 +44,21 @@ const Developpeur = () => {
                             </CardHeader>
                             <Table className="align-items-center table-flush" responsive>
                                 <thead className="thead-light">
-                                <tr>
-                                    <th scope="col">User name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Completion</th>
-                                    <th scope="col" />
+                                <tr className="font">
+                                    <th scope="col">Projet <i className="fa fa-sort"/></th>
+                                    <th scope="col">Reference</th>
+                                    <th scope="col">Url</th>
+                                    <th scope="col">Etat <i className="fa fa-sort"/></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
                                     <th scope="row">
-                                        <Media className="align-items-center">
-                                            <a
-                                                className="avatar rounded-circle mr-3"
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                <img
-                                                    alt="..."
-                                                    src={require("../../assets/img/theme/bootstrap.jpg")}
-                                                />
-                                            </a>
-                                            <Media>
-                                              <span className="mb-0 text-sm">
+                                                <span className="mb-0 text-sm">
                                                 Argon Design System
                                               </span>
-                                            </Media>
-                                        </Media>
                                     </th>
-                                    <td>$2,500 USD</td>
+                                    <td><a href="" target="_blank" rel="noopener noreferrer">Reference</a></td>
                                     <td>
                                         <Badge color="" className="badge-dot mr-4">
                                             <i className="bg-warning" />
@@ -94,21 +66,7 @@ const Developpeur = () => {
                                         </Badge>
                                     </td>
                                     <td>
-                                        <div className="d-flex align-items-center">
-                                            <span className="mr-2">60%</span>
-                                            <div>
-                                                <Progress
-                                                    max="100"
-                                                    value="60"
-                                                    barClassName="bg-danger"
-                                                />
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="text-right">
-                                        <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{Next("admin/developpeurs/view",null,navigate)}}>
-                                            <i className="fas fa-eye" />
-                                        </button>
+                                        <a href="" target="_blank" rel="noopener noreferrer">Reference</a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -121,7 +79,7 @@ const Developpeur = () => {
                                     >
                                         <PaginationItem className="disabled">
                                             <PaginationLink
-                                                href="#"
+                                                href="#pablo"
                                                 onClick={(e) => e.preventDefault()}
                                                 tabIndex="-1"
                                             >
@@ -166,11 +124,11 @@ const Developpeur = () => {
                                 </nav>
                             </CardFooter>
                         </Card>
-                    </div>
+                    </Col>
                 </Row>
             </Container>
         </>
     );
 };
 
-export default Developpeur;
+export default Tikets;

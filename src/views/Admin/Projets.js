@@ -26,15 +26,33 @@ import {
 import {useEffect, useState} from "react";
 import userBlanck from '../../assets/img/icons/bl.png'
 import Header from "../../components/Headers/Header";
+import ProjectView from "../../Model/ProjectView.tsx";
 
 const Projets = () => {
-    // const [name,setName]=useState("")
-    // useEffect(()=>{
-    //     const user=JSON.parse(localStorage.getItem("user"))
-    //     if (user){
-    //         setName(user.name)
-    //     }
-    // },[])
+    const [listProjet,setListProjet]=useState([])
+    const [loading,setLoading]=useState(true)
+    useEffect(()=>{
+        const token=JSON.parse(localStorage.getItem("user")).token
+        setLoading(true)
+        ProjectView.all(token).then((response)=>{
+            setListProjet(response)
+        }).finally(()=>{
+            setLoading(false)
+        })
+    },[])
+
+    function getClassEtat(etat) {
+        etat = etat.toLowerCase();
+        if (etat === 'a faire') {
+            return 'px-2 py-1 bg-light text-body rounded-sm';
+        } else if (etat === 'en cours') {
+            return 'px-2 py-1 bg-warning text-white rounded-sm';
+        } else if (etat === 'suspendu') {
+            return 'px-2 py-1 bg-danger text-white rounded-sm';
+        } else {
+            return 'px-2 py-1 bg-success rounded-sm';
+        }
+    }
 
     return (
         <>
@@ -46,7 +64,7 @@ const Projets = () => {
                         <Card className="shadow">
                             <CardHeader className="border-0 row m-0">
                                 <div className="col-8 text-start">
-                                    <h3 className="mb-0">Liste de tous les développeurs</h3>
+                                    <h3 className="mb-0">Liste de tous les Projets</h3>
                                 </div>
                                 <div className="col-4 d-flex justify-content-end">
                                     <div className="input-group-merge input-group">
@@ -56,60 +74,61 @@ const Projets = () => {
                             </CardHeader>
                             <Table className="align-items-center table-flush" responsive>
                                 <thead className="thead-light">
-                                <tr>
-                                    <th scope="col">User name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Completion</th>
-                                    <th scope="col" />
-                                </tr>
+                                    <tr className="font">
+                                        <th className="clickable" scope="col">Projet</th>
+                                        <th className="clickable" scope="col">Type</th>
+                                        <th className="clickable" scope="col">Date Creation <i className="fa fa-sort"/></th>
+                                        <th className="clickable" scope="col">date limite <i className="fa fa-sort"/></th>
+                                        <th className="clickable" scope="col">Etat <i className="fa fa-sort"/></th>
+                                        <th className="clickable" scope="col" />
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        <Media className="align-items-center">
-                                            <a
-                                                className="avatar rounded-circle mr-3"
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                <img
-                                                    alt="..."
-                                                    src={require("../../assets/img/theme/bootstrap.jpg")}
-                                                />
-                                            </a>
-                                            <Media>
-                                          <span className="mb-0 text-sm">
-                                            Argon Design System
-                                          </span>
-                                            </Media>
-                                        </Media>
-                                    </th>
-                                    <td>$2,500 USD</td>
-                                    <td>
-                                        <Badge color="" className="badge-dot mr-4">
-                                            <i className="bg-warning" />
-                                            pending
-                                        </Badge>
-                                    </td>
-                                    <td>
-                                        <div className="d-flex align-items-center">
-                                            <span className="mr-2">60%</span>
-                                            <div>
-                                                <Progress
-                                                    max="100"
-                                                    value="60"
-                                                    barClassName="bg-danger"
-                                                />
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="text-right">
-                                        <button type={"button"} className="btn-icon-only btn text-darker" >
-                                            <i className="fas fa-eye" />
-                                        </button>
-                                    </td>
-                                </tr>
+                                {loading ? (
+                                    <tr>
+                                        <th scope="row">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
+                                        <td><div className="skeleton p-3 mb-3"/></td>
+                                        <td>
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td>
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td>
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-right">
+
+                                        </td>
+                                    </tr>
+                                ):listProjet.map((ProjectView)=>(
+                                    <tr key={ProjectView.idProjet}>
+                                        <th scope="row">
+                                             <span className="mb-0 text-sm">
+                                                {ProjectView.nomProjet}
+                                             </span>
+                                        </th>
+                                        <td>{ProjectView.nomType}</td>
+                                        <td>
+                                            <pre className="m-0 p-0 fs-16">{ProjectView.dateCreation}</pre>
+                                        </td>
+                                        <td>
+                                            <pre className="m-0 p-0 fs-16">{ProjectView.deadlines}</pre>
+                                        </td>
+                                        <td>
+                                            <span className={getClassEtat(ProjectView.nomEtat)}>
+                                                {ProjectView.nomEtat}
+                                            </span>
+                                        </td>
+                                        <td className="text-right">
+                                            <button type={"button"} className="btn-icon-only btn text-darker" >
+                                                <i className="fas fa-eye" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )) }
                                 </tbody>
                             </Table>
                             <CardFooter className="py-4">
