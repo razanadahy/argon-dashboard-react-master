@@ -6,7 +6,6 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "routes.js";
-import ViewDeveloppeur from "../views/Admin/ViewDeveloppeur";
 
 const Admin = (props) => {
     const mainContent = React.useRef(null);
@@ -23,9 +22,6 @@ const Admin = (props) => {
             return
         }
         setUserName(JSON.parse(localStorage.getItem("user")).name)
-        // TypeTraitement.list(JSON.parse(localStorage.getItem("user")).token).then((response)=>{
-        //     console.log(response)
-        // })
     }, [location]);
 
     const getRoutes = (routes) => {

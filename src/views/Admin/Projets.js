@@ -1,38 +1,20 @@
 //https://docs.google.com/document/d/1v_d5NnLB_6SHEkrNZcW8iRDHM4pKt7fv/edit?pli=1#heading=h.1ci93xb
 
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    FormGroup,
-    Form,
-    Input,
-    Container,
-    Row,
-    Col,
-    Table,
-    Media,
-    Badge,
-    UncontrolledTooltip,
-    Progress,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-    CardFooter, Pagination, PaginationItem, PaginationLink,
-} from "reactstrap";
+import {Card, CardHeader, Container, Row, Table, CardFooter} from "reactstrap";
 
 import {useEffect, useState} from "react";
-import userBlanck from '../../assets/img/icons/bl.png'
 import Header from "../../components/Headers/Header";
 import ProjectView from "../../Model/ProjectView.tsx";
 import unidecode from 'unidecode';
+import PaginateObject from "../../components/Sidebar/PaginateObject";
+import {useNavigate} from "react-router-dom";
+import {Next} from "../../Config.ts";
 
-const Projets = () => {
+const Projets = ({type}) => {
     const [listProjet,setListProjet]=useState([])
     const[filteritem,setFilterItem]=useState([])
     const [loading,setLoading]=useState(true)
+    const navigate=useNavigate()
     useEffect(()=>{
         const token=JSON.parse(localStorage.getItem("user")).token
         setLoading(true)
@@ -87,6 +69,16 @@ const Projets = () => {
         setFilterItem(updatedFilterItem);
     }
 
+    const [currentPage,setCurrentPage]=useState(1)
+
+    function onPageChange(number) {
+        setCurrentPage(number)
+    }
+    const perPage=5;
+    const startIndex=(currentPage-1)*perPage
+    const endIndex=startIndex+perPage
+    const currentData=filteritem.slice(startIndex,endIndex)
+
     function search(input) {
         const normalizedInput = unidecode(input).toLowerCase();
 
@@ -110,9 +102,7 @@ const Projets = () => {
                 return normalizedType.includes(normalizedInput);
             }
         });
-
         const searchResults = [...new Set([...byRef, ...byNom, ...byType])];
-
         setFilterItem(searchResults);
     }
 
@@ -176,7 +166,7 @@ const Projets = () => {
 
                                         </td>
                                     </tr>
-                                ):filteritem.map((ProjectView)=>(
+                                ):currentData.map((ProjectView)=>(
                                     <tr key={ProjectView.idProjet}>
                                         <th scope="row">
                                              <span className="mb-0 text-sm">
@@ -201,7 +191,7 @@ const Projets = () => {
                                             </span>
                                         </td>
                                         <td className="text-right">
-                                            <button type={"button"} className="btn-icon-only btn text-darker" >
+                                            <button type={"button"} onClick={()=>{Next(type+"/projets/view/"+ProjectView.idProjet,null,navigate)}} className="btn-icon-only btn text-darker" >
                                                 <i className="fas fa-eye" />
                                             </button>
                                         </td>
@@ -211,71 +201,7 @@ const Projets = () => {
                             </Table>
                             <CardFooter className="py-4">
                                 <nav aria-label="...">
-                                    <Pagination
-                                        className="pagination justify-content-end mb-0"
-                                        listClassName="justify-content-end mb-0"
-                                    >
-                                        <PaginationItem className="disabled">
-                                            <PaginationLink
-                                                href="#"
-                                                onClick={(e) => e.preventDefault()}
-                                                tabIndex="-1"
-                                            >
-                                                <i className="fas fa-angle-left" />
-                                                <span className="sr-only">Previous</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem className="active">
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                1
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                2 <span className="sr-only">(current)</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                3
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                3
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                3
-                                            </PaginationLink>
-                                        </PaginationItem>
-
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                <i className="fas fa-angle-right" />
-                                                <span className="sr-only">Next</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    </Pagination>
+                                    <PaginateObject currentPage={currentPage} list={filteritem} perPage={perPage} onPageChange={onPageChange}/>
                                 </nav>
                             </CardFooter>
                         </Card>

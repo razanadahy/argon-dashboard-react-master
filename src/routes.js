@@ -4,13 +4,14 @@ import Developpeur from "./views/Admin/Developpeur";
 import Projets from "./views/Admin/Projets";
 import ViewDeveloppeur from "./views/Admin/ViewDeveloppeur";
 import Tikets from "./views/Admin/Tikets";
+import ViewProject from "./views/Admin/ViewProject";
 
-var routes = [
+const routes = [
   {
     path: "/index",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
-    component: <Index />,
+    component: <Index/>,
     layout: "/admin",
     hide: false,
   },
@@ -18,7 +19,7 @@ var routes = [
     path: "/projets",
     name: "Liste des projets",
     icon: "ni ni-bullet-list-67 text-indigo",
-    component: <Projets />,
+    component: <Projets type={"admin"}/>,
     layout: "/admin",
     hide: false,
   },
@@ -42,7 +43,7 @@ var routes = [
     path: "/tiket/me",
     name: "Mes tikets",
     icon: "ni fa-regular fa-bookmark text-blue",
-    component: <Tikets utilisateur={1} />,
+    component: <Tikets utilisateur={1}/>,
     layout: "/admin",
     hide: false,
   },
@@ -50,15 +51,15 @@ var routes = [
     path: "/statistique",
     name: "Statistique",
     icon: "ni ni-chart-bar-32 text-cyan",
-    component: <Profile />,
+    component: <Profile/>,
     layout: "/admin",
     hide: false,
   },
   {
     path: "/user-profile",
-    name: "User Profile",
+    name: "Profile",
     icon: "ni ni-single-02 text-yellow",
-    component: <Profile />,
+    component: <Profile/>,
     layout: "/admin",
     hide: false,
   },
@@ -66,24 +67,78 @@ var routes = [
     path: "/developpeurs/view",
     name: "",
     icon: "ni ni-single-02 text-yellow",
-    component: <ViewDeveloppeur />,
+    component: <ViewDeveloppeur/>,
     layout: "/admin",
     hide: true,
   },
-  // {
-  //   path: "/login",
-  //   name: "Login",
-  //   icon: "ni ni-key-25 text-info",
-  //   component: <Login />,
-  //   layout: "/auth",
-  // },
-  // {
-  //   path: "/register",
-  //   name: "Register",
-  //   icon: "ni ni-circle-08 text-pink",
-  //   component: <Register />,
-  //   layout: "/auth",
-  // },
+
+
+  {
+    path: "/index",
+    name: "Dashboard",
+    icon: "ni ni-tv-2 text-primary",
+    component: <Index/>,
+    layout: "/auth",
+    hide: false,
+  },
+  {
+    path: "/projets",
+    name: "Liste des projets",
+    icon: "ni ni-bullet-list-67 text-indigo",
+    component: <Projets type={"auth"}/>,
+    layout: "/auth",
+    hide: false,
+  },
+
+  {
+    path: "/tikets",
+    name: "Tous les tikets",
+    icon: "ni fa-regular fa-rectangle-list text-red",
+    component: <Tikets utilisateur={10988}/>,
+    layout: "/auth",
+    hide: false,
+  },
+  {
+    path: "/tiket/me",
+    name: "Mes tikets",
+    icon: "ni fa-regular fa-bookmark text-blue",
+    component: <Tikets utilisateur={1}/>,
+    layout: "/auth",
+    hide: false,
+  },
+  {
+    path: "/statistique",
+    name: "Statistique",
+    icon: "ni ni-chart-bar-32 text-cyan",
+    component: <Profile/>,
+    layout: "/auth",
+    hide: false,
+  },
+  {
+    path: "/user-profile",
+    name: "Profile",
+    icon: "ni ni-single-02 text-yellow",
+    component: <Profile/>,
+    layout: "/auth",
+    hide: false,
+  },
+
+  {
+    path: "/projets/view/:id",
+    name: "",
+    icon: "ni ni-single-02 text-yellow",
+    component: <ViewProject/>,
+    layout: "/auth",
+    hide: true,
+  },
+  {
+    path: "/projets/view/:id",
+    name: "",
+    icon: "ni ni-single-02 text-yellow",
+    component: <ViewProject/>,
+    layout: "/admin",
+    hide: true,
+  },
 
 ];
 export default routes;

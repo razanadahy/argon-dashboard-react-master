@@ -2,35 +2,7 @@ import { useState } from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 import { PropTypes } from "prop-types";
 
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    CardTitle,
-    Collapse,
-    DropdownMenu,
-    DropdownItem,
-    UncontrolledDropdown,
-    DropdownToggle,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Media,
-    NavbarBrand,
-    Navbar,
-    NavItem,
-    NavLink,
-    Nav,
-    Progress,
-    Table,
-    Container,
-    Row,
-    Col,
-} from "reactstrap";
+import {Collapse, NavbarBrand, Navbar, NavItem, NavLink, Nav, Container,} from "reactstrap";
 
 const Sidebar = (props) => {
     const [collapseOpen, setCollapseOpen] = useState();
@@ -40,9 +12,16 @@ const Sidebar = (props) => {
     const closeCollapse = () => {
         setCollapseOpen(false);
     };
+    const type=JSON.parse(localStorage.getItem("user")).type
+    let eg=''
+    if (type===1){
+        eg="/admin"
+    }else{
+        eg="/auth"
+    }
     const createLinks = (routes) => {
         return routes.map((prop, key) => {
-            if (!prop.hide){
+            if (!prop.hide && prop.layout===eg){
                 return (
                     <NavItem key={key}>
                         <NavLink
