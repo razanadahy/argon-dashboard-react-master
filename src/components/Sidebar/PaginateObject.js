@@ -22,49 +22,58 @@ function PaginateObject({list,perPage,currentPage,onPageChange}) {
         pageNumber.push(i);
     }
     return(
-        <Pagination
-            className={`pagination justify-content-end mb-0 ${pageNumber.length===0 && "dis-none"}`}
-            listClassName="justify-content-end mb-0"
-        >
-            <PaginationItem disabled={currentPage===1}>
-                <PaginationLink
-                    href="#prev"
-                    onClick={(e) =>{
-                        e.preventDefault()
-                        onPageChange(currentPage-1)
-                    }}
-                    tabIndex="-1"
+        <div className="row m-0 p-0">
+            <div className="col-6 text-start">
+                <span>
+                    Total: <strong className="rounded text-success px-3 py-1 border">{list.length}</strong>
+                </span>
+            </div>
+            <div className="col-6">
+                <Pagination
+                    className={`pagination justify-content-end mb-0 ${pageNumber.length===0 && "dis-none"}`}
+                    listClassName="justify-content-end mb-0"
                 >
-                    <i className="fas fa-angle-left" />
-                    <span className="sr-only">Previous</span>
-                </PaginationLink>
-            </PaginationItem>
-            {pageNumber.map((number)=>(
-                <PaginationItem key={number} active={number===currentPage}>
-                    <PaginationLink
-                        onClick={(e) => {
-                            e.preventDefault()
-                            onPageChange(number)
-                        }}
-                    >
-                        {number}
-                    </PaginationLink>
-                </PaginationItem>
-            ))}
+                    <PaginationItem disabled={currentPage===1}>
+                        <PaginationLink
+                            href="#prev"
+                            onClick={(e) =>{
+                                e.preventDefault()
+                                onPageChange(currentPage-1)
+                            }}
+                            tabIndex="-1"
+                        >
+                            <i className="fas fa-angle-left" />
+                            <span className="sr-only">Previous</span>
+                        </PaginationLink>
+                    </PaginationItem>
+                    {pageNumber.map((number)=>(
+                        <PaginationItem key={number} active={number===currentPage}>
+                            <PaginationLink
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    onPageChange(number)
+                                }}
+                            >
+                                {number}
+                            </PaginationLink>
+                        </PaginationItem>
+                    ))}
 
-            <PaginationItem disabled={currentPage===totalPage}>
-                <PaginationLink
-                    href="#next"
-                    onClick={(e) => {
-                        e.preventDefault()
-                        onPageChange(currentPage+1)
-                    }}
-                >
-                    <i className="fas fa-angle-right" />
-                    <span className="sr-only">Next</span>
-                </PaginationLink>
-            </PaginationItem>
-        </Pagination>
+                    <PaginationItem disabled={currentPage===totalPage}>
+                        <PaginationLink
+                            href="#next"
+                            onClick={(e) => {
+                                e.preventDefault()
+                                onPageChange(currentPage+1)
+                            }}
+                        >
+                            <i className="fas fa-angle-right" />
+                            <span className="sr-only">Next</span>
+                        </PaginationLink>
+                    </PaginationItem>
+                </Pagination>
+            </div>
+        </div>
     )
 }
 export default PaginateObject
