@@ -1,45 +1,54 @@
 import { useNavigate, useParams} from "react-router-dom";
-import {useEffect} from "react";
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    FormGroup,
-    Input,
-    Row,
-    Form,
-    Table,
-    Badge,
-    CardFooter,
-    Pagination,
-    PaginationItem,
-    PaginationLink,
-    Progress,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-    UncontrolledDropdown
-} from "reactstrap";
+import {useEffect, useState} from "react";
+import {Button, Card, CardBody, CardHeader, Col, Row, Table, CardFooter, Pagination, PaginationItem, PaginationLink, Progress, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledDropdown} from "reactstrap";
 import HeaderProject from "../../components/Headers/HeaderProject";
 import {Next} from "../../Config.ts";
+import StadeTicket from "../../Model/StadeTicket.tsx";
+import Etat from "../../Model/Etat.tsx";
+import Stade from "../../Model/Stade.tsx";
 
 function ViewProject({author}) {
     const {id}=useParams()
     const navigate=useNavigate()
-
+    const [getStadeTicket,setStadeTicket]=useState([])
+    const [loading,setLoading]=useState(true)
+    const [etats,setEtats]=useState([
+        new Etat(1,'A faire',0),
+        new Etat(2,'En cours',10),
+        new Etat(3,'Suspendu',100),
+        new Etat(4,'Terminé',1000),
+    ])
+    const [stades,setStades]=useState([])
+    const [loadStade,setLoad]=useState(true)
+    const utilisateur=JSON.parse(localStorage.getItem("user"))
     useEffect(()=>{
-        const type=JSON.parse(localStorage.getItem("user")).type
-        if(author==="admin" && type!==1){
+        setLoad(true)
+        Stade.getStades(utilisateur.token).then((response)=>{
+            setStades(response)
+        }).finally(()=>{
+            setLoad(false)
+        })
+    },[])
+    useEffect(()=>{
+        setLoading(true)
+        if(author==="admin" && utilisateur.type!==1){
             navigate("/login")
-        }else if(author==="auth" && type!==2){
+            return;
+        }else if(author==="auth" && utilisateur.type!==2){
             navigate("/login")
+            return
         }
         if (!id){
             navigate("/login")
+            return
         }
+        StadeTicket.getStadeTicketByIdProject(utilisateur.token,id).then((response)=>{
+            console.log(response)
+            setStadeTicket(response)
+        }).finally(()=>{
+            setLoading(false)
+        })
+
     },[id])
     function getClassEtat(etat) {
         etat = etat.toLowerCase();
@@ -69,1011 +78,127 @@ function ViewProject({author}) {
                                 </Col>
                                 {author==="admin" && (
                                     <Col className="text-right justify-content-end" xl={"7"} xs="4">
-                                        <Button
-                                            color="default"
-                                            onClick={(e) => e.preventDefault()}
-                                            // size={"sm"}
-                                        >
+                                        <Button color="default" onClick={(e) => e.preventDefault()}>
                                             Modifier
                                         </Button>
                                     </Col>
                                 )}
                             </Row>
                         </CardHeader>
-                        <Table className="align-items-center table-flush" style={{minHeight:'150px',}} responsive={true}>
+                        <Table className="align-items-center table-flush" style={{minHeight:'185px',}} responsive={true}>
                             <thead className="thead-light clickable">
                                 <tr className="font">
                                     <th scope="col">site <i className="fa fa-sort"/></th>
                                     <th scope="col">Ticket</th>
                                     <th scope="col">Dev <i className="fa fa-sort"/></th>
-                                    <th scope="col">Mapping <i className="fa fa-sort"/></th>
-                                    <th scope="col">Crawler<i className="fa fa-sort"/></th>
-                                    <th scope="col">Validation crawler <i className="fa fa-sort"/></th>
-                                    <th scope="col">Config job <i className="fa fa-sort"/></th>
-                                    <th scope="col">Arbo/Mapping <i className="fa fa-sort"/></th>
-                                    <th scope="col">Etat QC <i className="fa fa-sort"/></th>
+                                    <th scope="col">Type <i className="fa fa-sort"/></th>
+                                    {!loadStade && stades.map((stade)=>(
+                                        <th key={stade.id} scope="col">{stade.nom} <i className="fa fa-sort"/></th>
+                                    ))}
+
                                     <th scope="col">Progression <i className="fa fa-sort"/></th>
                                     <th scope="col"/>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        Argon Design System
-                                    </th>
-                                    <td>
-                                        <a href="" target="_blank" rel="noopener noreferrer">PTT-9098</a>
-                                    </td>
-                                    <td className="text-capitalize">
-                                        Andrianiavo
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                            {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                            en cours
-                                        {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
+                                {loading ? (
+                                    <tr>
+                                        <th scope="row">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
+                                        <td>
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-capitalize">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-capitalize">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-center">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td>
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-right m-0 p-1">
 
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td>
-                                        <div className="d-flex align-items-center">
-                                            <span className="mr-2">100%</span>
-                                            <div>
-                                                <Progress
-                                                    max="100"
-                                                    value="100"
-                                                    barClassName="bg-success"
-                                                />
+                                        </td>
+                                    </tr>
+                                ): getStadeTicket.map((element)=>(
+                                    <tr key={element.idStadeTiket}>
+                                        <th scope="row">
+                                            {element.site.nomSite}
+                                        </th>
+                                        <td>
+                                            <a href={element.ticket.url} target="_blank" rel="noopener noreferrer">{element.ticket.reference}</a>
+                                        </td>
+                                        <td className="text-capitalize">
+                                            {element.utilisateur.nom}
+                                        </td>
+                                        <td className="text-capitalize">
+                                            {element.typeProjet.type}
+                                        </td>
+                                        {element.etatStade.map(({etat,stade})=>(
+                                            <td key={stade.id} className="text-center">
+                                                <UncontrolledDropdown>
+                                                    <DropdownToggle
+                                                        className={`clickable ${getClassEtat(etat.nom)}`}
+                                                        role="button"
+                                                        size="sm"
+                                                        color=""
+                                                        tag ="span"
+                                                    >
+                                                        {etat.nom}
+                                                    </DropdownToggle>
+                                                    <DropdownMenu className="dropdown-menu-arrow" right>
+                                                        <DropdownItem className="noti-title" header tag="div">
+                                                            <h6 className="text-overflow m-0 p-0 text-center">Modifier Etat</h6>
+                                                        </DropdownItem>
+                                                        <DropdownItem  divider/>
+                                                        {etats.filter(et=>et.id!==etat.id).map((etatModifier)=>(
+                                                            <DropdownItem key={etatModifier.id} onClick={(e) => e.preventDefault()}>
+                                                                {etatModifier.nom}
+                                                            </DropdownItem>
+                                                        ))}
+                                                    </DropdownMenu>
+                                                </UncontrolledDropdown>
+                                            </td>
+                                        ))}
+                                        <td>
+                                            <div className="d-flex align-items-center">
+                                                <span className="mr-2">100%</span>
+                                                <div>
+                                                    <Progress
+                                                        max="100"
+                                                        value="100"
+                                                        barClassName="bg-success"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="text-right m-0 p-1">
-                                        <button type={"button"} onClick={()=>{Next("#",null,navigate)}} className="btn-icon-only btn text-darker" >
-                                            <i className="fas fa-eye" />
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        Argon Design System
-                                    </th>
-                                    <td>
-                                        <a href="" target="_blank" rel="noopener noreferrer">PTT-9098</a>
-                                    </td>
-                                    <td className="text-capitalize">
-                                        Andrianiavo
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td>
-                                        <div className="d-flex align-items-center">
-                                            <span className="mr-2">100%</span>
-                                            <div>
-                                                <Progress
-                                                    max="100"
-                                                    value="100"
-                                                    barClassName="bg-success"
-                                                />
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="text-right m-0 p-1">
-                                        <button type={"button"} onClick={()=>{Next("#",null,navigate)}} className="btn-icon-only btn text-darker" >
-                                            <i className="fas fa-eye" />
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        Argon Design System
-                                    </th>
-                                    <td>
-                                        <a href="" target="_blank" rel="noopener noreferrer">PTT-9098</a>
-                                    </td>
-                                    <td className="text-capitalize">
-                                        Andrianiavo
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td>
-                                        <div className="d-flex align-items-center">
-                                            <span className="mr-2">100%</span>
-                                            <div>
-                                                <Progress
-                                                    max="100"
-                                                    value="100"
-                                                    barClassName="bg-success"
-                                                />
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="text-right m-0 p-1">
-                                        <button type={"button"} onClick={()=>{Next("#",null,navigate)}} className="btn-icon-only btn text-darker" >
-                                            <i className="fas fa-eye" />
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        Argon Design System
-                                    </th>
-                                    <td>
-                                        <a href="" target="_blank" rel="noopener noreferrer">PTT-9098</a>
-                                    </td>
-                                    <td className="text-capitalize">
-                                        Andrianiavo
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td className="text-center">
-                                        <UncontrolledDropdown>
-                                            <DropdownToggle
-                                                className={`clickable ${getClassEtat("en cours")}`}
-                                                role="button"
-                                                size="sm"
-                                                color=""
-                                                tag ="span"
-                                            >
-                                                {/*<span className={`clickable ${getClassEtat("en cours")}`}>*/}
-                                                en cours
-                                                {/*</span>*/}
-                                            </DropdownToggle>
-                                            <DropdownMenu className="dropdown-menu-arrow" right>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Another action
-                                                </DropdownItem>
-                                                <DropdownItem
-                                                    href="#pablo"
-                                                    onClick={(e) => e.preventDefault()}
-                                                >
-                                                    Something else here
-                                                </DropdownItem>
-                                            </DropdownMenu>
-                                        </UncontrolledDropdown>
-
-                                    </td>
-                                    <td>
-                                        <div className="d-flex align-items-center">
-                                            <span className="mr-2">100%</span>
-                                            <div>
-                                                <Progress
-                                                    max="100"
-                                                    value="100"
-                                                    barClassName="bg-success"
-                                                />
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="text-right m-0 p-1">
-                                        <button type={"button"} onClick={()=>{Next("#",null,navigate)}} className="btn-icon-only btn text-darker" >
-                                            <i className="fas fa-eye" />
-                                        </button>
-                                    </td>
-                                </tr>
-
+                                        </td>
+                                        <td className="text-right m-0 p-1">
+                                            <button type={"button"} onClick={()=>{Next("#",null,navigate)}} className="btn-icon-only btn text-darker" >
+                                                <i className="fas fa-eye" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </Table>
                         <CardFooter className="py-3">
@@ -1145,26 +270,7 @@ function ViewProject({author}) {
                             </Col>
                         </Row>
                         <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                            {/*<div className="d-flex justify-content-between">*/}
-                            {/*  <Button*/}
-                            {/*    className="mr-4"*/}
-                            {/*    color="info"*/}
-                            {/*    href="#pablo"*/}
-                            {/*    onClick={(e) => e.preventDefault()}*/}
-                            {/*    size="sm"*/}
-                            {/*  >*/}
-                            {/*    Connect*/}
-                            {/*  </Button>*/}
-                            {/*  <Button*/}
-                            {/*    className="float-right"*/}
-                            {/*    color="default"*/}
-                            {/*    href="#pablo"*/}
-                            {/*    onClick={(e) => e.preventDefault()}*/}
-                            {/*    size="sm"*/}
-                            {/*  >*/}
-                            {/*    Message*/}
-                            {/*  </Button>*/}
-                            {/*</div>*/}
+
                         </CardHeader>
                         <CardBody className="pt-0 pt-md-4">
                             <Row>
