@@ -10,9 +10,11 @@ export default class ProjectView {
     prios: boolean
     nomEtat: string
     jira: Jira
+    plateforme: string
+    nombreSite: number
 
 
-    constructor(idProjet: number, dateCreation: Date, deadlines: Date, nomProjet: string, nomType: string, prios: boolean, nomEtat: string, jira: Jira) {
+    constructor(idProjet: number, dateCreation: Date, deadlines: Date, nomProjet: string, nomType: string, prios: boolean, nomEtat: string, jira: Jira, plateforme: string, nombreSite: number) {
         this.idProjet = idProjet;
         this.dateCreation = dateCreation;
         this.deadlines = deadlines;
@@ -21,6 +23,8 @@ export default class ProjectView {
         this.prios = prios;
         this.nomEtat = nomEtat;
         this.jira = jira;
+        this.plateforme = plateforme;
+        this.nombreSite = nombreSite;
     }
 
     static async all(token) {

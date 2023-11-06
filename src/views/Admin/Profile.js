@@ -98,9 +98,9 @@ const Profile = () => {
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="lucky.jesse"
+                              defaultValue=""
                               id="input-username"
-                              placeholder="Username"
+                              placeholder=""
                               type="text"
                             />
                           </FormGroup>
@@ -116,7 +116,7 @@ const Profile = () => {
                             <Input
                               className="form-control-alternative"
                               id="input-email"
-                              placeholder="jesse@example.com"
+                              placeholder=""
                               type="email"
                             />
                           </FormGroup>
@@ -133,9 +133,9 @@ const Profile = () => {
                             </label>
                             <Input
                               className="form-control-alternative"
-                              defaultValue="Lucky"
+                              defaultValue=""
                               id="input-first-name"
-                              placeholder="First name"
+                              placeholder=""
                               type="text"
                             />
                           </FormGroup>
@@ -162,7 +162,7 @@ const Profile = () => {
                       <Row>
                           <Col lg="6">
                               <FormGroup>
-                                <button type="reset" className="btn btn-pinterest col-12">Annuller</button>
+                                <button type="reset" className="btn btn-pinterest col-12">Annuler</button>
                               </FormGroup>
                           </Col>
                           <Col lg="6">

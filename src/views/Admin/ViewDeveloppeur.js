@@ -116,11 +116,11 @@ const ViewDeveloppeur = () => {
                             <Card className="bg-secondary shadow">
                                 <CardHeader className="border-0 row m-0">
                                     <div className="col-6 text-start">
-                                        <h3 className="mb-0">Ses Tickets</h3>
+                                        <h3 className="mb-0">Tickets</h3>
                                     </div>
                                     <div className="col-6 d-flex justify-content-end">
                                         <div className="input-group-merge input-group">
-                                            <input placeholder="search" type="search" className="form-control"/>
+                                            <input placeholder="Recherche" type="search" className="form-control"/>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -140,7 +140,7 @@ const ViewDeveloppeur = () => {
                                                     Argon Design System
                                                   </span>
                                         </th>
-                                        <td><a href="" target="_blank" rel="noopener noreferrer">Reference</a></td>
+                                        <td>Reference</td>
                                         <td>
                                             <Badge color="" className="badge-dot mr-4">
                                                 <i className="bg-warning" />
@@ -148,7 +148,7 @@ const ViewDeveloppeur = () => {
                                             </Badge>
                                         </td>
                                         <td>
-                                            <a href="" target="_blank" rel="noopener noreferrer">Reference</a>
+                                           Reference
                                         </td>
                                     </tr>
                                     </tbody>

@@ -13,9 +13,9 @@ const UserHeader = ({name}) => {
                             <p className="text-white mt-0 mb-5">
                                 Ceci est votre page de profil. Vous pouvez y voir les progrès que vous avez réalisés dans votre travail et gérer vos projets ou tâches assignées.
                             </p>
-                            <Button color="info" href="#" onClick={(e) => e.preventDefault()}>
-                                Prendre du congé
-                          </Button>
+{/*                             <Button color="info" href="#" onClick={(e) => e.preventDefault()}> */}
+{/*                                 Prendre du congé */}
+{/*                           </Button> */}
                         </Col>
                     </Row>
                 </Container>

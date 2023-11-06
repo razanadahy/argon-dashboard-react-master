@@ -51,7 +51,7 @@ const Developpeur = () => {
                                 </div>
                                 <div className="col-4 d-flex justify-content-end">
                                     <div className="input-group-merge input-group">
-                                        <input placeholder="search" type="search" className="form-control"/>
+                                        <input placeholder="Recherche" type="search" className="form-control"/>
                                     </div>
                                 </div>
                             </CardHeader>
@@ -86,7 +86,7 @@ const Developpeur = () => {
                                             </Media>
                                         </Media>
                                     </th>
-                                    <td>$2,500 USD</td>
+                                    <td>exemple@gmail.com</td>
                                     <td>
                                         <Badge color="" className="badge-dot mr-4">
                                             <i className="bg-warning" />
@@ -95,11 +95,11 @@ const Developpeur = () => {
                                     </td>
                                     <td>
                                         <div className="d-flex align-items-center">
-                                            <span className="mr-2">60%</span>
+                                            <span className="mr-2">10%</span>
                                             <div>
                                                 <Progress
                                                     max="100"
-                                                    value="60"
+                                                    value="10"
                                                     barClassName="bg-danger"
                                                 />
                                             </div>

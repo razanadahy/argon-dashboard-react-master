@@ -6,6 +6,10 @@ import {Next} from "../../Config.ts";
 import StadeTicket from "../../Model/StadeTicket.tsx";
 import Etat from "../../Model/Etat.tsx";
 import Stade from "../../Model/Stade.tsx";
+import EtatStade from "../../Model/EtatStade.tsx";
+import {useBoolean} from "@chakra-ui/react";
+import PaginateObject from "../../components/Sidebar/PaginateObject";
+import unidecode from "unidecode";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -21,6 +25,9 @@ function ViewProject({author}) {
     const [stades,setStades]=useState([])
     const [loadStade,setLoad]=useState(true)
     const utilisateur=JSON.parse(localStorage.getItem("user"))
+    const [erreur,setErreur]=useState(false)
+    const [update,setUpdate]=useBoolean()
+    const [allStadeEtat,setAllStadeEtat]=useState([])
     useEffect(()=>{
         setLoad(true)
         Stade.getStades(utilisateur.token).then((response)=>{
@@ -43,13 +50,13 @@ function ViewProject({author}) {
             return
         }
         StadeTicket.getStadeTicketByIdProject(utilisateur.token,id).then((response)=>{
-            console.log(response)
             setStadeTicket(response)
+            setAllStadeEtat(response)
         }).finally(()=>{
             setLoading(false)
         })
 
-    },[id])
+    },[id,update])
     function getClassEtat(etat) {
         etat = etat.toLowerCase();
         if (etat === 'a faire') {
@@ -62,18 +69,132 @@ function ViewProject({author}) {
             return 'px-2 py-1 bg-success rounded-sm';
         }
     }
+    function getPourcentage(etats){
+        let i=0;
+        etats.map(({etat})=>{
+            if (etat.id===4){
+                i+=1;
+            }
+        })
+        return i;
+    }
+    function updateEtat(idTicket,idStade,idEtat) {
+        EtatStade.updateEtatTicket(utilisateur.token,idTicket,idStade,idEtat).then((resp)=>{
+            if (!resp){
+                setErreur(true)
+            }
+        }).finally(()=>{
+            setUpdate.toggle()
+        })
+    }
+    const [order,setOrder]=useBoolean()
+    function orderEtatStade(idStade){
+        const updatedFilterItem = [...getStadeTicket];
+        updatedFilterItem.sort((a, b) =>{
+            const etatA=order ? a.etatStade.find(e=>e.stade.id===idStade) : b.etatStade.find(e=>e.stade.id===idStade)
+            const etatB=order ? b.etatStade.find(e=>e.stade.id===idStade) : a.etatStade.find(e=>e.stade.id===idStade)
+            if (etatA && etatB) {
+                const etatNomA = etatA.etat.nom.toUpperCase();
+                const etatNomB = etatB.etat.nom.toUpperCase();
+
+                if (etatNomA < etatNomB) {
+                    return -1;
+                }
+                if (etatNomA > etatNomB) {
+                    return 1;
+                }
+                return 0;
+            } else if (etatA) {
+                return -1;
+            } else if (etatB) {
+                return 1;
+            }
+            return 0;
+        })
+        setStadeTicket(updatedFilterItem);
+    }
+
+    function orderSite(){
+        const updatedFilterItem = [...getStadeTicket];
+        if (order){
+            updatedFilterItem.sort((a, b) =>b.site.nomSite.localeCompare(a.site.nomSite))
+        }else{
+            updatedFilterItem.sort((a, b) =>a.site.nomSite.localeCompare(b.site.nomSite))
+        }
+        setStadeTicket(updatedFilterItem);
+    }
+
+    function orderDev() {
+        const updatedFilterItem = [...getStadeTicket];
+        if (order){
+            updatedFilterItem.sort((a, b) =>b.utilisateur.nom.localeCompare(a.utilisateur.nom))
+        }else{
+            updatedFilterItem.sort((a, b) =>a.utilisateur.nom.localeCompare(b.utilisateur.nom))
+        }
+        setStadeTicket(updatedFilterItem);
+    }
+    function orderType() {
+        const updatedFilterItem = [...getStadeTicket];
+        if (order){
+            updatedFilterItem.sort((a, b) =>a.typeProjet.id - b.typeProjet.id)
+        }else{
+            updatedFilterItem.sort((a, b) =>b.typeProjet.id - a.typeProjet.id)
+        }
+        setStadeTicket(updatedFilterItem);
+    }
+    function search(input) {
+        const normalizedInput = unidecode(input).toLowerCase();
+
+        const byRef = allStadeEtat.filter((projet) => {
+            if (projet?.ticket?.reference) {
+                const normalizedReference = unidecode(projet.ticket.reference).toLowerCase();
+                return normalizedReference.includes(normalizedInput);
+            }
+        });
+
+        const byNom = allStadeEtat.filter((projet) => {
+            if (projet?.site?.nomSite) {
+                const normalizedNom = unidecode(projet.site.nomSite).toLowerCase();
+                return normalizedNom.includes(normalizedInput);
+            }
+        });
+
+        const byType = allStadeEtat.filter((projet) => {
+            if (projet?.typeProjet?.type) {
+                const normalizedType = unidecode(projet.typeProjet.type).toLowerCase();
+                return normalizedType.includes(normalizedInput);
+            }
+        });
+        const byDev = allStadeEtat.filter((projet) => {
+            if (projet?.utilisateur?.nom) {
+                const normalizedType = unidecode(projet.utilisateur.nom).toLowerCase();
+                return normalizedType.includes(normalizedInput);
+            }
+        });
+        const searchResults = [...new Set([...byRef, ...byNom, ...byType,...byDev])];
+        setStadeTicket(searchResults);
+    }
+
+    const [currentPage,setCurrentPage]=useState(1)
+    function onPageChange(number) {
+        setCurrentPage(number)
+    }
+    const perPage=10;
+    const startIndex=(currentPage-1)*perPage
+    const endIndex=startIndex+perPage
+    const currentData=getStadeTicket.slice(startIndex,endIndex)
 
     return(
         <>
             <HeaderProject name={"teste"}/>
-            <Row className="mt--8 m-0 p-0" fluid>
+            <Row className="mt--8 m-0 p-0">
                 <Col className="order-xl-1 mb-2" xl="12">
                     <Card className="bg-secondary m-0 p-0 border-0">
                         <CardHeader className="bg-white border-0 p-2">
                             <Row className="text-center">
                                 <Col className="col-5 text-start" xl="5" xs={"8"}>
                                     <div className="input-group-merge input-group">
-                                        <input placeholder="search" type="search" onChange={(event)=>null} className="form-control"/>
+                                        <input placeholder="search" type="search" onChange={(event)=>search(event.target.value)} className="form-control"/>
                                     </div>
                                 </Col>
                                 {author==="admin" && (
@@ -85,18 +206,30 @@ function ViewProject({author}) {
                                 )}
                             </Row>
                         </CardHeader>
-                        <Table className="align-items-center table-flush" style={{minHeight:'185px',}} responsive={true}>
+                        <Table className="align-items-center table-flush" style={{minHeight:'185px',}} responsive>
                             <thead className="thead-light clickable">
                                 <tr className="font">
-                                    <th scope="col">site <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderSite()
+                                    }}>site <i className="fa fa-sort"/></th>
                                     <th scope="col">Ticket</th>
-                                    <th scope="col">Dev <i className="fa fa-sort"/></th>
-                                    <th scope="col">Type <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderDev()
+                                    }}>Dev <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderType()
+                                    }}>Type <i className="fa fa-sort"/></th>
                                     {!loadStade && stades.map((stade)=>(
-                                        <th key={stade.id} scope="col">{stade.nom} <i className="fa fa-sort"/></th>
+                                        <th key={stade.id} onClick={()=>{
+                                            setOrder.toggle()
+                                            orderEtatStade(stade.id)
+                                        }} scope="col">{stade.nom} <i className="fa fa-sort"/></th>
                                     ))}
 
-                                    <th scope="col">Progression <i className="fa fa-sort"/></th>
+                                    <th scope="col">Progression</th>
                                     <th scope="col"/>
                                 </tr>
                             </thead>
@@ -140,7 +273,7 @@ function ViewProject({author}) {
 
                                         </td>
                                     </tr>
-                                ): getStadeTicket.map((element)=>(
+                                ): currentData.map((element)=>(
                                     <tr key={element.idStadeTiket}>
                                         <th scope="row">
                                             {element.site.nomSite}
@@ -172,7 +305,10 @@ function ViewProject({author}) {
                                                         </DropdownItem>
                                                         <DropdownItem  divider/>
                                                         {etats.filter(et=>et.id!==etat.id).map((etatModifier)=>(
-                                                            <DropdownItem key={etatModifier.id} onClick={(e) => e.preventDefault()}>
+                                                            <DropdownItem key={etatModifier.id} onClick={(e) =>{
+                                                                e.preventDefault()
+                                                                updateEtat(element.idTiket,stade.id,etatModifier.id)
+                                                            }}>
                                                                 {etatModifier.nom}
                                                             </DropdownItem>
                                                         ))}
@@ -182,18 +318,18 @@ function ViewProject({author}) {
                                         ))}
                                         <td>
                                             <div className="d-flex align-items-center">
-                                                <span className="mr-2">100%</span>
+                                                <span className="mr-2">{Math.ceil((getPourcentage(element.etatStade)*100/stades.length))}%</span>
                                                 <div>
                                                     <Progress
                                                         max="100"
-                                                        value="100"
-                                                        barClassName="bg-success"
+                                                        value={Math.ceil(((getPourcentage(element.etatStade)*100/stades.length)))}
+                                                        barClassName={`${Math.ceil((getPourcentage(element.etatStade)*100/stades.length))>=50 ? "bg-success" : "bg-danger"}`}
                                                     />
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="text-right m-0 p-1">
-                                            <button type={"button"} onClick={()=>{Next("#",null,navigate)}} className="btn-icon-only btn text-darker" >
+                                            <button type={"button"} onClick={()=>{Next("",null,navigate)}} className="btn-icon-only btn text-darker" >
                                                 <i className="fas fa-eye" />
                                             </button>
                                         </td>
@@ -203,109 +339,110 @@ function ViewProject({author}) {
                         </Table>
                         <CardFooter className="py-3">
                             <nav aria-label="...">
-                                <Pagination
-                                    className="pagination justify-content-end mb-0"
-                                    listClassName="justify-content-end mb-0"
-                                >
-                                    <PaginationItem className="disabled">
-                                        <PaginationLink
-                                            href="#pablo"
-                                            onClick={(e) => e.preventDefault()}
-                                            tabIndex="-1"
-                                        >
-                                            <i className="fas fa-angle-left" />
-                                            <span className="sr-only">Previous</span>
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem className="active">
-                                        <PaginationLink
-                                            href="#pablo"
-                                            onClick={(e) => e.preventDefault()}
-                                        >
-                                            1
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink
-                                            href="#pablo"
-                                            onClick={(e) => e.preventDefault()}
-                                        >
-                                            2 <span className="sr-only">(current)</span>
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink
-                                            href="#pablo"
-                                            onClick={(e) => e.preventDefault()}
-                                        >
-                                            3
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink
-                                            href="#pablo"
-                                            onClick={(e) => e.preventDefault()}
-                                        >
-                                            <i className="fas fa-angle-right" />
-                                            <span className="sr-only">Next</span>
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                </Pagination>
+                                <PaginateObject currentPage={currentPage} list={getStadeTicket} perPage={perPage} onPageChange={onPageChange}/>
                             </nav>
                         </CardFooter>
                     </Card>
                 </Col>
-                <Col className="order-xl-2 mb-5 mb-xl-0" xl="12">
-                    <Card className="card-profile shadow">
-                        <Row className="justify-content-center">
-                            <Col className="order-lg-2" lg="3">
-                                <div className="card-profile-image">
-                                    {/*<a href="#" onClick={(e) => e.preventDefault()}>*/}
-                                    {/*    <img*/}
-                                    {/*        alt="Image"*/}
-                                    {/*        className="rounded-circle bg-gradient-secondary"*/}
-                                    {/*        src={userBlanck}/>*/}
-                                    {/*</a>*/}
-                                </div>
-                            </Col>
-                        </Row>
-                        <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-
-                        </CardHeader>
-                        <CardBody className="pt-0 pt-md-4">
-                            <Row>
-                                <div className="col">
-                                    <div className="card-profile-stats d-flex justify-content-center mt-md-5">
-                                        <div>
-                                            <span className="heading">22</span>
-                                            <span className="description">En cours</span>
+                <Col className="order-xl-2 mb-6 mb-xl-0" xl="12">
+                    <Row className="d-flex align-items-stretch">
+                        <Col xl="7" xs="12">
+                            <Card className="card-profile shadow h-100 rounded">
+                                <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                                    <Row className="text-center">
+                                        <Col className="col-5 text-start" xl="5" xs={"8"}>
+                                            <h3 className="mb-0">Consigne du projet</h3>
+                                        </Col>
+                                    </Row>
+                                    <hr className="my-4" />
+                                </CardHeader>
+                                <CardBody className="pt-0 pt-md-4">
+                                    <Row>
+                                        <div className="col">
+                                            <div className="card-profile-stats d-flex justify-content-center mt-md-5">
+                                                <div>
+                                                    <span className="heading">22</span>
+                                                    <span className="description">En cours</span>
+                                                </div>
+                                                <div>
+                                                    <span className="heading">10</span>
+                                                    <span className="description">À faire</span>
+                                                </div>
+                                                <div>
+                                                    <span className="heading">89</span>
+                                                    <span className="description">Terminés</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <span className="heading">10</span>
-                                            <span className="description">À faire</span>
+                                    </Row>
+                                    <div className="text-center">
+                                        <h3>
+                                            Jessica Jones
+                                        </h3>
+                                        <div className="h5 font-weight-300">
+                                            JessicaJones@gmail.com
                                         </div>
-                                        <div>
-                                            <span className="heading">89</span>
-                                            <span className="description">Terminés</span>
+                                        <div className="h5 mt-4">
+                                            <i className="ni business_briefcase-24 mr-2" />
+                                            Developpeur
                                         </div>
                                     </div>
-                                </div>
-                            </Row>
-                            <div className="text-center">
-                                <h3>
-                                    Jessica Jones
-                                </h3>
-                                <div className="h5 font-weight-300">
-                                    JessicaJones@gmail.com
-                                </div>
-                                <div className="h5 mt-4">
-                                    <i className="ni business_briefcase-24 mr-2" />
-                                    Developpeur
-                                </div>
-                                <hr className="my-4" />
-                            </div>
-                        </CardBody>
-                    </Card>
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        <Col xl="5" xs="12">
+                            <Card className="card-profile shadow h-100 rounded">
+                                <Row className="justify-content-center">
+                                    <Col className="order-lg-2" lg="3">
+                                        <div className="card-profile-image">
+                                            {/*<a href="#" onClick={(e) => e.preventDefault()}>*/}
+                                            {/*    <img*/}
+                                            {/*        alt="Image"*/}
+                                            {/*        className="rounded-circle bg-gradient-secondary"*/}
+                                            {/*        src={userBlanck}/>*/}
+                                            {/*</a>*/}
+                                        </div>
+                                    </Col>
+                                </Row>
+                                <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+
+                                </CardHeader>
+                                <CardBody className="pt-0 pt-md-4">
+                                    <Row>
+                                        <div className="col">
+                                            <div className="card-profile-stats d-flex justify-content-center mt-md-5">
+                                                <div>
+                                                    <span className="heading">22</span>
+                                                    <span className="description">En cours</span>
+                                                </div>
+                                                <div>
+                                                    <span className="heading">10</span>
+                                                    <span className="description">À faire</span>
+                                                </div>
+                                                <div>
+                                                    <span className="heading">89</span>
+                                                    <span className="description">Terminés</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Row>
+                                    <div className="text-center">
+                                        <h3>
+                                            Jessica Jones
+                                        </h3>
+                                        <div className="h5 font-weight-300">
+                                            JessicaJones@gmail.com
+                                        </div>
+                                        <div className="h5 mt-4">
+                                            <i className="ni business_briefcase-24 mr-2" />
+                                            Developpeur
+                                        </div>
+                                    </div>
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </>

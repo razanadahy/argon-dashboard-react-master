@@ -9,6 +9,7 @@ import unidecode from 'unidecode';
 import PaginateObject from "../../components/Sidebar/PaginateObject";
 import {useNavigate} from "react-router-dom";
 import {Next} from "../../Config.ts";
+import {useBoolean} from "@chakra-ui/react";
 
 const Projets = ({type}) => {
     const [listProjet,setListProjet]=useState([])
@@ -68,9 +69,26 @@ const Projets = ({type}) => {
         }
         setFilterItem(updatedFilterItem);
     }
-
+    const [ordPlateForme,setOrderPlate]=useBoolean()
+    function orderPlateforme(order){
+        const updatedFilterItem = [...filteritem];
+        if (order){
+            updatedFilterItem.sort((a, b) => b.plateforme.localeCompare(a.plateforme))
+        }else{
+            updatedFilterItem.sort((a, b) => a.plateforme.localeCompare(b.plateforme))
+        }
+        setFilterItem(updatedFilterItem);
+    }
+    function orderNbSite(order){
+        const updatedFilterItem = [...filteritem];
+        if (order){
+            updatedFilterItem.sort((a, b) => b.nombreSite - a.nombreSite)
+        }else{
+            updatedFilterItem.sort((a, b) => a.nombreSite - b.nombreSite)
+        }
+        setFilterItem(updatedFilterItem);
+    }
     const [currentPage,setCurrentPage]=useState(1)
-
     function onPageChange(number) {
         setCurrentPage(number)
     }
@@ -102,7 +120,13 @@ const Projets = ({type}) => {
                 return normalizedType.includes(normalizedInput);
             }
         });
-        const searchResults = [...new Set([...byRef, ...byNom, ...byType])];
+        const byPlateforme = listProjet.filter((projet) => {
+            if (projet.plateforme) {
+                const normalizedType = unidecode(projet.plateforme).toLowerCase();
+                return normalizedType.includes(normalizedInput);
+            }
+        });
+        const searchResults = [...new Set([...byRef, ...byNom, ...byType, ...byPlateforme])];
         setFilterItem(searchResults);
     }
 
@@ -128,6 +152,10 @@ const Projets = ({type}) => {
                                 <thead className="thead-light">
                                     <tr className="font">
                                         <th className="clickable" scope="col">Projet</th>
+                                        <th className="clickable" scope="col" onClick={()=>{
+                                            setOrderPlate.toggle()
+                                            orderPlateforme(ordPlateForme)
+                                        }}>Plateforme<i className="fa fa-sort"/></th>
                                         <th className="clickable" scope="col">Jira</th>
                                         <th className="clickable" scope="col">Type</th>
                                         <th className="clickable" scope="col" onClick={()=>{
@@ -142,12 +170,19 @@ const Projets = ({type}) => {
                                             setSortEtat((prev)=>!prev)
                                             orderEtat(sortEtat)
                                         }}>Etat <i className="fa fa-sort"/></th>
+                                        <th className="clickable" scope="col" onClick={()=>{
+                                            setOrderPlate.toggle()
+                                            orderNbSite(ordPlateForme)
+                                        }}>Nb de site <i className="fa fa-sort"/></th>
                                         <th className="clickable" scope="col" />
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {loading ? (
                                     <tr>
+                                        <th scope="row">
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
                                         <th scope="row">
                                             <div className="skeleton p-3 mb-3"/>
                                         </th>
@@ -163,7 +198,10 @@ const Projets = ({type}) => {
                                             <div className="skeleton p-3 mb-3"/>
                                         </td>
                                         <td className="text-right">
-
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </td>
+                                        <td className="text-right">
+                                            <div className="skeleton p-3 mb-3"/>
                                         </td>
                                     </tr>
                                 ):currentData.map((ProjectView)=>(
@@ -173,6 +211,7 @@ const Projets = ({type}) => {
                                                 {ProjectView.nomProjet}
                                              </span>
                                         </th>
+                                        <td className="text-center">{ProjectView.plateforme}</td>
                                         <td>
                                             {!ProjectView.jira.reference ? (<div><pre  data-toggle="tooltip" title="projet n'a pas de lien jira!" className="m-0 p-0 text-lg">--</pre></div>):(
                                                 <a href={ProjectView.jira.url} target="_blank" rel="noopener noreferrer">{ProjectView.jira.reference}</a>
@@ -180,15 +219,20 @@ const Projets = ({type}) => {
                                         </td>
                                         <td>{ProjectView.nomType}</td>
                                         <td>
-                                            <pre className="m-0 p-0 fs-16">{ProjectView.dateCreation}</pre>
+                                            <pre className="m-0 p-0 fs-14">{ProjectView.dateCreation}</pre>
                                         </td>
                                         <td>
-                                            <pre className="m-0 p-0 fs-16">{ProjectView.deadlines}</pre>
+                                            <pre className="m-0 p-0 fs-14">{ProjectView.deadlines}</pre>
                                         </td>
                                         <td>
                                             <span className={getClassEtat(ProjectView.nomEtat)}>
                                                 {ProjectView.nomEtat}
                                             </span>
+                                        </td>
+                                        <td className="text-center">
+                                            <pre className="m-0 p-0 fs-14">
+                                                {ProjectView.nombreSite}
+                                            </pre>
                                         </td>
                                         <td className="text-right">
                                             <button type={"button"} onClick={()=>{Next(type+"/projets/view/"+ProjectView.idProjet,null,navigate)}} className="btn-icon-only btn text-darker" >
