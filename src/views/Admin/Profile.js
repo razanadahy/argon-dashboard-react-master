@@ -5,16 +5,16 @@ import {useEffect, useState} from "react";
 import userBlanck from '../../assets/img/icons/bl.png'
 
 const Profile = () => {
-    const [name,setName]=useState("")
+  const [name,setName]=useState("")
 
-    useEffect(()=>{
-      const user=JSON.parse(localStorage.getItem("user"))
-      if (user){
-        setName(user.name)
-      }
-    },[])
+  useEffect(()=>{
+    const user=JSON.parse(localStorage.getItem("user"))
+    if (user){
+      setName(user.name)
+    }
+  },[])
 
-    return (
+  return (
       <>
         <UserHeader name={name}/>
         <Container className="mt--7" fluid>
@@ -26,9 +26,9 @@ const Profile = () => {
                     <div className="card-profile-image">
                       <a href="#" onClick={(e) => e.preventDefault()}>
                         <img
-                          alt="Image"
-                          className="rounded-circle bg-gradient-secondary"
-                          src={userBlanck}/>
+                            alt="Image"
+                            className="rounded-circle bg-gradient-secondary"
+                            src={userBlanck}/>
                       </a>
                     </div>
                   </Col>
@@ -91,33 +91,33 @@ const Profile = () => {
                         <Col lg="6">
                           <FormGroup>
                             <label
-                              className="form-control-label"
-                              htmlFor="input-username"
+                                className="form-control-label"
+                                htmlFor="input-username"
                             >
                               Nom
                             </label>
                             <Input
-                              className="form-control-alternative"
-                              defaultValue=""
-                              id="input-username"
-                              placeholder=""
-                              type="text"
+                                className="form-control-alternative"
+                                defaultValue=""
+                                id="input-username"
+                                placeholder=""
+                                type="text"
                             />
                           </FormGroup>
                         </Col>
                         <Col lg="6">
                           <FormGroup>
                             <label
-                              className="form-control-label"
-                              htmlFor="input-email"
+                                className="form-control-label"
+                                htmlFor="input-email"
                             >
                               Email
                             </label>
                             <Input
-                              className="form-control-alternative"
-                              id="input-email"
-                              placeholder=""
-                              type="email"
+                                className="form-control-alternative"
+                                id="input-email"
+                                placeholder=""
+                                type="email"
                             />
                           </FormGroup>
                         </Col>
@@ -126,50 +126,50 @@ const Profile = () => {
                         <Col lg="6">
                           <FormGroup>
                             <label
-                              className="form-control-label"
-                              htmlFor="input-first-name"
+                                className="form-control-label"
+                                htmlFor="input-first-name"
                             >
                               Mot de passe
                             </label>
                             <Input
-                              className="form-control-alternative"
-                              defaultValue=""
-                              id="input-first-name"
-                              placeholder=""
-                              type="text"
+                                className="form-control-alternative"
+                                defaultValue=""
+                                id="input-first-name"
+                                placeholder=""
+                                type="text"
                             />
                           </FormGroup>
                         </Col>
                         <Col lg="6">
                           <FormGroup>
                             <label
-                              className="form-control-label"
-                              htmlFor="input-last-name"
+                                className="form-control-label"
+                                htmlFor="input-last-name"
                             >
                               ID
                             </label>
                             <Input
-                              className="form-control-alternative"
-                              defaultValue="Jesse"
-                              id="input-last-name"
-                              placeholder="Last name"
-                              disabled={true}
+                                className="form-control-alternative"
+                                defaultValue="Jesse"
+                                id="input-last-name"
+                                placeholder="Last name"
+                                disabled={true}
                             />
                           </FormGroup>
                         </Col>
                       </Row>
 
                       <Row>
-                          <Col lg="6">
-                              <FormGroup>
-                                <button type="reset" className="btn btn-pinterest col-12">Annuler</button>
-                              </FormGroup>
-                          </Col>
-                          <Col lg="6">
-                              <FormGroup>
-                                  <button type="submit" className="btn btn-primary col-12">Modifier</button>
-                              </FormGroup>
-                          </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <button type="reset" className="btn btn-pinterest col-12">Annuler</button>
+                          </FormGroup>
+                        </Col>
+                        <Col lg="6">
+                          <FormGroup>
+                            <button type="submit" className="btn btn-primary col-12">Modifier</button>
+                          </FormGroup>
+                        </Col>
                       </Row>
                     </div>
                     <hr className="my-4" />
@@ -180,7 +180,7 @@ const Profile = () => {
           </Row>
         </Container>
       </>
-    );
+  );
 };
 
 export default Profile;

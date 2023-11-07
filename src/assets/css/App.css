@@ -61,3 +61,8 @@
         background-position: -200% 0;
     }
 }
+.container-message{
+    max-width: 100%;
+    word-wrap: break-word;
+    white-space: pre-line;
+}

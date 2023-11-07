@@ -10,6 +10,8 @@ import EtatStade from "../../Model/EtatStade.tsx";
 import {useBoolean} from "@chakra-ui/react";
 import PaginateObject from "../../components/Sidebar/PaginateObject";
 import unidecode from "unidecode";
+import BarChart from "../../variables/BarChart";
+import InfoProjet from "../../Model/InfoProjet.tsx";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -28,8 +30,25 @@ function ViewProject({author}) {
     const [erreur,setErreur]=useState(false)
     const [update,setUpdate]=useBoolean()
     const [allStadeEtat,setAllStadeEtat]=useState([])
+
+    const [projet,setProjet]=useState(null)
     useEffect(()=>{
         setLoad(true)
+        InfoProjet.getProjet(utilisateur.token,id).then((response)=>{
+            if (response===null){
+                navigate("../")
+                return
+            }
+            setProjet(response)
+            const dateDebut = new Date(response.creation)
+            const dateFin = new Date(response.deadLine)
+            const totalM = dateFin - dateDebut;
+            const difH = Math.floor(totalM / (1000 * 60 * 60 *24))
+            const now=new Date()
+            const difNow=dateFin-now
+            const restant=Math.floor(difNow / (1000 * 60 * 60 *24))
+            setData([difH-restant,restant])
+        })
         Stade.getStades(utilisateur.token).then((response)=>{
             setStades(response)
         }).finally(()=>{
@@ -184,11 +203,13 @@ function ViewProject({author}) {
     const endIndex=startIndex+perPage
     const currentData=getStadeTicket.slice(startIndex,endIndex)
 
+    const [data,setData]=useState([0,0])
+    const label=["temps cumulé en jour(s)","Temps restant en jour(s)"]
     return(
         <>
-            <HeaderProject name={"teste"}/>
+            <HeaderProject name={projet ? projet.nomProjet : ""}/>
             <Row className="mt--8 m-0 p-0">
-                <Col className="order-xl-1 mb-2" xl="12">
+                <Col className="order-xl-1 mb-4" xl="12">
                     <Card className="bg-secondary m-0 p-0 border-0">
                         <CardHeader className="bg-white border-0 p-2">
                             <Row className="text-center">
@@ -206,7 +227,7 @@ function ViewProject({author}) {
                                 )}
                             </Row>
                         </CardHeader>
-                        <Table className="align-items-center table-flush" style={{minHeight:'185px',}} responsive>
+                        <Table className="align-items-center table-flush" style={{minHeight:'185px'}} responsive>
                             <thead className="thead-light clickable">
                                 <tr className="font">
                                     <th scope="col" onClick={()=>{
@@ -346,99 +367,52 @@ function ViewProject({author}) {
                 </Col>
                 <Col className="order-xl-2 mb-6 mb-xl-0" xl="12">
                     <Row className="d-flex align-items-stretch">
-                        <Col xl="7" xs="12">
+                        <Col xl="7" xs="12" className="mb-4">
                             <Card className="card-profile shadow h-100 rounded">
-                                <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                                    <Row className="text-center">
-                                        <Col className="col-5 text-start" xl="5" xs={"8"}>
-                                            <h3 className="mb-0">Consigne du projet</h3>
-                                        </Col>
-                                    </Row>
-                                    <hr className="my-4" />
+                                <CardHeader className="text-center border-0 pb-2">
+                                    <h3 className="mb-0">Consigne du projet</h3>
                                 </CardHeader>
-                                <CardBody className="pt-0 pt-md-4">
+                                <hr className="my-2" />
+                                <CardBody className="m-0 p-0">
                                     <Row>
                                         <div className="col">
-                                            <div className="card-profile-stats d-flex justify-content-center mt-md-5">
-                                                <div>
-                                                    <span className="heading">22</span>
-                                                    <span className="description">En cours</span>
+                                            {projet ? (
+                                                <div className="card-profile-stats d-flex justify-content-start px-3">
+                                                    <pre className="m-0 p-0 container-message" dangerouslySetInnerHTML={{__html: projet.consigne}}/>
                                                 </div>
-                                                <div>
-                                                    <span className="heading">10</span>
-                                                    <span className="description">À faire</span>
+                                            ): (
+                                                <div className="card-profile-stats d-flex justify-content-center">
+                                                    <div className="spinner-border" role="status">
+                                                        <span className="sr-only">Loading...</span>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <span className="heading">89</span>
-                                                    <span className="description">Terminés</span>
-                                                </div>
-                                            </div>
+                                            )}
                                         </div>
                                     </Row>
-                                    <div className="text-center">
-                                        <h3>
-                                            Jessica Jones
-                                        </h3>
-                                        <div className="h5 font-weight-300">
-                                            JessicaJones@gmail.com
-                                        </div>
-                                        <div className="h5 mt-4">
-                                            <i className="ni business_briefcase-24 mr-2" />
-                                            Developpeur
-                                        </div>
-                                    </div>
                                 </CardBody>
                             </Card>
                         </Col>
-
-                        <Col xl="5" xs="12">
+                        <Col className="mb-4" xl="5" xs="12">
                             <Card className="card-profile shadow h-100 rounded">
-                                <Row className="justify-content-center">
-                                    <Col className="order-lg-2" lg="3">
-                                        <div className="card-profile-image">
-                                            {/*<a href="#" onClick={(e) => e.preventDefault()}>*/}
-                                            {/*    <img*/}
-                                            {/*        alt="Image"*/}
-                                            {/*        className="rounded-circle bg-gradient-secondary"*/}
-                                            {/*        src={userBlanck}/>*/}
-                                            {/*</a>*/}
-                                        </div>
-                                    </Col>
-                                </Row>
-                                <CardHeader className="text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-
+                                <CardHeader className="text-center border-0 pb-2">
+                                    <h3 className="mb-0">Rapport sur le temps du projet</h3>
                                 </CardHeader>
-                                <CardBody className="pt-0 pt-md-4">
-                                    <Row>
-                                        <div className="col">
-                                            <div className="card-profile-stats d-flex justify-content-center mt-md-5">
-                                                <div>
-                                                    <span className="heading">22</span>
-                                                    <span className="description">En cours</span>
-                                                </div>
-                                                <div>
-                                                    <span className="heading">10</span>
-                                                    <span className="description">À faire</span>
-                                                </div>
-                                                <div>
-                                                    <span className="heading">89</span>
-                                                    <span className="description">Terminés</span>
+                                <hr className="my-2" />
+                                <CardBody className="m-0 p-0 py-3">
+                                    {projet && projet.idEtat!==4 ?(
+                                        <BarChart type={'doughnut'} data={data} label={label} />
+                                    ): (
+                                        <Row>
+                                            <div className="col">
+                                                <div className="card-profile-stats d-flex justify-content-center mt-md-5">
+                                                    <div>
+                                                        <span className="heading">Projet déjà fini!</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Row>
-                                    <div className="text-center">
-                                        <h3>
-                                            Jessica Jones
-                                        </h3>
-                                        <div className="h5 font-weight-300">
-                                            JessicaJones@gmail.com
-                                        </div>
-                                        <div className="h5 mt-4">
-                                            <i className="ni business_briefcase-24 mr-2" />
-                                            Developpeur
-                                        </div>
-                                    </div>
+                                        </Row>
+                                    )}
+
                                 </CardBody>
                             </Card>
                         </Col>
