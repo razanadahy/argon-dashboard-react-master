@@ -5,6 +5,7 @@ import Projets from "./views/Admin/Projets";
 import ViewDeveloppeur from "./views/Admin/ViewDeveloppeur";
 import Tikets from "./views/Admin/Tikets";
 import ViewProject from "./views/Admin/ViewProject";
+import ViewSite from "./views/Admin/ViewSite";
 
 const routes = [
   {
@@ -139,6 +140,21 @@ const routes = [
     layout: "/admin",
     hide: true,
   },
-
+  {
+    path: "/projets/view/site/:id",
+    name: "",
+    icon: "ni ni-single-02 text-yellow",
+    component: <ViewSite author={"auth"}/>,
+    layout: "/auth",
+    hide: true,
+  },
+  {
+    path: "/projets/view/site/:id",
+    name: "",
+    icon: "ni ni-single-02 text-yellow",
+    component: <ViewSite author={"admin"}/>,
+    layout: "/admin",
+    hide: true,
+  },
 ];
 export default routes;

@@ -350,7 +350,7 @@ function ViewProject({author}) {
                                             </div>
                                         </td>
                                         <td className="text-right m-0 p-1">
-                                            <button type={"button"} onClick={()=>{Next("",null,navigate)}} className="btn-icon-only btn text-darker" >
+                                            <button type={"button"} onClick={()=>{Next(author+"/projets/view/site/"+element.site.idSite,null,navigate)}} className="btn-icon-only btn text-darker" >
                                                 <i className="fas fa-eye" />
                                             </button>
                                         </td>
