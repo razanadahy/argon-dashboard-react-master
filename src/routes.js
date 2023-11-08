@@ -141,7 +141,7 @@ const routes = [
     hide: true,
   },
   {
-    path: "/projets/view/site/:id",
+    path: "/projets/view/site/:id/:nomPrpjet/:idProjet",
     name: "",
     icon: "ni ni-single-02 text-yellow",
     component: <ViewSite author={"auth"}/>,
@@ -149,7 +149,7 @@ const routes = [
     hide: true,
   },
   {
-    path: "/projets/view/site/:id",
+    path: "/projets/view/site/:id/:nomPrpjet/:idProjet",
     name: "",
     icon: "ni ni-single-02 text-yellow",
     component: <ViewSite author={"admin"}/>,

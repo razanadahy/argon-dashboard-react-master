@@ -25,10 +25,7 @@ const Profile = () => {
                   <Col className="order-lg-2" lg="3">
                     <div className="card-profile-image">
                       <a href="#" onClick={(e) => e.preventDefault()}>
-                        <img
-                            alt="Image"
-                            className="rounded-circle bg-gradient-secondary"
-                            src={userBlanck}/>
+                        <img alt="Image" className="rounded-circle bg-gradient-secondary" src={userBlanck}/>
                       </a>
                     </div>
                   </Col>

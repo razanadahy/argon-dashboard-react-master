@@ -24,7 +24,7 @@ function ViewProject({author}) {
         new Etat(3,'Suspendu',100),
         new Etat(4,'Terminé',1000),
     ])
-    const [stades,setStades]=useState([])
+    const [stades,setStades]=useState([]) 
     const [loadStade,setLoad]=useState(true)
     const utilisateur=JSON.parse(localStorage.getItem("user"))
     const [erreur,setErreur]=useState(false)
@@ -75,7 +75,7 @@ function ViewProject({author}) {
             setLoading(false)
         })
 
-    },[id,update])
+    },[id,update,author])
     function getClassEtat(etat) {
         etat = etat.toLowerCase();
         if (etat === 'a faire') {
@@ -290,9 +290,7 @@ function ViewProject({author}) {
                                         <td>
                                             <div className="skeleton p-3 mb-3"/>
                                         </td>
-                                        <td className="text-right m-0 p-1">
-
-                                        </td>
+                                        <td className="text-right m-0 p-1"/>
                                     </tr>
                                 ): currentData.map((element)=>(
                                     <tr key={element.idStadeTiket}>
@@ -350,7 +348,7 @@ function ViewProject({author}) {
                                             </div>
                                         </td>
                                         <td className="text-right m-0 p-1">
-                                            <button type={"button"} onClick={()=>{Next(author+"/projets/view/site/"+element.site.idSite,null,navigate)}} className="btn-icon-only btn text-darker" >
+                                            <button type={"button"} onClick={()=>{Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)}} className="btn-icon-only btn text-darker" >
                                                 <i className="fas fa-eye" />
                                             </button>
                                         </td>

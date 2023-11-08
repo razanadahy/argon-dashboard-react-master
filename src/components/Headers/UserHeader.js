@@ -4,10 +4,10 @@ const UserHeader = ({name}) => {
 
     return (
         <>
-            <div className="header pb-8 pt-lg-6  d-flex align-items-center bg-info" style={{minHeight: "300px", backgroundSize: "cover",}}>
-                <span className="mask bg-gradient-default opacity-8" />
+            <div className="header pb-8 pt-lg-6  d-flex align-items-center bg-gradient-info" style={{minHeight: "300px", backgroundSize: "cover",}}>
+                {/*<span className="mask bg-gradient-default opacity-8" />*/}
                 <Container className="d-flex align-items-center m-0 p-0" fluid>
-                    <Row>
+                    <Row className="w-100">
                         <Col lg="7" md="10">
                             <h3 className="display-2 text-white text-capitalize">Hello {name}</h3>
                             <p className="text-white mt-0 mb-5">
