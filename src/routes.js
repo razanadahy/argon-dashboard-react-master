@@ -33,14 +33,6 @@ const routes = [
     hide: false,
   },
   {
-    path: "/tikets",
-    name: "Tous les tikets",
-    icon: "ni fa-regular fa-rectangle-list text-red",
-    component: <Tikets utilisateur={10988}/>,
-    layout: "/admin",
-    hide: false,
-  },
-  {
     path: "/tiket/me",
     name: "Mes tikets",
     icon: "ni fa-regular fa-bookmark text-blue",
@@ -91,14 +83,6 @@ const routes = [
     hide: false,
   },
 
-  {
-    path: "/tikets",
-    name: "Tous les tikets",
-    icon: "ni fa-regular fa-rectangle-list text-red",
-    component: <Tikets utilisateur={10988}/>,
-    layout: "/auth",
-    hide: false,
-  },
   {
     path: "/tiket/me",
     name: "Mes tikets",

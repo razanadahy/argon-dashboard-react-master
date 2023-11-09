@@ -20,7 +20,7 @@ const HeaderSite = ({idProjet,nomProjet,nomSite,author}) => {
                                 <li className="breadcrumb-item text-capitalize">
                                     <a href={`/${author}/projets/view/${idProjet}`}>{nomProjet}</a>
                                 </li>
-                                <li className="active breadcrumb-item">{nomSite}</li>
+                                <li className="active breadcrumb-item text-capitalize">{nomSite}</li>
                             </ol>
                         </nav>
                     </div>

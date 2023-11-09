@@ -3,20 +3,18 @@
 import {
     Card,
     CardHeader,
-    CardBody,
     Container,
     Row,
     Col,
     Table,
-    Badge,
 
     CardFooter, Pagination, PaginationItem, PaginationLink,
 } from "reactstrap";
 import {useEffect, useState} from "react";
-import userBlanck from '../../assets/img/icons/bl.png'
 import Header from "../../components/Headers/Header";
+import {Next} from "../../Config.ts";
 
-const Tikets = ({utilisateur}) => {
+const Tikets = ({}) => {
     // const [name,setName]=useState("")
     // useEffect(()=>{
     //     const user=JSON.parse(localStorage.getItem("user"))
@@ -34,7 +32,7 @@ const Tikets = ({utilisateur}) => {
                         <Card className="bg-secondary shadow">
                             <CardHeader className="border-0 row m-0">
                                 <div className="col-6 text-start">
-                                    <h3 className="mb-0">Ses Tickets</h3>
+                                    <h3 className="mb-0">Mes Tickets</h3>
                                 </div>
                                 <div className="col-6 d-flex justify-content-end">
                                     <div className="input-group-merge input-group">
@@ -46,28 +44,33 @@ const Tikets = ({utilisateur}) => {
                                 <thead className="thead-light">
                                 <tr className="font">
                                     <th scope="col">Projet <i className="fa fa-sort"/></th>
+                                    <th scope="col">Site <i className="fa fa-sort"/></th>
                                     <th scope="col">Reference</th>
-                                    <th scope="col">Url</th>
                                     <th scope="col">Etat <i className="fa fa-sort"/></th>
+                                    <th scope="col"/>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
                                     <th scope="row">
-                                                <span className="mb-0 text-sm">
-                                                Argon Design System
-                                              </span>
+                                        <span className="mb-0 text-sm">
+                                            Argon Design System
+                                        </span>
                                     </th>
+                                    <td scope="row">
+                                        <span className="mb-0 text-sm">
+                                            Argon Design System
+                                        </span>
+                                    </td>
                                     <td><a href="" target="_blank" rel="noopener noreferrer">Reference</a></td>
                                     <td>
-                                        <Badge color="" className="badge-dot mr-4">
-                                            <i className="bg-warning" />
-                                            pending
-                                        </Badge>
+                                        <a href="" target="_blank" rel="noopener noreferrer">A faire</a>
                                     </td>
-                                    <td>
-                                        <a href="" target="_blank" rel="noopener noreferrer">Reference</a>
-                                    </td>
+                                    <button type={"button"} onClick={()=> null
+                                        // Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)
+                                    } className="btn-icon-only btn text-darker" >
+                                        <i className="fas fa-eye" />
+                                    </button>
                                 </tr>
                                 </tbody>
                             </Table>
