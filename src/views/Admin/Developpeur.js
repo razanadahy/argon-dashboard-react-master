@@ -89,8 +89,8 @@ const Developpeur = () => {
                                     <td>exemple@gmail.com</td>
                                     <td>
                                         <Badge color="" className="badge-dot mr-4">
-                                            <i className="bg-warning" />
-                                            pending
+                                            <i className="bg-success" />
+                                            En activité
                                         </Badge>
                                     </td>
                                     <td>
