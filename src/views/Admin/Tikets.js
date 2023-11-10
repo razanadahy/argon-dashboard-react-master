@@ -7,12 +7,14 @@ import {useBoolean} from "@chakra-ui/react";
 import TicketAssignedDev from "../../Model/TicketAssignedDev.tsx";
 import Etat from "../../Model/Etat.tsx";
 import PaginateObject from "../../components/Sidebar/PaginateObject";
+import unidecode from "unidecode";
 
 const Tikets = ({author}) => {
     const user=JSON.parse(localStorage.getItem("user"))
     const [ticketsAssigned,setTicketsAssigned]=useState([])
     const [loading,setLoading]=useBoolean(false)
     const [allTicket,setAllTicket]=useState([])
+    const [upd,setUpd]=useBoolean()
     useEffect(()=>{
        setLoading.on()
         TicketAssignedDev.getTicketAssigned(user.token).then((response)=>{
@@ -21,7 +23,7 @@ const Tikets = ({author}) => {
         }).finally(()=>{
             setLoading.off()
         })
-    },[])
+    },[upd])
 
     function getClassEtat(etat) {
         etat = etat.toLowerCase();
@@ -49,6 +51,90 @@ const Tikets = ({author}) => {
     const startIndex=(currentPage-1)*perPage
     const endIndex=startIndex+perPage
     const currentData=ticketsAssigned.slice(startIndex,endIndex)
+    const [erreur,setErreur]=useBoolean(false)
+    
+    function modifEtatTicket(idTicket,isBug,idEtat) {
+        setLoading.on()
+        TicketAssignedDev.update(user.token,idTicket,idEtat,isBug).then((res)=>{
+            if (!res){
+                setErreur.on()
+            }
+        }).finally(()=>{
+            setUpd.toggle()
+        })
+    }
+
+    const [order,setOrder]=useBoolean()
+    function orderProjet() {
+        const updatedFilterItem = [...ticketsAssigned];
+        if (order){
+            updatedFilterItem.sort((a, b) =>b.nomProjet.localeCompare(a.nomProjet))
+        }else{
+            updatedFilterItem.sort((a, b) =>a.nomProjet.localeCompare(b.nomProjet))
+        }
+        setTicketsAssigned(updatedFilterItem);
+    }
+    function orderSite() {
+        const updatedFilterItem = [...ticketsAssigned];
+        if (order){
+            updatedFilterItem.sort((a, b) =>b.nomSite.localeCompare(a.nomSite))
+        }else{
+            updatedFilterItem.sort((a, b) =>a.nomSite.localeCompare(b.nomSite))
+        }
+        setTicketsAssigned(updatedFilterItem);
+    }
+    function orderEtat() {
+        const updatedFilterItem = [...ticketsAssigned];
+        if (order){
+            updatedFilterItem.sort((a, b) =>b.jira.etat.nom.localeCompare(a.jira.etat.nom))
+        }else{
+            updatedFilterItem.sort((a, b) =>a.jira.etat.nom.localeCompare(b.jira.etat.nom))
+        }
+        setTicketsAssigned(updatedFilterItem);
+    }
+    function orderReference() {
+        const updatedFilterItem = [...ticketsAssigned];
+        if (order){
+            updatedFilterItem.sort((a, b) =>b.jira.reference.localeCompare(a.jira.reference))
+        }else{
+            updatedFilterItem.sort((a, b) =>a.jira.reference.localeCompare(b.jira.reference))
+        }
+        setTicketsAssigned(updatedFilterItem);
+    }
+
+    function search(input) {
+        const normalizedInput = unidecode(input).toLowerCase();
+
+        const byRef = allTicket.filter((projet) => {
+            if (projet?.jira?.reference) {
+                const normalizedReference = unidecode(projet.jira.reference).toLowerCase();
+                return normalizedReference.includes(normalizedInput);
+            }
+        });
+
+        const byNom = allTicket.filter((projet) => {
+            if (projet?.nomSite) {
+                const normalizedNom = unidecode(projet.nomSite).toLowerCase();
+                return normalizedNom.includes(normalizedInput);
+            }
+        });
+
+        const byTypeP = allTicket.filter((projet) => {
+            if (projet?.nomProjet) {
+                const normalizedType = unidecode(projet.nomProjet).toLowerCase();
+                return normalizedType.includes(normalizedInput);
+            }
+        });
+        const byDev = allTicket.filter((projet) => {
+            if (projet?.jira?.etat?.nom) {
+                const normalizedType = unidecode(projet.jira.etat.nom).toLowerCase();
+                return normalizedType.includes(normalizedInput);
+            }
+        });
+        const searchResults = [...new Set([...byRef, ...byNom, ...byTypeP,...byDev])];
+        setTicketsAssigned(searchResults);
+    }
+
     return (
         <>
             <Header/>
@@ -62,17 +148,29 @@ const Tikets = ({author}) => {
                                 </div>
                                 <div className="col-6 d-flex justify-content-end">
                                     <div className="input-group-merge input-group">
-                                        <input placeholder="search" type="search" className="form-control"/>
+                                        <input placeholder="search" onChange={(event)=>{search(event.target.value)}} type="search" className="form-control"/>
                                     </div>
                                 </div>
                             </CardHeader>
-                            <Table className="align-items-center table-flush" style={{minHeight: '185px'}} responsive>
+                            <Table className={`align-items-center table-flush ${loading && "tableLoading disabled"}`} style={{minHeight: '165px'}} responsive>
                                 <thead className="thead-light">
                                 <tr className="font clickable">
-                                    <th scope="col">Projet <i className="fa fa-sort"/></th>
-                                    <th scope="col">Site <i className="fa fa-sort"/></th>
-                                    <th scope="col">Reference  <i className="fa fa-sort"/></th>
-                                    <th scope="col">Etat <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderProjet()
+                                    }}>Projet <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderSite()
+                                    }}>Site <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderReference()
+                                    }}>Reference  <i className="fa fa-sort"/></th>
+                                    <th scope="col" onClick={()=>{
+                                        setOrder.toggle()
+                                        orderEtat()
+                                    }}>Etat <i className="fa fa-sort"/></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -90,7 +188,6 @@ const Tikets = ({author}) => {
                                         <th scope="row" >
                                             <div className="skeleton p-3 mb-3"/>
                                         </th>
-
                                     </tr>
                                 ):currentData.map(({jira,nomSite,nomProjet,typeTicket,idSite,idProjet},index)=>(
                                     <tr key={index}>
@@ -109,7 +206,7 @@ const Tikets = ({author}) => {
                                             </a>
                                         </td>
                                         <td><a href={jira.url} target="_blank" rel="noopener noreferrer">{jira.reference}</a></td>
-                                        <td className="text-center">
+                                        <td>
                                             <UncontrolledDropdown>
                                                 <DropdownToggle
                                                     className={`clickable ${getClassEtat(jira.etat.nom)}`}
@@ -120,15 +217,11 @@ const Tikets = ({author}) => {
                                                 >
                                                     {jira.etat.nom}
                                                 </DropdownToggle>
-                                                <DropdownMenu className="dropdown-menu-arrow" right>
-                                                    <DropdownItem  header tag="div">
-                                                        <h6 className="text-overflow m-0 p-0 text-center">Modifier Etat</h6>
-                                                    </DropdownItem>
-                                                    <DropdownItem  divider/>
+                                                <DropdownMenu className="dropdown-menu-arrow" right={false}>
                                                     {etats.filter(et=>et.id!==jira.etat.id).map((etatModifier)=>(
-                                                        <DropdownItem key={etatModifier.id} onClick={(e) =>{
+                                                        <DropdownItem  key={etatModifier.id} onClick={(e) =>{
                                                             e.preventDefault()
-                                                            // updateEtat(element.idTiket,stade.id,etatModifier.id)
+                                                            modifEtatTicket(jira.id,typeTicket,etatModifier.id)
                                                         }}>
                                                             {etatModifier.nom}
                                                         </DropdownItem>

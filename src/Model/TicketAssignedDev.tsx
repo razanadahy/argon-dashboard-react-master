@@ -54,4 +54,19 @@ export default class TicketAssignedDev {
             return []
         }
     }
+    static async update(token,idTicket,idEtat,idBug) {
+        try {
+            const response = await fetch(UrlBase("projet/ticket/"+idTicket+"/"+idEtat+"/"+idBug), {
+                method: "put",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            return response.ok
+        }catch (e) {
+            return false
+        }
+    }
+    
 }

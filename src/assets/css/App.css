@@ -66,3 +66,7 @@
     word-wrap: break-word;
     white-space: pre-line;
 }
+.tableLoading {
+    opacity: 0.5; 
+    transition: opacity 0.3s ease; 
+}

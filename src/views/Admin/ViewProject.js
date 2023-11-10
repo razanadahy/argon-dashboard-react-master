@@ -319,10 +319,6 @@ function ViewProject({author}) {
                                                         {etat.nom}
                                                     </DropdownToggle>
                                                     <DropdownMenu className="dropdown-menu-arrow" right>
-                                                        <DropdownItem className="noti-title" header tag="div">
-                                                            <h6 className="text-overflow m-0 p-0 text-center">Modifier Etat</h6>
-                                                        </DropdownItem>
-                                                        <DropdownItem  divider/>
                                                         {etats.filter(et=>et.id!==etat.id).map((etatModifier)=>(
                                                             <DropdownItem key={etatModifier.id} onClick={(e) =>{
                                                                 e.preventDefault()
