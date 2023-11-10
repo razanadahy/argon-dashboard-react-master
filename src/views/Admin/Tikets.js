@@ -1,28 +1,54 @@
 //https://docs.google.com/document/d/1v_d5NnLB_6SHEkrNZcW8iRDHM4pKt7fv/edit?pli=1#heading=h.1ci93xb
 
-import {
-    Card,
-    CardHeader,
-    Container,
-    Row,
-    Col,
-    Table,
-
-    CardFooter, Pagination, PaginationItem, PaginationLink,
-} from "reactstrap";
+import {Card, CardHeader, Container, Row, Col, Table, CardFooter, Pagination, PaginationItem, PaginationLink, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledDropdown,} from "reactstrap";
 import {useEffect, useState} from "react";
 import Header from "../../components/Headers/Header";
-import {Next} from "../../Config.ts";
+import {useBoolean} from "@chakra-ui/react";
+import TicketAssignedDev from "../../Model/TicketAssignedDev.tsx";
+import Etat from "../../Model/Etat.tsx";
+import PaginateObject from "../../components/Sidebar/PaginateObject";
 
-const Tikets = ({}) => {
-    // const [name,setName]=useState("")
-    // useEffect(()=>{
-    //     const user=JSON.parse(localStorage.getItem("user"))
-    //     if (user){
-    //         setName(user.name)
-    //     }
-    // },[])
+const Tikets = ({author}) => {
+    const user=JSON.parse(localStorage.getItem("user"))
+    const [ticketsAssigned,setTicketsAssigned]=useState([])
+    const [loading,setLoading]=useBoolean(false)
+    const [allTicket,setAllTicket]=useState([])
+    useEffect(()=>{
+       setLoading.on()
+        TicketAssignedDev.getTicketAssigned(user.token).then((response)=>{
+            setTicketsAssigned(response)
+            setAllTicket(response)
+        }).finally(()=>{
+            setLoading.off()
+        })
+    },[])
 
+    function getClassEtat(etat) {
+        etat = etat.toLowerCase();
+        if (etat === 'a faire') {
+            return 'px-2 py-1 bg-light text-body rounded-sm';
+        } else if (etat === 'en cours') {
+            return 'px-2 py-1 bg-warning text-white rounded-sm';
+        } else if (etat === 'suspendu') {
+            return 'px-2 py-1 bg-danger text-white rounded-sm';
+        } else {
+            return 'px-2 py-1 bg-success rounded-sm';
+        }
+    }
+    const [etats,setEtats]=useState([
+        new Etat(1,'A faire',0),
+        new Etat(2,'En cours',10),
+        new Etat(3,'Suspendu',100),
+        new Etat(4,'Terminé',1000),
+    ])
+    const [currentPage,setCurrentPage]=useState(1)
+    function onPageChange(number) {
+        setCurrentPage(number)
+    }
+    const perPage=10;
+    const startIndex=(currentPage-1)*perPage
+    const endIndex=startIndex+perPage
+    const currentData=ticketsAssigned.slice(startIndex,endIndex)
     return (
         <>
             <Header/>
@@ -40,90 +66,83 @@ const Tikets = ({}) => {
                                     </div>
                                 </div>
                             </CardHeader>
-                            <Table className="align-items-center table-flush" responsive>
+                            <Table className="align-items-center table-flush" style={{minHeight: '185px'}} responsive>
                                 <thead className="thead-light">
-                                <tr className="font">
+                                <tr className="font clickable">
                                     <th scope="col">Projet <i className="fa fa-sort"/></th>
                                     <th scope="col">Site <i className="fa fa-sort"/></th>
-                                    <th scope="col">Reference</th>
+                                    <th scope="col">Reference  <i className="fa fa-sort"/></th>
                                     <th scope="col">Etat <i className="fa fa-sort"/></th>
-                                    <th scope="col"/>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th scope="row">
-                                        <span className="mb-0 text-sm">
-                                            Argon Design System
-                                        </span>
-                                    </th>
-                                    <td scope="row">
-                                        <span className="mb-0 text-sm">
-                                            Argon Design System
-                                        </span>
-                                    </td>
-                                    <td><a href="" target="_blank" rel="noopener noreferrer">Reference</a></td>
-                                    <td>
-                                        <a href="" target="_blank" rel="noopener noreferrer">A faire</a>
-                                    </td>
-                                    <button type={"button"} onClick={()=> null
-                                        // Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)
-                                    } className="btn-icon-only btn text-darker" >
-                                        <i className="fas fa-eye" />
-                                    </button>
-                                </tr>
+                                {loading ? (
+                                    <tr>
+                                        <th scope="row" >
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
+                                        <th scope="row" >
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
+                                        <th scope="row" >
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
+                                        <th scope="row" >
+                                            <div className="skeleton p-3 mb-3"/>
+                                        </th>
+
+                                    </tr>
+                                ):currentData.map(({jira,nomSite,nomProjet,typeTicket,idSite,idProjet},index)=>(
+                                    <tr key={index}>
+                                        <th scope="row">
+                                            <a href={`/${author}/projets/view/${idProjet}`}>
+                                                <span className="mb-0 text-sm clickable text-capitalize" >
+                                                   {nomProjet}
+                                                </span>
+                                            </a>
+                                        </th>
+                                        <td scope="row">
+                                            <a href={`/${author}/projets/view/site/${idSite}/${nomProjet}/${idProjet}`}>
+                                                <span className="mb-0 text-sm clickable text-capitalize">
+                                                   {nomSite}
+                                                </span>
+                                            </a>
+                                        </td>
+                                        <td><a href={jira.url} target="_blank" rel="noopener noreferrer">{jira.reference}</a></td>
+                                        <td className="text-center">
+                                            <UncontrolledDropdown>
+                                                <DropdownToggle
+                                                    className={`clickable ${getClassEtat(jira.etat.nom)}`}
+                                                    role="button"
+                                                    size="sm"
+                                                    color=""
+                                                    tag ="span"
+                                                >
+                                                    {jira.etat.nom}
+                                                </DropdownToggle>
+                                                <DropdownMenu className="dropdown-menu-arrow" right>
+                                                    <DropdownItem  header tag="div">
+                                                        <h6 className="text-overflow m-0 p-0 text-center">Modifier Etat</h6>
+                                                    </DropdownItem>
+                                                    <DropdownItem  divider/>
+                                                    {etats.filter(et=>et.id!==jira.etat.id).map((etatModifier)=>(
+                                                        <DropdownItem key={etatModifier.id} onClick={(e) =>{
+                                                            e.preventDefault()
+                                                            // updateEtat(element.idTiket,stade.id,etatModifier.id)
+                                                        }}>
+                                                            {etatModifier.nom}
+                                                        </DropdownItem>
+                                                    ))}
+                                                </DropdownMenu>
+                                            </UncontrolledDropdown>
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </Table>
                             <CardFooter className="py-4">
                                 <nav aria-label="...">
-                                    <Pagination
-                                        className="pagination justify-content-end mb-0"
-                                        listClassName="justify-content-end mb-0"
-                                    >
-                                        <PaginationItem className="disabled">
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                                tabIndex="-1"
-                                            >
-                                                <i className="fas fa-angle-left" />
-                                                <span className="sr-only">Previous</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem className="active">
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                1
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                2 <span className="sr-only">(current)</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                3
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem>
-                                            <PaginationLink
-                                                href="#pablo"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                <i className="fas fa-angle-right" />
-                                                <span className="sr-only">Next</span>
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    </Pagination>
+                                    <PaginateObject currentPage={currentPage} list={ticketsAssigned} perPage={perPage} onPageChange={onPageChange}/>
                                 </nav>
                             </CardFooter>
                         </Card>
