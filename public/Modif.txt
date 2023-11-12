@@ -293,3 +293,19 @@ const Profile = () => {
 };
 
 export default Profile;
+
+note!
+on prend en compte le 8h/j de travail.
+
+message du jour sera remplacer par un agenda qui aura tout les messages
+on ne peut pas attribuer un tache à un dev en congé
+les congés sont prix en charge lors de stat de dev
+
+page de visite dans dashbord est remplacé par des stat d'un developpeur
+Total orders en nombre de projet par mois
+Vue d'ensemble en temps de finishion de chaque stade
+Social traffic en retour de ticket(ticket bug) par site/par developpeur
+
+statistique: projet fait avant le deadline
+
+si on prend un congé,tous les tickets doivent terminer
