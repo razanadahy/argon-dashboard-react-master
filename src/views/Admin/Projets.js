@@ -1,6 +1,6 @@
 //https://docs.google.com/document/d/1v_d5NnLB_6SHEkrNZcW8iRDHM4pKt7fv/edit?pli=1#heading=h.1ci93xb
 
-import {Card, CardHeader, Container, Row, Table, CardFooter} from "reactstrap";
+import {Card, CardHeader, Container, Row, Table, CardFooter, FormGroup} from "reactstrap";
 
 import {useEffect, useState} from "react";
 import Header from "../../components/Headers/Header";
@@ -26,7 +26,6 @@ const Projets = ({type}) => {
             setLoading(false)
         })
     },[])
-
     function getClassEtat(etat) {
         etat = etat.toLowerCase();
         if (etat === 'a faire') {
@@ -96,7 +95,6 @@ const Projets = ({type}) => {
     const startIndex=(currentPage-1)*perPage
     const endIndex=startIndex+perPage
     const currentData=filteritem.slice(startIndex,endIndex)
-
     function search(input) {
         const normalizedInput = unidecode(input).toLowerCase();
 
@@ -131,6 +129,7 @@ const Projets = ({type}) => {
     }
 
 
+
     return (
         <>
             <Header/>
@@ -139,10 +138,13 @@ const Projets = ({type}) => {
                     <div className="col">
                         <Card className="shadow">
                             <CardHeader className="border-0 row m-0">
-                                <div className="col-8 text-start">
+                                <div className="col-3 text-start">
                                     <h3 className="mb-0">Liste de tous les Projets</h3>
                                 </div>
-                                <div className="col-4 d-flex justify-content-end">
+                                <div className="col-4 text-start">
+                                    <button type="submit" className="btn btn-primary col-12">Ajouter nouveau projet </button>
+                                </div>
+                                <div className="col-4 offset-1 d-flex justify-content-end">
                                     <div className="input-group-merge input-group">
                                         <input placeholder="search" type="search" onChange={(event)=>search(event.target.value)} className="form-control"/>
                                     </div>
