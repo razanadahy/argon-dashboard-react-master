@@ -171,7 +171,7 @@ const ViewSite = ({author}) => {
                                                 </Media>
                                             </Col>
                                         ):(
-                                            <Col lg="12" className="skeleton p-3 mb-3 w-100"/>
+                                            <Col lg="12" className="skeleton p-3 mb-3 w-100 rounded"/>
                                         )}
                                     </Row>
                                 </div>

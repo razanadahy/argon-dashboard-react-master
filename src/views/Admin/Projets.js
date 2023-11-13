@@ -181,27 +181,27 @@ const Projets = ({type}) => {
                                 {loading ? (
                                     <tr>
                                         <th scope="row">
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </th>
                                         <th scope="row">
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </th>
-                                        <td><div className="skeleton p-3 mb-3"/></td>
-                                        <td><div className="skeleton p-3 mb-3"/></td>
+                                        <td><div className="skeleton p-3 mb-3 rounded"/></td>
+                                        <td><div className="skeleton p-3 mb-3 rounded"/></td>
                                         <td>
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </td>
                                         <td>
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </td>
                                         <td>
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </td>
                                         <td className="text-right">
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </td>
                                         <td className="text-right">
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </td>
                                     </tr>
                                 ):currentData.map((ProjectView)=>(
