@@ -19,3 +19,13 @@ export function Next(nextPage,object, navigate) {
         navigate(`/${nextPage}`);
     }
 }
+export function GetObjectFromURL() {
+    const searchParams = new URLSearchParams(window.location.search);
+    const projetParam = searchParams.get('projet');
+
+    if (projetParam) {
+        return JSON.parse(projetParam);
+    }
+
+    return null;
+}

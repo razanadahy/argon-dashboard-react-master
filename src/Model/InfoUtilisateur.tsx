@@ -1,3 +1,5 @@
+import {UrlBase} from "../Config.ts";
+
 export default class InfoUtilisateur {
     nom: string
     email: string
@@ -9,5 +11,23 @@ export default class InfoUtilisateur {
         this.email = email;
         this.id = id;
         this.type = type;
+    }
+
+    static async getUser(token) {
+        try {
+            const response = await fetch(UrlBase("utilisateur"), {
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok){
+                return await response.json() as InfoUtilisateur
+            }
+            return null
+        }catch (e) {
+            return null
+        }
     }
 }

@@ -129,12 +129,12 @@ const Developpeur = ({author}) => {
                                     <th scope="col">Email</th>
                                     <th scope="col" onClick={()=>{
                                         setOrder.toggle()
-                                        status()
-                                    }}>Status  <i className="fa fa-sort"/></th>
+                                        completion()
+                                    }}>ticket Assignés  <i className="fa fa-sort"/></th>
                                     <th scope="col" onClick={()=>{
                                         setOrder.toggle()
-                                        completion()
-                                    }}>Completion  <i className="fa fa-sort"/></th>
+                                        status()
+                                    }}>Status  <i className="fa fa-sort"/></th>
                                     <th scope="col" />
                                 </tr>
                                 </thead>
@@ -177,6 +177,10 @@ const Developpeur = ({author}) => {
                                                 {infoUtilisateur.email}
                                             </div>
                                         </td>
+
+                                        <td>
+                                            <pre className="m-0 p-0 fs-14">{pourcentageTacheFini}</pre>
+                                        </td>
                                         <td>
                                             {enConge ? (
                                                 <Badge color="" className="badge-dot mr-4">
@@ -189,22 +193,9 @@ const Developpeur = ({author}) => {
                                                     En activité
                                                 </Badge>
                                             )}
-
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <span className="mr-2">{pourcentageTacheFini}%</span>
-                                                <div>
-                                                    <Progress
-                                                        max="100"
-                                                        value={pourcentageTacheFini}
-                                                        barClassName={pourcentageTacheFini <70 ? "bg-danger" : "bg-success"}
-                                                    />
-                                                </div>
-                                            </div>
                                         </td>
                                         <td className="text-right">
-                                            <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{Next("admin/developpeurs/view",null,navigate)}}>
+                                            <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{Next("admin/developpeurs/view",{infoUtilisateur,enConge,pourcentageTacheFini},navigate)}}>
                                                 <i className="fas fa-eye" />
                                             </button>
                                         </td>

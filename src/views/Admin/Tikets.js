@@ -177,16 +177,16 @@ const Tikets = ({author}) => {
                                 {loading ? (
                                     <tr>
                                         <th scope="row" >
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </th>
                                         <th scope="row" >
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </th>
                                         <th scope="row" >
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </th>
                                         <th scope="row" >
-                                            <div className="skeleton p-3 mb-3"/>
+                                            <div className="skeleton p-3 mb-3 rounded"/>
                                         </th>
                                     </tr>
                                 ):currentData.map(({jira,nomSite,nomProjet,typeTicket,idSite,idProjet},index)=>(
