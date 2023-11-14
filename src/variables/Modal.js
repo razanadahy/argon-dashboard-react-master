@@ -1,7 +1,6 @@
-import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
-import {useState} from "react";
+import {Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner} from "reactstrap";
 
-function ModalLg({show,hide,title,onSubmit,onCancel,children}) {
+function ModalLg({show,hide,title,onSubmit,onCancel,children,loading}) {
 
     return (
         <>
@@ -11,12 +10,27 @@ function ModalLg({show,hide,title,onSubmit,onCancel,children}) {
                     {children}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="info" onClick={()=>onSubmit}>
-                        Enregistrer
-                    </Button>{' '}
-                    <Button color="secondary" onClick={onCancel}>
-                        Annuler
-                    </Button>
+                    {loading ? (
+                        <>
+                            <Button color="info" style={{width: "150px"}}>
+                                <Spinner color="dark" size="sm">
+                                    Loading...
+                                </Spinner>
+                            </Button>{' '}
+                            <Button color="secondary" disabled>
+                                Annuler
+                            </Button>
+                        </>
+                    ): (
+                     <>
+                         <Button color="info" active={false} onClick={(event)=>onSubmit(event)}>
+                             Enregistrer
+                         </Button>{' '}
+                         <Button color="secondary" onClick={onCancel}>
+                             Annuler
+                         </Button>
+                     </>
+                    )}
                 </ModalFooter>
             </Modal>
         </>

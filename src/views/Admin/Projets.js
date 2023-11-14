@@ -1,6 +1,17 @@
 //https://docs.google.com/document/d/1v_d5NnLB_6SHEkrNZcW8iRDHM4pKt7fv/edit?pli=1#heading=h.1ci93xb
 
-import {Card, CardHeader, Container, Row, Table, CardFooter, FormGroup, Input, Col, Form} from "reactstrap";
+import {
+    Card,
+    CardHeader,
+    Container,
+    Row,
+    Table,
+    CardFooter,
+    FormGroup,
+    Input,
+    Col,
+    Form, FormFeedback,
+} from "reactstrap";
 
 import {useEffect, useState} from "react";
 import Header from "../../components/Headers/Header";
@@ -13,6 +24,7 @@ import {useBoolean} from "@chakra-ui/react";
 import ModalLg from "../../variables/Modal";
 import TypeProjet from "../../Model/TypeProjet.tsx";
 import Plateforme from "../../Model/Plateforme.tsx";
+import Projet from "../../Model/Projet.tsx";
 
 const Projets = ({type}) => {
     const [listProjet,setListProjet]=useState([])
@@ -20,6 +32,7 @@ const Projets = ({type}) => {
     const [loading,setLoading]=useState(true)
     const navigate=useNavigate()
     const user=JSON.parse(localStorage.getItem("user"))
+    const [insert,setInsert]=useState(true)
     useEffect(()=>{
         if (user.type===1 && type!=='admin'){
             navigate("/")
@@ -35,7 +48,7 @@ const Projets = ({type}) => {
         }).finally(()=>{
             setLoading(false)
         })
-    },[])
+    },[insert])
     function getClassEtat(etat) {
         etat = etat.toLowerCase();
         if (etat === 'a faire') {
@@ -150,6 +163,13 @@ const Projets = ({type}) => {
     const [creation,setCreation]=useState(new Date())
     const [limite,setLimite]=useState(new Date())
     const [consigne,setConsigne]=useState('')
+    const [erreur,setErreur]=useState(false)
+    const [loadFinal,setLoadFinal]=useState(false)
+
+    const [validTitle,setValidTite]=useState(true)
+    const [validRef,setValidRef]=useState(true)
+    const [validUrl,setValidurl]=useState(true)
+    const [validDate,setValidDate]=useState(true)
 
     function getAllList() {
         setModalShow(true)
@@ -167,11 +187,63 @@ const Projets = ({type}) => {
         let dateFormatee = `${annee}-${mois}-${jour}`;
         return dateFormatee;
     }
-    function onSubmit() {
-
+    function estVide(chaine) {
+        return chaine.trim().length === 0;
+    }
+    function onSubmit(event) {
+        event.preventDefault()
+        if (estVide(titre)){
+            setValidTite(false)
+            return
+        }
+        if (estVide(url)){
+            setValidurl(false)
+            return
+        }
+        if (estVide(reference)){
+            setValidRef(false)
+            return
+        }
+        if (creation>limite){
+            setValidDate(false)
+            return;
+        }
+        setLoadFinal(true)
+        function convertToHTML(consigne) {
+            const lignes = consigne.split('\n');
+            const lignesHTML = lignes.map(ligne => `<p>-${ligne}</p>`);
+            const consigneHTML = lignesHTML.join('');
+            return consigneHTML;
+        }
+        const titreTrimmed = titre.trim();
+        const typeProjetH = selectedTypeProjet === null ? listTypeProjet[0] : selectedTypeProjet;
+        const plate = selectedPlateforme === null ? listPlateforme[0] : selectedTypeProjet;
+        const pro = new Projet(
+            titreTrimmed,
+            convertToHTML(consigne.trim()),
+            reference,
+            url,
+            typeProjetH,
+            creation,
+            limite,
+            plate
+        );
+        Projet.insertProjet(user.token,pro).then((response)=>{
+            if (!response){
+                setErreur(true)
+            }else{
+                setInsert(!insert)
+                onCancel()
+            }
+        }).finally(()=>{setLoadFinal(false)})
     }
     function onCancel() {
-
+        setModalShow(false)
+        setTitre("")
+        setConsigne("")
+        setReference("")
+        setUrl("")
+        setLimite(new Date())
     }
     return (
         <>
@@ -302,7 +374,7 @@ const Projets = ({type}) => {
                     </div>
                 </Row>
             </Container>
-            <ModalLg show={modalShow} onSubmit={onSubmit()} onCancel={onCancel()} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
+            <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
                 <Form className="font" autoComplete="off">
                     <div className="pl-lg-4">
                         <Row>
@@ -318,7 +390,11 @@ const Projets = ({type}) => {
                                         type="text"
                                         onChange={(event)=>setTitre(event.target.value)}
                                         value={titre}
+                                        invalid={!validTitle}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide titre
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
@@ -376,7 +452,11 @@ const Projets = ({type}) => {
                                         type="text"
                                         value={reference}
                                         onChange={(event)=>setReference(event.target.value)}
+                                        invalid={!validRef}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide Reference
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
@@ -394,7 +474,11 @@ const Projets = ({type}) => {
                                         type="text"
                                         onChange={(event)=>setUrl(event.target.value)}
                                         value={url}
+                                        invalid={!validUrl}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide Url
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -430,7 +514,11 @@ const Projets = ({type}) => {
                                         type="date"
                                         onChange={(event)=>setLimite(new Date(event.target.value))}
                                         value={formatDate(limite)}
+                                        invalid={!validDate}
                                     />
+                                    <FormFeedback>
+                                        Date de creation > date limite
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                         </Row>
