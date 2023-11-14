@@ -6,6 +6,7 @@ import ViewDeveloppeur from "./views/Admin/ViewDeveloppeur";
 import Tikets from "./views/Admin/Tikets";
 import ViewProject from "./views/Admin/ViewProject";
 import ViewSite from "./views/Admin/ViewSite";
+import MesTopPrios from "./views/Admin/MesTopPrios";
 
 const routes = [
   {
@@ -152,6 +153,22 @@ const routes = [
     name: "",
     icon: "ni ni-single-02 text-yellow",
     component: <ViewSite author={"admin"}/>,
+    layout: "/admin",
+    hide: true,
+  },
+  {
+    path: "/nav/topPrios",
+    name: "Mes Top Prios",
+    icon: "ni ni-single-02 text-yellow",
+    component: <MesTopPrios author={"auth"}/>,
+    layout: "/auth",
+    hide: true,
+  },
+  {
+    path: "/nav/topPrios",
+    name: "Mes Top Prios",
+    icon: "ni ni-single-02 text-yellow",
+    component: <MesTopPrios author={"admin"}/>,
     layout: "/admin",
     hide: true,
   },

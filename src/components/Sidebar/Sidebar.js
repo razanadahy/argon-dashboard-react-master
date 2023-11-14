@@ -80,7 +80,7 @@ const Sidebar = (props) => {
                     <hr className="my-3" />
                     <Nav className="mb-md-3" navbar>
                         <NavItem>
-                            <NavLink href="#">
+                            <NavLink href={`${eg}/nav/topPrios`}>
                                 <i className="ni ni-ui-04" />
                                 Mes top Prios
                             </NavLink>

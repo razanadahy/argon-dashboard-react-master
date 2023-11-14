@@ -36,6 +36,24 @@ export default class TicketAssignedDev {
             return []
         }
     }
+    static async getTicketPrios(token) {
+        try {
+            const response = await fetch(UrlBase("projet/tickets/prios"), {
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok) {
+                return  await response.json() as TicketAssignedDev[];
+            } else {
+                return []
+            }
+        }catch (e) {
+            return []
+        }
+    }
     static async getTicketAssignedByIdDev(token,idDev,typeDev) {
         try {
             const response = await fetch(UrlBase("projet/tickets/"+idDev+"/"+typeDev), {

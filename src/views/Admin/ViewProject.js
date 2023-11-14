@@ -1,6 +1,21 @@
 import { useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {Button, Card, CardBody, CardHeader, Col, Row, Table, CardFooter, Pagination, PaginationItem, PaginationLink, Progress, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledDropdown} from "reactstrap";
+import {
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    Col,
+    Row,
+    Table,
+    CardFooter,
+    Progress,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    UncontrolledDropdown,
+    Form, FormGroup, Input, FormFeedback
+} from "reactstrap";
 import HeaderProject from "../../components/Headers/HeaderProject";
 import {Next} from "../../Config.ts";
 import StadeTicket from "../../Model/StadeTicket.tsx";
@@ -12,6 +27,10 @@ import PaginateObject from "../../components/Sidebar/PaginateObject";
 import unidecode from "unidecode";
 import BarChart from "../../variables/BarChart";
 import InfoProjet from "../../Model/InfoProjet.tsx";
+import TypeProjet from "../../Model/TypeProjet.tsx";
+import Plateforme from "../../Model/Plateforme.tsx";
+import Projet from "../../Model/Projet.tsx";
+import ModalLg from "../../variables/Modal";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -205,6 +224,102 @@ function ViewProject({author}) {
 
     const [data,setData]=useState([0,0])
     const label=["temps cumulé en jour(s)","Temps restant en jour(s)"]
+
+
+    const [listTypeProjet,setListTypeProjet]=useState([])
+    const [listPlateforme,setListPlateforme]=useState([])
+    const [modalShow, setModalShow]=useState(false)
+
+    const [titre,setTitre]=useState("")
+    const [selectedPlateforme,setSelectedPlateforme]=useState(null)
+    const [selectedTypeProjet,setSelectedTypeProjet]=useState(null)
+    const [url,setUrl]=useState('')
+    const [reference,setReference]=useState('')
+    const [creation,setCreation]=useState(new Date())
+    const [limite,setLimite]=useState(new Date())
+    const [consigne,setConsigne]=useState('')
+    const [loadFinal,setLoadFinal]=useState(false)
+
+    const [validTitle,setValidTite]=useState(true)
+    const [validRef,setValidRef]=useState(true)
+    const [validUrl,setValidurl]=useState(true)
+    const [validDate,setValidDate]=useState(true)
+
+    function getAllList() {
+        setModalShow(true)
+        TypeProjet.getListTypeProjet(utilisateur.token).then((response)=>{
+            setListTypeProjet(response)
+        })
+        Plateforme.getListPlateforme(utilisateur.token).then((response)=>{
+            setListPlateforme(response)
+        })
+    }
+    function formatDate(date) {
+        let mois = (date.getMonth() + 1).toString().padStart(2, '0');
+        let jour = date.getDate().toString().padStart(2, '0');
+        let annee = date.getFullYear();
+        let dateFormatee = `${annee}-${mois}-${jour}`;
+        return dateFormatee;
+    }
+    function estVide(chaine) {
+        return chaine.trim().length === 0;
+    }
+    function onSubmit(event) {
+        event.preventDefault()
+        if (estVide(titre)){
+            setValidTite(false)
+            return
+        }
+        if (estVide(url)){
+            setValidurl(false)
+            return
+        }
+        if (estVide(reference)){
+            setValidRef(false)
+            return
+        }
+        if (creation>limite){
+            setValidDate(false)
+            return;
+        }
+        setLoadFinal(true)
+        function convertToHTML(consigne) {
+            const lignes = consigne.split('\n');
+            const lignesHTML = lignes.map(ligne => `<p> - ${ligne}</p>`);
+            const consigneHTML = lignesHTML.join('');
+            return consigneHTML;
+        }
+        const titreTrimmed = titre.trim();
+        const typeProjetH = selectedTypeProjet === null ? listTypeProjet[0] : selectedTypeProjet;
+        const plate = selectedPlateforme === null ? listPlateforme[0] : selectedTypeProjet;
+        const pro = new Projet(
+            titreTrimmed,
+            convertToHTML(consigne.trim()),
+            reference,
+            url,
+            typeProjetH,
+            creation,
+            limite,
+            plate
+        );
+        Projet.insertProjet(utilisateur.token,pro).then((response)=>{
+            if (!response){
+                setErreur(true)
+            }else{
+                setUpdate.toggle()
+                onCancel()
+            }
+        }).finally(()=>{setLoadFinal(false)})
+    }
+    function onCancel() {
+        setModalShow(false)
+        setTitre("")
+        setConsigne("")
+        setReference("")
+        setUrl("")
+        setLimite(new Date())
+    }
+
     return(
         <>
             <HeaderProject name={projet ? projet.nomProjet : ""}/>
@@ -220,6 +335,8 @@ function ViewProject({author}) {
                                 </Col>
                                 {author==="admin" && (
                                     <Col className="text-right justify-content-end" xl={"7"} xs="4">
+                                        <button type="button" className="btn btn-primary"
+                                                onClick={()=>getAllList()}>Nouveau Site </button>{''}
                                         <Button color="default" onClick={(e) => e.preventDefault()}>
                                             Modifier
                                         </Button>
@@ -413,6 +530,178 @@ function ViewProject({author}) {
                     </Row>
                 </Col>
             </Row>
+            <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
+                <Form className="font" autoComplete="off">
+                    <div className="pl-lg-4">
+                        <Row>
+                            <Col lg="12">
+                                <FormGroup>
+                                    <label className="form-control-label" htmlFor="input-title">
+                                        Titre
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative"
+                                        id="input-title"
+                                        placeholder="titre du projet"
+                                        type="text"
+                                        onChange={(event)=>setTitre(event.target.value)}
+                                        value={titre}
+                                        invalid={!validTitle}
+                                    />
+                                    <FormFeedback valid={false}>
+                                        Invalide titre
+                                    </FormFeedback>
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label className="form-control-label" htmlFor="input-plateforme">
+                                        Plateforme
+                                    </label>
+                                    {listPlateforme.length===0 ? (
+                                        <div className="skeleton p-3 rounded"/>
+                                    ): (
+                                        <Input className="form-control-alternative" onChange={(event)=>{
+                                            setSelectedPlateforme(listPlateforme.find(element=>element.id===(parseInt(event.target.value, 10))))
+                                        }} value={selectedPlateforme ? selectedPlateforme?.id : 1} id="input-plateforme" type="select">
+                                            {listPlateforme.map(({id,nomPlateforme},index)=>(
+                                                <option key={index} value={id}>
+                                                    {nomPlateforme}
+                                                </option>
+                                            ))}
+                                        </Input>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label className="form-control-label" htmlFor="input-type">
+                                        Type de projet
+                                    </label>
+                                    {listTypeProjet.length!==0 ? (
+                                        <Input className="form-control-alternative" id="input-type" onChange={(event)=>setSelectedTypeProjet(listTypeProjet.find(element=>element.id===(parseInt(event.target.value))))} value={selectedTypeProjet ? selectedTypeProjet?.id : 1} type="select">
+                                            {listTypeProjet.map(({id,type},index)=>(
+                                                <option key={index} value={id}>
+                                                    {type}
+                                                </option>
+                                            ))}
+                                        </Input>
+                                    ): (
+                                        <div className="skeleton p-3 rounded"/>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-reference"
+                                    >
+                                        Reference
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative"
+                                        id="input-reference"
+                                        placeholder="Reference du lien Jira"
+                                        type="text"
+                                        value={reference}
+                                        onChange={(event)=>setReference(event.target.value)}
+                                        invalid={!validRef}
+                                    />
+                                    <FormFeedback valid={false}>
+                                        Invalide Reference
+                                    </FormFeedback>
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-url"
+                                    >
+                                        Url
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative"
+                                        id="input-url"
+                                        placeholder="Url dans Jira"
+                                        type="text"
+                                        onChange={(event)=>setUrl(event.target.value)}
+                                        value={url}
+                                        invalid={!validUrl}
+                                    />
+                                    <FormFeedback valid={false}>
+                                        Invalide Url
+                                    </FormFeedback>
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-creation"
+                                    >
+                                        Date de création
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative"
+                                        id="input-creation"
+                                        type="date"
+                                        onChange={()=>setCreation(new Date())}
+                                        value={formatDate(creation)}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-limite"
+                                    >
+                                        Date limite
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative"
+                                        id="input-limite"
+                                        type="date"
+                                        onChange={(event)=>setLimite(new Date(event.target.value))}
+                                        value={formatDate(limite)}
+                                        invalid={!validDate}
+                                    />
+                                    <FormFeedback>
+                                        Date de creation > date limite
+                                    </FormFeedback>
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col lg="12">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-consigne"
+                                    >
+                                        Consigne
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative"
+                                        id="input-consigne"
+                                        placeholder="Consigne du projet"
+                                        rows={4}
+                                        type="textarea"
+                                        value={consigne}
+                                        onChange={(event)=>setConsigne(event.target.value)}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
+            </ModalLg>
         </>
     )
 }

@@ -56,7 +56,7 @@ class BarChart extends Component {
 
     render() {
         return (
-            <div className="row p-0 m-0 h-100 w-100">
+            <div className="row p-0 m-0 w-100">
                 <canvas id="myChart" ref={this.chartRef}  height={300} />
             </div>
         );

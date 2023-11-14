@@ -211,7 +211,7 @@ const Projets = ({type}) => {
         setLoadFinal(true)
         function convertToHTML(consigne) {
             const lignes = consigne.split('\n');
-            const lignesHTML = lignes.map(ligne => `<p>-${ligne}</p>`);
+            const lignesHTML = lignes.map(ligne => `<p> - ${ligne}</p>`);
             const consigneHTML = lignesHTML.join('');
             return consigneHTML;
         }
