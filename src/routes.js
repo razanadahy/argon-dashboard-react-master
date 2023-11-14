@@ -33,14 +33,6 @@ const routes = [
     hide: false,
   },
   {
-    path: "/developpeurs",
-    name: "Développeurs",
-    icon: "ni fa-solid fa-users text-orange",
-    component: <Developpeur author="auth"/>,
-    layout: "/auth",
-    hide: false,
-  },
-  {
     path: "/tiket/me",
     name: "Mes tikets",
     icon: "ni fa-regular fa-bookmark text-blue",
@@ -98,7 +90,14 @@ const routes = [
     layout: "/auth",
     hide: false,
   },
-
+  {
+    path: "/developpeurs",
+    name: "Développeurs",
+    icon: "ni fa-solid fa-users text-orange",
+    component: <Developpeur author="auth"/>,
+    layout: "/auth",
+    hide: false,
+  },
   {
     path: "/tiket/me",
     name: "Mes tikets",

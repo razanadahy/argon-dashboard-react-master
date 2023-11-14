@@ -1,17 +1,16 @@
 import {UrlBase} from "../Config.ts";
 
-export default class TypeProjet {
+export default class Plateforme {
     id: number
-    type: string
+    nomPlateforme:string
 
-    constructor(id: number, type: string) {
+    constructor(id: number, nomPlateforme: string) {
         this.id = id;
-        this.type = type;
+        this.nomPlateforme = nomPlateforme;
     }
-
-    static async getListTypeProjet(token) {
+    static async getListPlateforme(token) {
         try {
-            const response = await fetch(UrlBase("main/typeprojets"), {
+            const response = await fetch(UrlBase("main/plateformes"), {
                 method: "get",
                 headers: {
                     'Content-Type': 'application/json',
@@ -19,7 +18,7 @@ export default class TypeProjet {
                 },
             });
             if (response.ok) {
-                return  await response.json() as TypeProjet[];
+                return  await response.json() as Plateforme[];
             } else {
                 return []
             }

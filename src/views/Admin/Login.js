@@ -1,19 +1,4 @@
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Row,
-    Col,
-    Container,
-    Media,
-} from "reactstrap";
+import {Card, CardBody, FormGroup, Form, Input, InputGroupAddon, InputGroupText, InputGroup, Row, Col, Container, Media,} from "reactstrap";
 import React, {useEffect, useState} from "react";
 import Utilisateur from "../../Model/Utilisateur.tsx";
 import {useNavigate} from "react-router-dom";
@@ -80,7 +65,7 @@ const Login = () => {
                 </div>
                 <Container className="mt--8 pb-5">
                     <Row className="justify-content-center">
-                        <Col lg="5" md="7">
+                        <Col lg="6" xl="5" md="8">
                             <Card className="bg-secondary shadow border-0">
                                 <CardBody className="px-lg-5 py-lg-5">
                                     <div className="text-center text-muted mb-4">
