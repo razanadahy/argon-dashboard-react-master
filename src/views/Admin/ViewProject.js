@@ -14,7 +14,7 @@ import {
     DropdownMenu,
     DropdownItem,
     UncontrolledDropdown,
-    Form, FormGroup, Input, FormFeedback
+    Form, FormGroup, Input, FormFeedback, Media
 } from "reactstrap";
 import HeaderProject from "../../components/Headers/HeaderProject";
 import {Next} from "../../Config.ts";
@@ -31,6 +31,9 @@ import TypeProjet from "../../Model/TypeProjet.tsx";
 import Plateforme from "../../Model/Plateforme.tsx";
 import Projet from "../../Model/Projet.tsx";
 import ModalLg from "../../variables/Modal";
+import Select from 'react-select';
+import Difficulte from "../../Model/Difficulte.tsx";
+import CreatableSelect from "react-select/creatable";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -266,6 +269,7 @@ function ViewProject({author}) {
     }
     function onSubmit(event) {
         event.preventDefault()
+        return;
         if (estVide(titre)){
             setValidTite(false)
             return
@@ -320,6 +324,75 @@ function ViewProject({author}) {
         setLimite(new Date())
     }
 
+    const options = [
+        { value: '4', label: 'Andrianiavo', hiddenValue: 'andrianiavo.vit@gmail.com'},
+        { value: '2', label: 'Andrianiavo1', hiddenValue: 'andrianiavo1.vit@gmail.com'},
+        { value: '5', label: 'Andrianiavo2', hiddenValue: 'andrianiavo2.vit@gmail.com'},
+        { value: '7', label: 'Andrianiavo3', hiddenValue: 'andrianiavo3.vit@gmail.com'},
+    ];
+    function getFirstLetter(userName) {
+        userName = userName.toLowerCase();
+        return userName.substring(0, 1);
+    }
+    const CustomOption = ({ innerProps, label, isSelected, isFocused, data }) => (
+        <Media {...innerProps} className={`align-items-center clickable rounded p-3 border-bottom ${isSelected ?
+            "bg-translucent-info" : isFocused ? "bg-translucent-light" : "bg-white"}`}>
+            <button className="avatar rounded-circle mr-3 btn bg-default" onClick={(event)=>{event.preventDefault()}}>
+                <i className={`fa fa-${getFirstLetter(label)}`}/>
+            </button>
+            <Media>
+                <span className="mb-0 text-sm text-capitalize">
+                    {label}
+                    <div className="text-sm text-muted text-lowercase">
+                        {data.hiddenValue}
+                    </div>
+                </span>
+            </Media>
+        </Media>
+    );
+
+    const [selectedOption, setSelectedOption] = useState(null);
+    const handleSelectChange = (selectedOption) => {
+        setSelectedOption(selectedOption);
+    };
+    const customStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            border: 'none',
+            boxShadow: state.isFocused
+                ? ' 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08)'
+                : '0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)',
+            borderRadius: '5px',
+            padding: '4px',
+        }),
+        input: (provided) => ({
+            ...provided,
+            // height: '40px'
+        }),
+    };
+    const [difficult,setDifficult]=useState([
+        new Difficulte(1,'facile'),
+        new Difficulte(2,'moyen'),
+        new Difficulte(3,'difficile'),
+        new Difficulte(4,'Tres difficille'),
+    ])
+
+    const [existingOptions,setExistingOptions] = useState([
+        { value: 'option1', label: 'Option 1' },
+        { value: 'option2', label: 'Option 2' },
+        { value: 'option3', label: 'Option 3' },
+    ])
+    const [selectedOptions, setSelectedOptions] = useState(null);
+
+    const handleCreateOption = (inputValue) => {
+        const newOption = { value: existingOptions.length+1, label: inputValue };
+        setExistingOptions([...existingOptions,newOption])
+        setSelectedOptions( newOption);
+    };
+
+    const handleChange = (selectedOptions) => {
+        setSelectedOptions(selectedOptions);
+    };
     return(
         <>
             <HeaderProject name={projet ? projet.nomProjet : ""}/>
@@ -530,129 +603,188 @@ function ViewProject({author}) {
                     </Row>
                 </Col>
             </Row>
-            <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
-                <Form className="font" autoComplete="off">
-                    <div className="pl-lg-4">
-                        <Row>
-                            <Col lg="12">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="input-title">
-                                        Titre
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-title"
-                                        placeholder="titre du projet"
-                                        type="text"
-                                        onChange={(event)=>setTitre(event.target.value)}
-                                        value={titre}
-                                        invalid={!validTitle}
-                                    />
-                                    <FormFeedback valid={false}>
-                                        Invalide titre
-                                    </FormFeedback>
-                                </FormGroup>
-                            </Col>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="input-plateforme">
-                                        Plateforme
-                                    </label>
-                                    {listPlateforme.length===0 ? (
-                                        <div className="skeleton p-3 rounded"/>
-                                    ): (
-                                        <Input className="form-control-alternative" onChange={(event)=>{
-                                            setSelectedPlateforme(listPlateforme.find(element=>element.id===(parseInt(event.target.value, 10))))
-                                        }} value={selectedPlateforme ? selectedPlateforme?.id : 1} id="input-plateforme" type="select">
-                                            {listPlateforme.map(({id,nomPlateforme},index)=>(
-                                                <option key={index} value={id}>
-                                                    {nomPlateforme}
-                                                </option>
-                                            ))}
-                                        </Input>
-                                    )}
-                                </FormGroup>
-                            </Col>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="input-type">
-                                        Type de projet
-                                    </label>
-                                    {listTypeProjet.length!==0 ? (
-                                        <Input className="form-control-alternative" id="input-type" onChange={(event)=>setSelectedTypeProjet(listTypeProjet.find(element=>element.id===(parseInt(event.target.value))))} value={selectedTypeProjet ? selectedTypeProjet?.id : 1} type="select">
-                                            {listTypeProjet.map(({id,type},index)=>(
-                                                <option key={index} value={id}>
-                                                    {type}
-                                                </option>
-                                            ))}
-                                        </Input>
-                                    ): (
-                                        <div className="skeleton p-3 rounded"/>
-                                    )}
-                                </FormGroup>
-                            </Col>
-                        </Row>
+            <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau Site"} hide={()=>setModalShow(false)}>
+                <Form  autoComplete="off">
+                    <h6 className="heading-small text-muted mb-4">
+                        Site
+                    </h6>
+                    <div className="pl-lg-3">
                         <Row>
                             <Col lg="6">
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-reference"
+                                        htmlFor="input-email"
+                                    >
+                                        Nom Site
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        // value={site.plugin.nom}
+                                        type="text"
+                                        // disabled
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-username"
+                                    >
+                                        Domaine
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        // value={site.domaine}
+                                        type="text"
+                                        // disabled
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </div>
+                    <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">
+                        Responsable
+                    </h6>
+                    <div className="pl-lg-3">
+                        <Row>
+                            <Col lg="12">
+                                <FormGroup>
+                                    <label className="form-control-label">
+                                        Developpeur
+                                    </label>
+                                    <Select
+                                        value={selectedOption}
+                                        onChange={handleSelectChange}
+                                        options={options}
+                                        isSearchable={true}
+                                        styles={customStyles}
+                                        placeholder="Selectionner le responsable"
+                                        components={{ Option: ({ innerProps, label, isFocused, isSelected, data }) => <CustomOption innerProps={innerProps} label={label} isSelected={isSelected} isFocused={isFocused} data={data} /> }}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </div>
+                    <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">
+                        Plugin
+                    </h6>
+                    <div className="pl-lg-4">
+                        <Row>
+
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-email"
+                                    >
+                                        Nom plugin
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        // value={site.plugin.nom}
+                                        type="text"
+                                        // disabled
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-last-name"
+                                    >
+                                        Type de traitement
+                                    </label>
+                                    <CreatableSelect
+                                        onChange={handleChange}
+                                        onCreateOption={handleCreateOption}
+                                        options={existingOptions}
+                                        value={selectedOptions}
+                                        styles={customStyles}
+                                        placeholder=" type de...."
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col lg="12">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-first-name"
+                                    >
+                                        SSH Git
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        // value={site.plugin.ssh}
+                                        type="text"
+                                        // disabled
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </div>
+                    <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">
+                        Ticket
+                    </h6>
+                    <div className="pl-lg-4">
+                        <Row>
+                            <Col md="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-address"
                                     >
                                         Reference
                                     </label>
                                     <Input
-                                        className="form-control-alternative"
-                                        id="input-reference"
-                                        placeholder="Reference du lien Jira"
+                                        className="form-control-alternative bg-white"
+                                        // value={site.protection.nom}
                                         type="text"
-                                        value={reference}
-                                        onChange={(event)=>setReference(event.target.value)}
-                                        invalid={!validRef}
+                                        // disabled
                                     />
-                                    <FormFeedback valid={false}>
-                                        Invalide Reference
-                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-url"
+                                        htmlFor="input-city"
                                     >
                                         Url
                                     </label>
                                     <Input
-                                        className="form-control-alternative"
-                                        id="input-url"
-                                        placeholder="Url dans Jira"
+                                        className="form-control-alternative bg-white text-capitalize"
+                                        // value={site.protection.difficulte.nom}
+                                        type="text"/>
+                                </FormGroup>
+                            </Col>
+
+                        </Row>
+                    </div>
+                    <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">
+                        Information sur la protection
+                    </h6>
+                    <div className="pl-lg-4">
+                        <Row>
+                            <Col md="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-address"
+                                    >
+                                        Protection
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        // value={site.protection.nom}
                                         type="text"
-                                        onChange={(event)=>setUrl(event.target.value)}
-                                        value={url}
-                                        invalid={!validUrl}
-                                    />
-                                    <FormFeedback valid={false}>
-                                        Invalide Url
-                                    </FormFeedback>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-creation"
-                                    >
-                                        Date de création
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-creation"
-                                        type="date"
-                                        onChange={()=>setCreation(new Date())}
-                                        value={formatDate(creation)}
+                                        // disabled
                                     />
                                 </FormGroup>
                             </Col>
@@ -660,45 +792,34 @@ function ViewProject({author}) {
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-limite"
+                                        htmlFor="input-city"
                                     >
-                                        Date limite
+                                        Difficulté
                                     </label>
                                     <Input
-                                        className="form-control-alternative"
-                                        id="input-limite"
-                                        type="date"
-                                        onChange={(event)=>setLimite(new Date(event.target.value))}
-                                        value={formatDate(limite)}
-                                        invalid={!validDate}
-                                    />
-                                    <FormFeedback>
-                                        Date de creation > date limite
-                                    </FormFeedback>
+                                        className="form-control-alternative bg-white text-capitalize"
+                                        // value={site.protection.difficulte.nom}
+                                        type="select">
+                                        {difficult.map(({id,nom})=>(
+                                            <option key={id} value={id}>{nom}</option>
+                                        ))}
+                                    </Input>
                                 </FormGroup>
                             </Col>
+
                         </Row>
-                        <Row>
-                            <Col lg="12">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-consigne"
-                                    >
-                                        Consigne
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-consigne"
-                                        placeholder="Consigne du projet"
-                                        rows={4}
-                                        type="textarea"
-                                        value={consigne}
-                                        onChange={(event)=>setConsigne(event.target.value)}
-                                    />
-                                </FormGroup>
-                            </Col>
-                        </Row>
+                    </div>
+                    <hr className="my-4" />
+                    <h6 className="heading-small text-muted mb-4">Remarque</h6>
+                    <div className="pl-lg-4">
+                        <FormGroup>
+                            <Input
+                                className="form-control-alternative bg-white w-100"
+                                rows="4"
+                                // value={site.protection.description}
+                                type="textarea"
+                            />
+                        </FormGroup>
                     </div>
                 </Form>
             </ModalLg>
