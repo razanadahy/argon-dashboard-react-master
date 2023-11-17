@@ -375,178 +375,180 @@ const Projets = ({type}) => {
                     </div>
                 </Row>
             </Container>
-            <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
-                <Form className="font" autoComplete="off">
-                    <div className="pl-lg-4">
-                        <Row>
-                            <Col lg="12">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="input-title">
-                                        Titre
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-title"
-                                        placeholder="titre du projet"
-                                        type="text"
-                                        onChange={(event)=>setTitre(event.target.value)}
-                                        value={titre}
-                                        invalid={!validTitle}
-                                    />
-                                    <FormFeedback valid={false}>
-                                        Invalide titre
-                                    </FormFeedback>
-                                </FormGroup>
-                            </Col>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="input-plateforme">
-                                        Plateforme
-                                    </label>
-                                    {listPlateforme.length===0 ? (
-                                        <div className="skeleton p-3 rounded"/>
-                                    ): (
-                                        <Input className="form-control-alternative" onChange={(event)=>{
-                                           setSelectedPlateforme(listPlateforme.find(element=>element.id===(parseInt(event.target.value, 10))))
-                                        }} value={selectedPlateforme ? selectedPlateforme?.id : 1} id="input-plateforme" type="select">
-                                            {listPlateforme.map(({id,nomPlateforme},index)=>(
-                                                <option key={index} value={id}>
-                                                    {nomPlateforme}
-                                                </option>
-                                            ))}
-                                        </Input>
-                                    )}
-                                </FormGroup>
-                            </Col>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="input-type">
-                                        Type de projet
-                                    </label>
-                                    {listTypeProjet.length!==0 ? (
-                                        <Input className="form-control-alternative" id="input-type" onChange={(event)=>setSelectedTypeProjet(listTypeProjet.find(element=>element.id===(parseInt(event.target.value))))} value={selectedTypeProjet ? selectedTypeProjet?.id : 1} type="select">
-                                            {listTypeProjet.map(({id,type},index)=>(
-                                                <option key={index} value={id}>
-                                                    {type}
-                                                </option>
-                                            ))}
-                                        </Input>
-                                    ): (
-                                        <div className="skeleton p-3 rounded"/>
-                                    )}
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-reference"
-                                    >
-                                        Reference
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-reference"
-                                        placeholder="Reference du lien Jira"
-                                        type="text"
-                                        value={reference}
-                                        onChange={(event)=>setReference(event.target.value)}
-                                        invalid={!validRef}
-                                    />
-                                    <FormFeedback valid={false}>
-                                        Invalide Reference
-                                    </FormFeedback>
-                                </FormGroup>
-                            </Col>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-url"
-                                    >
-                                        Url
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-url"
-                                        placeholder="Url dans Jira"
-                                        type="text"
-                                        onChange={(event)=>setUrl(event.target.value)}
-                                        value={url}
-                                        invalid={!validUrl}
-                                    />
-                                    <FormFeedback valid={false}>
-                                        Invalide Url
-                                    </FormFeedback>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-creation"
-                                    >
-                                        Date de création
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-creation"
-                                        type="date"
-                                        onChange={()=>setCreation(new Date())}
-                                        value={formatDate(creation)}
-                                    />
-                                </FormGroup>
-                            </Col>
-                            <Col lg="6">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-limite"
-                                    >
-                                        Date limite
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-limite"
-                                        type="date"
-                                        onChange={(event)=>setLimite(new Date(event.target.value))}
-                                        value={formatDate(limite)}
-                                        invalid={!validDate}
-                                    />
-                                    <FormFeedback>
-                                        Date de creation > date limite
-                                    </FormFeedback>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg="12">
-                                <FormGroup>
-                                    <label
-                                        className="form-control-label"
-                                        htmlFor="input-consigne"
-                                    >
-                                        Consigne
-                                    </label>
-                                    <Input
-                                        className="form-control-alternative"
-                                        id="input-consigne"
-                                        placeholder="Consigne du projet"
-                                        rows={4}
-                                        type="textarea"
-                                        value={consigne}
-                                        onChange={(event)=>setConsigne(event.target.value)}
-                                    />
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                    </div>
-                </Form>
-            </ModalLg>
+            {user.type===1 && (
+                <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
+                    <Form className="font" autoComplete="off">
+                        <div className="pl-lg-4">
+                            <Row>
+                                <Col lg="12">
+                                    <FormGroup>
+                                        <label className="form-control-label" htmlFor="input-title">
+                                            Titre
+                                        </label>
+                                        <Input
+                                            className="form-control-alternative"
+                                            id="input-title"
+                                            placeholder="titre du projet"
+                                            type="text"
+                                            onChange={(event)=>setTitre(event.target.value)}
+                                            value={titre}
+                                            invalid={!validTitle}
+                                        />
+                                        <FormFeedback valid={false}>
+                                            Invalide titre
+                                        </FormFeedback>
+                                    </FormGroup>
+                                </Col>
+                                <Col lg="6">
+                                    <FormGroup>
+                                        <label className="form-control-label" htmlFor="input-plateforme">
+                                            Plateforme
+                                        </label>
+                                        {listPlateforme.length===0 ? (
+                                            <div className="skeleton p-3 rounded"/>
+                                        ): (
+                                            <Input className="form-control-alternative" onChange={(event)=>{
+                                                setSelectedPlateforme(listPlateforme.find(element=>element.id===(parseInt(event.target.value, 10))))
+                                            }} value={selectedPlateforme ? selectedPlateforme?.id : 1} id="input-plateforme" type="select">
+                                                {listPlateforme.map(({id,nomPlateforme},index)=>(
+                                                    <option key={index} value={id}>
+                                                        {nomPlateforme}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                        )}
+                                    </FormGroup>
+                                </Col>
+                                <Col lg="6">
+                                    <FormGroup>
+                                        <label className="form-control-label" htmlFor="input-type">
+                                            Type de projet
+                                        </label>
+                                        {listTypeProjet.length!==0 ? (
+                                            <Input className="form-control-alternative" id="input-type" onChange={(event)=>setSelectedTypeProjet(listTypeProjet.find(element=>element.id===(parseInt(event.target.value))))} value={selectedTypeProjet ? selectedTypeProjet?.id : 1} type="select">
+                                                {listTypeProjet.map(({id,type},index)=>(
+                                                    <option key={index} value={id}>
+                                                        {type}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                        ): (
+                                            <div className="skeleton p-3 rounded"/>
+                                        )}
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col lg="6">
+                                    <FormGroup>
+                                        <label
+                                            className="form-control-label"
+                                            htmlFor="input-reference"
+                                        >
+                                            Reference
+                                        </label>
+                                        <Input
+                                            className="form-control-alternative"
+                                            id="input-reference"
+                                            placeholder="Reference du lien Jira"
+                                            type="text"
+                                            value={reference}
+                                            onChange={(event)=>setReference(event.target.value)}
+                                            invalid={!validRef}
+                                        />
+                                        <FormFeedback valid={false}>
+                                            Invalide Reference
+                                        </FormFeedback>
+                                    </FormGroup>
+                                </Col>
+                                <Col lg="6">
+                                    <FormGroup>
+                                        <label
+                                            className="form-control-label"
+                                            htmlFor="input-url"
+                                        >
+                                            Url
+                                        </label>
+                                        <Input
+                                            className="form-control-alternative"
+                                            id="input-url"
+                                            placeholder="Url dans Jira"
+                                            type="text"
+                                            onChange={(event)=>setUrl(event.target.value)}
+                                            value={url}
+                                            invalid={!validUrl}
+                                        />
+                                        <FormFeedback valid={false}>
+                                            Invalide Url
+                                        </FormFeedback>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col lg="6">
+                                    <FormGroup>
+                                        <label
+                                            className="form-control-label"
+                                            htmlFor="input-creation"
+                                        >
+                                            Date de création
+                                        </label>
+                                        <Input
+                                            className="form-control-alternative"
+                                            id="input-creation"
+                                            type="date"
+                                            onChange={()=>setCreation(new Date())}
+                                            value={formatDate(creation)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                                <Col lg="6">
+                                    <FormGroup>
+                                        <label
+                                            className="form-control-label"
+                                            htmlFor="input-limite"
+                                        >
+                                            Date limite
+                                        </label>
+                                        <Input
+                                            className="form-control-alternative"
+                                            id="input-limite"
+                                            type="date"
+                                            onChange={(event)=>setLimite(new Date(event.target.value))}
+                                            value={formatDate(limite)}
+                                            invalid={!validDate}
+                                        />
+                                        <FormFeedback>
+                                            Date de creation > date limite
+                                        </FormFeedback>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col lg="12">
+                                    <FormGroup>
+                                        <label
+                                            className="form-control-label"
+                                            htmlFor="input-consigne"
+                                        >
+                                            Consigne
+                                        </label>
+                                        <Input
+                                            className="form-control-alternative"
+                                            id="input-consigne"
+                                            placeholder="Consigne du projet"
+                                            rows={4}
+                                            type="textarea"
+                                            value={consigne}
+                                            onChange={(event)=>setConsigne(event.target.value)}
+                                        />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                        </div>
+                    </Form>
+                </ModalLg>
+            )}
         </>
     );
 };

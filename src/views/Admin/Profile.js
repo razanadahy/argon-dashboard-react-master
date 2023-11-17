@@ -1,4 +1,16 @@
-import {Button, Card, CardHeader, CardBody, FormGroup, Form, Input, Container, Row, Col} from "reactstrap";
+import {
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    FormGroup,
+    Form,
+    Input,
+    Container,
+    Row,
+    Col,
+    Alert, Toast, ToastHeader, ToastBody
+} from "reactstrap";
 
 import UserHeader from "components/Headers/UserHeader.js";
 import {useEffect, useState} from "react";
@@ -6,6 +18,8 @@ import userBlanck from '../../assets/img/icons/bl.png'
 import InfoUtilisateur from "../../Model/InfoUtilisateur.tsx";
 import {useNavigate} from "react-router-dom";
 import StatTicketDev from "../../Model/StatTicketDev.tsx";
+import ModalLg from "../../variables/Modal";
+import Conge from "../../Model/Conge.tsx";
 
 
 const Profile = () => {
@@ -32,7 +46,43 @@ const Profile = () => {
             setUtilisateur(response)
         })
     },[])
-
+    const [modalShow, setModalShow]=useState(false)
+    const [loadFinal,setLoadFinal]=useState(false)
+    const [erreur,setErreur]=useState(false)
+    const [dateDebut,setDateDebut]=useState(new Date())
+    const [dateFin,setDateFin]=useState(new Date())
+    function onSubmit(event){
+        event.preventDefault()
+        if (dateDebut>dateFin){
+            setErreur(true)
+            return
+        }
+        setLoadFinal(true)
+        const conge=new Conge(dateDebut,dateFin)
+        Conge.insertConge(user.token,conge).then((res)=>{
+            if (!res){
+                setErreur(true)
+                setLoadFinal(false)
+            }else{
+                setShowT(true)
+            }
+        }).finally(()=>{
+            setLoadFinal(false)
+        })
+    }
+    function onCancel() {
+        setModalShow(false)
+        setDateDebut(new Date())
+        setDateFin(new Date())
+    }
+    function formatDate(date) {
+        let mois = (date.getMonth() + 1).toString().padStart(2, '0');
+        let jour = date.getDate().toString().padStart(2, '0');
+        let annee = date.getFullYear();
+        let dateFormatee = `${annee}-${mois}-${jour}`;
+        return dateFormatee;
+    }
+    const [showT,setShowT]=useState(false)
     return (
         <>
             <UserHeader name={name}/>
@@ -112,7 +162,10 @@ const Profile = () => {
                                         <h3 className="mb-0">Mon Compte</h3>
                                     </Col>
                                     <Col className="text-right" xl="6" xs="6">
-                                        <Button color="info" onClick={(e) => e.preventDefault()}>
+                                        <Button color="info" onClick={(e) => {
+                                            e.preventDefault()
+                                            setModalShow(true)
+                                        }}>
                                             Prendre du congé
                                         </Button>
                                         <Button color="primary" onClick={(e) => e.preventDefault()} >
@@ -153,28 +206,81 @@ const Profile = () => {
                                                 </FormGroup>
                                             </Col>
                                         </Row>
-
-                                      {/*<Row>*/}
-                                      {/*  <Col lg="6">*/}
-                                      {/*    <FormGroup>*/}
-                                      {/*      <button type="reset" className="btn btn-pinterest col-12">Annuler</button>*/}
-                                      {/*    </FormGroup>*/}
-                                      {/*  </Col>*/}
-                                      {/*  <Col lg="6">*/}
-                                      {/*    <FormGroup>*/}
-                                      {/*      <button type="submit" className="btn btn-primary col-12">Modifier</button>*/}
-                                      {/*    </FormGroup>*/}
-                                      {/*  </Col>*/}
-                                      {/*</Row>*/}
                                     </div>
                                     <hr className="my-4" />
                                 </Form>
-
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
             </Container>
+            <ModalLg show={modalShow}
+                     onSubmit={onSubmit}
+                     loading={loadFinal}
+                     onCancel={onCancel}
+                     title={"Prendre du congé"}
+                     hide={()=>setModalShow(false)}>
+                <Form  autoComplete="off">
+                    <h6 className="heading-small text-muted mb-4">
+                        Date du congé
+                    </h6>
+                    <div className="pl-lg-4">
+                        <Row>
+                            <Col md="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-reference"
+                                    >
+                                        Date debut
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        value={formatDate(dateDebut)}
+                                        type="date"
+                                        id="input-reference"
+                                        onChange={(event)=>setDateDebut(new Date(event.target.value))}
+                                    />
+
+                                </FormGroup>
+                            </Col>
+                            <Col lg="6">
+                                <FormGroup>
+                                    <label
+                                        className="form-control-label"
+                                        htmlFor="input-url"
+                                    >
+                                        Date fin
+                                    </label>
+                                    <Input
+                                        className="form-control-alternative bg-white"
+                                        value={formatDate(dateFin)}
+                                        type="date"
+                                        id="input-url"
+                                        onChange={(event)=>setDateFin(new Date(event.target.value))}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </div>
+
+                </Form>
+                <Alert color="danger" isOpen={erreur} toggle={()=>setErreur(false)} >
+                    Invalide date
+                </Alert>
+            </ModalLg>
+            <div className="row m-0 p-0">
+                <div  className="p-3  my-2 col-3 position-absolute bottom-small-0 offset-9 rounded">
+                    <Toast transition={"fade"} fade={true} isOpen={showT}>
+                        <ToastHeader className="bg-lighter rounded-top p-2" icon="info" toggle={()=>setShowT(false)}>
+                            Info
+                        </ToastHeader>
+                        <ToastBody className="bg-info text-body p-3 rounded-bottom">
+                            Votre Congé a été pris en charge
+                        </ToastBody>
+                    </Toast>
+                </div>
+            </div>
         </>
     );
 };
