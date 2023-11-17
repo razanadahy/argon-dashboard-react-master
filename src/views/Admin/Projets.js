@@ -231,6 +231,7 @@ const Projets = ({type}) => {
         Projet.insertProjet(user.token,pro).then((response)=>{
             if (!response){
                 setErreur(true)
+                setLoadFinal(false)
             }else{
                 setInsert(!insert)
                 onCancel()

@@ -30,4 +30,21 @@ export default class InfoUtilisateur {
             return null
         }
     }
+    static async getAllUser(token) {
+        try {
+            const response = await fetch(UrlBase("main/allDev"), {
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok){
+                return await response.json() as InfoUtilisateur[]
+            }
+            return []
+        }catch (e) {
+            return []
+        }
+    }
 }

@@ -14,7 +14,7 @@ import {
     DropdownMenu,
     DropdownItem,
     UncontrolledDropdown,
-    Form, FormGroup, Input, FormFeedback, Media
+    Form, FormGroup, Input, FormFeedback, Media, Alert
 } from "reactstrap";
 import HeaderProject from "../../components/Headers/HeaderProject";
 import {Next} from "../../Config.ts";
@@ -27,13 +27,15 @@ import PaginateObject from "../../components/Sidebar/PaginateObject";
 import unidecode from "unidecode";
 import BarChart from "../../variables/BarChart";
 import InfoProjet from "../../Model/InfoProjet.tsx";
-import TypeProjet from "../../Model/TypeProjet.tsx";
-import Plateforme from "../../Model/Plateforme.tsx";
-import Projet from "../../Model/Projet.tsx";
 import ModalLg from "../../variables/Modal";
 import Select from 'react-select';
 import Difficulte from "../../Model/Difficulte.tsx";
 import CreatableSelect from "react-select/creatable";
+import InfoUtilisateur from "../../Model/InfoUtilisateur.tsx";
+import TypeTraitement from "../../Model/TypeTraitement.tsx";
+import InfoSite from "../../Model/InfoSite.tsx";
+import Plugin from "../../Model/Plugin.tsx";
+import Protection from "../../Model/Protection.tsx";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -228,87 +230,94 @@ function ViewProject({author}) {
     const [data,setData]=useState([0,0])
     const label=["temps cumulé en jour(s)","Temps restant en jour(s)"]
 
-
-    const [listTypeProjet,setListTypeProjet]=useState([])
-    const [listPlateforme,setListPlateforme]=useState([])
     const [modalShow, setModalShow]=useState(false)
-
-    const [titre,setTitre]=useState("")
-    const [selectedPlateforme,setSelectedPlateforme]=useState(null)
-    const [selectedTypeProjet,setSelectedTypeProjet]=useState(null)
-    const [url,setUrl]=useState('')
-    const [reference,setReference]=useState('')
-    const [creation,setCreation]=useState(new Date())
-    const [limite,setLimite]=useState(new Date())
-    const [consigne,setConsigne]=useState('')
     const [loadFinal,setLoadFinal]=useState(false)
+    const [nomSite,setNomSite]=useState("")
+    const [domaine,setDomaine]=useState('')
+    const [plugin,setplugin]=useState('')
+    const [ssh,setSsh]=useState('')
+    const [reference,setReference]=useState('')
+    const [url,setUrl]=useState('')
+    const [protection,setProtection]=useState('')
+    const [dif,setDif]=useState(null)
+    const [remarque,setRemarque]=useState('')
 
-    const [validTitle,setValidTite]=useState(true)
+    const [validNomSite,setValidNomSite]=useState(true)
+    const [validDomaine,setValidDomaine]=useState(true)
+    const [validDev,setValidDev]=useState(true)
+    const [validPlug,setValidPlugin]=useState(true)
+    const [validTraitement,setValidTraitement]=useState(true)
+    const [validSsh,setValidSsh]=useState(true)
     const [validRef,setValidRef]=useState(true)
-    const [validUrl,setValidurl]=useState(true)
-    const [validDate,setValidDate]=useState(true)
+    const [validUrl,setValidUrl]=useState(true)
+    const [validProtection,setValidProtection]=useState(true)
+
 
     function getAllList() {
         setModalShow(true)
-        TypeProjet.getListTypeProjet(utilisateur.token).then((response)=>{
-            setListTypeProjet(response)
+        InfoUtilisateur.getAllUser(utilisateur.token).then((response)=>{
+            setDevs(response)
+            setOptionDev(response.map((element, index) => ({ value: index, label: element.nom, hiddenValue: element.email })));
         })
-        Plateforme.getListPlateforme(utilisateur.token).then((response)=>{
-            setListPlateforme(response)
+        TypeTraitement.getTraitement(utilisateur.token).then((response)=>{
+            setTypeTraitement(response)
+            setTypetraitementOption(response.map((element)=>({value: element.id,label: element.traitement})))
         })
     }
-    function formatDate(date) {
-        let mois = (date.getMonth() + 1).toString().padStart(2, '0');
-        let jour = date.getDate().toString().padStart(2, '0');
-        let annee = date.getFullYear();
-        let dateFormatee = `${annee}-${mois}-${jour}`;
-        return dateFormatee;
-    }
+
     function estVide(chaine) {
         return chaine.trim().length === 0;
     }
     function onSubmit(event) {
         event.preventDefault()
-        return;
-        if (estVide(titre)){
-            setValidTite(false)
+        if (estVide(nomSite)){
+            setValidNomSite(false)
             return
         }
-        if (estVide(url)){
-            setValidurl(false)
+        if (estVide(domaine)){
+            setValidDomaine(false)
             return
+        }if (estVide(plugin)){
+            setValidPlugin(false)
+            return
+        }
+        if (estVide(ssh)){
+            setValidSsh(false)
+            return;
         }
         if (estVide(reference)){
             setValidRef(false)
-            return
-        }
-        if (creation>limite){
-            setValidDate(false)
             return;
         }
-        setLoadFinal(true)
-        function convertToHTML(consigne) {
-            const lignes = consigne.split('\n');
-            const lignesHTML = lignes.map(ligne => `<p> - ${ligne}</p>`);
-            const consigneHTML = lignesHTML.join('');
-            return consigneHTML;
+        if (estVide(url)){
+            setValidUrl(false)
+            return;
         }
-        const titreTrimmed = titre.trim();
-        const typeProjetH = selectedTypeProjet === null ? listTypeProjet[0] : selectedTypeProjet;
-        const plate = selectedPlateforme === null ? listPlateforme[0] : selectedTypeProjet;
-        const pro = new Projet(
-            titreTrimmed,
-            convertToHTML(consigne.trim()),
-            reference,
-            url,
-            typeProjetH,
-            creation,
-            limite,
-            plate
-        );
-        Projet.insertProjet(utilisateur.token,pro).then((response)=>{
+        if (estVide(protection)){
+            setValidProtection(false)
+            return
+        }
+        if (selectedOption===null){
+            setValidDev(false)
+            return
+        }
+        if (selectedOptions===null){
+            setValidTraitement(false)
+            return
+        }
+        setLoadFinal(true)
+        const infoDev=devs[selectedOption.value]
+        const typeT=typeTraitement.find(element=>parseInt(selectedOptions.value)===element.id)
+        const difT=dif ? dif : difficult[0]
+        const site=new InfoSite(
+            infoDev,nomSite,new Plugin(plugin,ssh),domaine,typeT,reference,url,
+            new Protection(protection,remarque,difT,"",1),id
+        )
+
+        InfoSite.insertSite(utilisateur.token,site).then((response)=>{
             if (!response){
                 setErreur(true)
+                setLoadFinal(false)
             }else{
                 setUpdate.toggle()
                 onCancel()
@@ -317,19 +326,30 @@ function ViewProject({author}) {
     }
     function onCancel() {
         setModalShow(false)
-        setTitre("")
-        setConsigne("")
-        setReference("")
-        setUrl("")
-        setLimite(new Date())
+        setNomSite('')
+        setDomaine('')
+        setSelectedOptions(null)
+        setSelectedOption(null)
+        setplugin("")
+        setSsh('')
+        setReference('')
+        setUrl('')
+        setProtection('')
+        setDif(null)
+        setRemarque('')
+        setValidNomSite(true)
+        setValidDomaine(true)
+        setValidDev(true)
+        setValidPlugin(true)
+        setValidTraitement(true)
+        setValidSsh(true)
+        setValidRef(true)
+        setValidUrl(true)
+        setValidProtection(true)
     }
 
-    const options = [
-        { value: '4', label: 'Andrianiavo', hiddenValue: 'andrianiavo.vit@gmail.com'},
-        { value: '2', label: 'Andrianiavo1', hiddenValue: 'andrianiavo1.vit@gmail.com'},
-        { value: '5', label: 'Andrianiavo2', hiddenValue: 'andrianiavo2.vit@gmail.com'},
-        { value: '7', label: 'Andrianiavo3', hiddenValue: 'andrianiavo3.vit@gmail.com'},
-    ];
+    const [devs,setDevs] = useState([])
+    const [optionDev,setOptionDev]=useState([])
     function getFirstLetter(userName) {
         userName = userName.toLowerCase();
         return userName.substring(0, 1);
@@ -377,16 +397,15 @@ function ViewProject({author}) {
         new Difficulte(4,'Tres difficille'),
     ])
 
-    const [existingOptions,setExistingOptions] = useState([
-        { value: 'option1', label: 'Option 1' },
-        { value: 'option2', label: 'Option 2' },
-        { value: 'option3', label: 'Option 3' },
-    ])
+    const [typeTraitement,setTypeTraitement]=useState([])
+    const [typetraitementOption,setTypetraitementOption] = useState([])
     const [selectedOptions, setSelectedOptions] = useState(null);
 
     const handleCreateOption = (inputValue) => {
-        const newOption = { value: existingOptions.length+1, label: inputValue };
-        setExistingOptions([...existingOptions,newOption])
+        const newOption = { value: typeTraitement.reduce((max, objet) => (objet.id > max ? objet.id : max), typeTraitement[0].id)+1, label: inputValue };
+        setTypetraitementOption([...typetraitementOption,newOption])
+        const bp={ id: typeTraitement.reduce((max, objet) => (objet.id > max ? objet.id : max), typeTraitement[0].id)+1, traitement: inputValue }
+        setTypeTraitement([...typeTraitement,bp])
         setSelectedOptions( newOption);
     };
 
@@ -614,32 +633,42 @@ function ViewProject({author}) {
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-email"
+                                        htmlFor="input-nomSite"
                                     >
                                         Nom Site
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white"
-                                        // value={site.plugin.nom}
+                                        value={nomSite}
                                         type="text"
-                                        // disabled
+                                        id="input-nomSite"
+                                        onChange={(event)=>setNomSite(event.target.value)}
+                                        invalid={!validNomSite}
                                     />
+                                    <FormFeedback tag="span" className="text-danger" valid={false}>
+                                        Invalide Nom
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-username"
+                                        htmlFor="input-domaine"
                                     >
                                         Domaine
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white"
-                                        // value={site.domaine}
+                                        value={domaine}
                                         type="text"
-                                        // disabled
+                                        id="input-domaine"
+                                        onChange={(event)=>setDomaine(event.target.value)}
+                                        invalid={!validDomaine}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide Domaine
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -655,15 +684,25 @@ function ViewProject({author}) {
                                     <label className="form-control-label">
                                         Developpeur
                                     </label>
-                                    <Select
-                                        value={selectedOption}
-                                        onChange={handleSelectChange}
-                                        options={options}
-                                        isSearchable={true}
-                                        styles={customStyles}
-                                        placeholder="Selectionner le responsable"
-                                        components={{ Option: ({ innerProps, label, isFocused, isSelected, data }) => <CustomOption innerProps={innerProps} label={label} isSelected={isSelected} isFocused={isFocused} data={data} /> }}
-                                    />
+                                    {optionDev.length===0 ? (
+                                        <div className="skeleton mb-3 p-4 rounded"/>
+                                    ):(
+                                        <Select
+                                            value={selectedOption}
+                                            onChange={handleSelectChange}
+                                            options={optionDev}
+                                            isSearchable={true}
+                                            styles={customStyles}
+                                            placeholder="Selectionner le responsable"
+                                            className="text-capitalize"
+                                            components={{ Option: ({ innerProps, label, isFocused, isSelected, data }) => <CustomOption innerProps={innerProps} label={label} isSelected={isSelected} isFocused={isFocused} data={data} /> }}
+                                        />
+                                    )}
+                                    {!validDev && (
+                                        <span className="text-danger">
+                                            Invalide Developpeur
+                                        </span>
+                                    )}
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -679,16 +718,21 @@ function ViewProject({author}) {
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-email"
+                                        htmlFor="input-plugin"
                                     >
                                         Nom plugin
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white"
-                                        // value={site.plugin.nom}
+                                        value={plugin}
                                         type="text"
-                                        // disabled
+                                        id="input-plugin"
+                                        onChange={(event)=>setplugin(event.target.value)}
+                                        invalid={!validPlug}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide plugin
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
@@ -699,30 +743,42 @@ function ViewProject({author}) {
                                     >
                                         Type de traitement
                                     </label>
-                                    <CreatableSelect
-                                        onChange={handleChange}
-                                        onCreateOption={handleCreateOption}
-                                        options={existingOptions}
-                                        value={selectedOptions}
-                                        styles={customStyles}
-                                        placeholder=" type de...."
-                                    />
+                                    {typetraitementOption.length===0 ? (<div className="skeleton mb-3 p-4 rounded"/>):(
+                                        <CreatableSelect
+                                            onChange={handleChange}
+                                            onCreateOption={handleCreateOption}
+                                            options={typetraitementOption}
+                                            value={selectedOptions}
+                                            styles={customStyles}
+                                            placeholder=" type de...."
+                                        />
+                                    )}
+                                    {!validTraitement && (
+                                        <span className="text-danger">
+                                            Invalide Developpeur
+                                        </span>
+                                    )}
                                 </FormGroup>
                             </Col>
                             <Col lg="12">
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-first-name"
+                                        htmlFor="input-ssh"
                                     >
                                         SSH Git
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white"
-                                        // value={site.plugin.ssh}
+                                        value={ssh}
                                         type="text"
-                                        // disabled
+                                        id="input-ssh"
+                                        onChange={(event)=>setSsh(event.target.value)}
+                                        invalid={!validSsh}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide ssh
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -737,30 +793,42 @@ function ViewProject({author}) {
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-address"
+                                        htmlFor="input-reference"
                                     >
                                         Reference
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white"
-                                        // value={site.protection.nom}
+                                        value={reference}
                                         type="text"
-                                        // disabled
+                                        id="input-reference"
+                                        onChange={(event)=>setReference(event.target.value)}
+                                        invalid={!validRef}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide Reference
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-city"
+                                        htmlFor="input-url"
                                     >
                                         Url
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white text-capitalize"
-                                        // value={site.protection.difficulte.nom}
-                                        type="text"/>
+                                        value={url}
+                                        type="text"
+                                        id="input-url"
+                                        onChange={(event)=>setUrl(event.target.value)}
+                                        invalid={!validUrl}
+                                    />
+                                    <FormFeedback valid={false}>
+                                        Invalide URL
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
 
@@ -776,30 +844,37 @@ function ViewProject({author}) {
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-address"
+                                        htmlFor="input-protection"
                                     >
                                         Protection
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white"
-                                        // value={site.protection.nom}
+                                        value={protection}
                                         type="text"
-                                        // disabled
+                                        id="input-protection"
+                                        onChange={(event)=>setProtection(event.target.value)}
+                                        invalid={!validProtection}
                                     />
+                                    <FormFeedback valid={false}>
+                                        Invalide Protection
+                                    </FormFeedback>
                                 </FormGroup>
                             </Col>
                             <Col lg="6">
                                 <FormGroup>
                                     <label
                                         className="form-control-label"
-                                        htmlFor="input-city"
+                                        htmlFor="input-dif"
                                     >
                                         Difficulté
                                     </label>
                                     <Input
                                         className="form-control-alternative bg-white text-capitalize"
-                                        // value={site.protection.difficulte.nom}
-                                        type="select">
+                                        id="input-dif"
+                                        type="select" value={dif ? dif.id : 1} onChange={(event)=>{
+                                            setDif(difficult.find(element=>element.id===parseInt(event.target.value)))
+                                    }}>
                                         {difficult.map(({id,nom})=>(
                                             <option key={id} value={id}>{nom}</option>
                                         ))}
@@ -816,12 +891,16 @@ function ViewProject({author}) {
                             <Input
                                 className="form-control-alternative bg-white w-100"
                                 rows="4"
-                                // value={site.protection.description}
+                                value={remarque}
+                                onChange={(event)=>setRemarque(event.target.value)}
                                 type="textarea"
                             />
                         </FormGroup>
                     </div>
                 </Form>
+                <Alert color="danger" isOpen={erreur} toggle={()=>setErreur(false)} >
+                    Des erreurs inattendues empêchent de faire la rêquete
+                </Alert>
             </ModalLg>
         </>
     )
