@@ -85,6 +85,12 @@ const Sidebar = (props) => {
                                 Mes top Prios
                             </NavLink>
                         </NavItem>
+                        <NavItem>
+                            <NavLink href={`${eg}/nav/calendrier`}>
+                                <i className="ni ni-calendar-grid-58" />
+                                Calendrier
+                            </NavLink>
+                        </NavItem>
                     </Nav>
                 </Collapse>
             </Container>

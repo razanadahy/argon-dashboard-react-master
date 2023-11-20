@@ -301,13 +301,15 @@ message du jour sera remplacer par un agenda qui aura tout les messages
 on ne peut pas attribuer un tache à un dev en congé
 les congés sont prix en charge lors de stat de dev
 
-page de visite dans dashbord est remplacé par des stat d'un developpeur
-Total orders en nombre de projet par mois
-Vue d'ensemble en temps de finishion de chaque stade
-Social traffic en retour de ticket(ticket bug) par site/par developpeur
+page de visite dans dashbord est remplacé par des stat d'un developpeur(ok)
+Total orders en nombre de projet par mois(ok)
+Vue d'ensemble en temps de finishion de chaque stade(en cours)=>par projet(moyenne de chaque projet fini)
+Social traffic en retour de ticket(ticket bug) par developpeur
 
 statistique: projet fait avant le deadline
 
-si on prend un congé,tous les tickets doivent terminer
+si on prend un congé,tous les tickets doivent terminer rehefa suspendu ve ny ticket ray de ts kitiana?
+
+rehefa vita ny site rehetra de vita ny projet?
 
 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

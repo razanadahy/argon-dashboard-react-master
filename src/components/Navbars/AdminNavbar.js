@@ -77,6 +77,11 @@ const AdminNavbar = (props) => {
 
     },[])
 
+    const [typeAffichageNotif,setTypeAffichage]=useState(1)
+
+    useEffect(()=>{
+
+    },[typeAffichageNotif])
     
     return (
           <>
@@ -97,34 +102,76 @@ const AdminNavbar = (props) => {
                               </DropdownToggle>
                               <DropdownMenu className="dropdown-menu-arrow" right>
                                   <DropdownItem className="text-sm text-muted m-0" header tag="div">
-                                      <h3 className="text-start text-sm text-capitalize m-0">Vous avez <strong className="text-danger ">{lenNotif}</strong> nouvelle notification(s)</h3>
-                                  </DropdownItem>
-                                  <DropdownItem to="/admin/user-profile" tag="div" style={{width: '500px'}}>
-                                      <div className="align-items-center d-flex row">
-                                          <div className="col-auto"><img alt="..." className="avatar rounded-circle"
-                                                                             src="/argon-dashboard-pro-react/static/media/team-1.fa5a7ac2.jpg"/>
+                                      <div className="row">
+                                          <div className="col-4 d-flex justify-content-start">
+                                              <button type="button" className="btn btn-outline-primary btn-sm">Nouvelle notification</button>
                                           </div>
-                                          <div className="col-auto ml--2">
+                                          <div className="col-4 d-flex justify-content-start">
+                                              <button type="button" className="btn btn-outline-primary btn-sm">Type de notification</button>
+                                          </div>
+                                          <div className="col-4 d-flex justify-content-start">
+                                              <button type="button" className="btn btn-primary btn-sm">Toute notification</button>
+                                          </div>
+                                      </div>
+                                      {/*<h3 className="text-start text-sm text-capitalize m-0">
+                                          Vous avez <strong className="text-danger ">{lenNotif}</strong> nouvelle notification(s)
+                                      </h3>*/}
+                                  </DropdownItem>
+                                  <DropdownItem tag="div" style={{width: '495px'}}>
+                                      <div className="align-items-center d-flex row clickable">
+                                          <div className="col-2">
+                                              <span className="avatar rounded-circle bg-translucent-warning">
+                                                  <i className="fa fa-c"/>
+                                              </span>
+                                          </div>
+                                          <div className="col-8 ml--2">
                                               <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">John Snow</h4></div>
-                                                  <div className="text-right text-muted"><small>2 hrs ago</small></div>
+                                                  <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
                                               </div>
-                                              <p className="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
+                                              <p className="text-sm mb-0">Le projet titre a été creé</p>
+                                          </div>
+                                          <div className="col-2 d-flex justify-content-end">
+                                              <div className="text-right text-muted"><small>2022-11-10</small></div>
                                           </div>
                                       </div>
                                   </DropdownItem>
-                                  <DropdownItem to="/admin/user-profile" tag="div" >
-                                      <div className="align-items-center d-flex row">
-                                          <div className="col-auto"><img alt="..." className="avatar rounded-circle" src="/argon-dashboard-pro-react/static/media/team-1.fa5a7ac2.jpg"/></div>
-                                          <div className="col-auto ml--2">
+                                  <DropdownItem tag="div" style={{width: '495px'}}>
+                                      <div className="align-items-center d-flex row clickable">
+                                          <div className="col-2">
+                                              <span className="avatar rounded-circle bg-translucent-warning">
+                                                  <i className="fa fa-c"/>
+                                              </span>
+                                          </div>
+                                          <div className="col-8 ml--2">
                                               <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">John Snow</h4></div>
-                                                  <div className="text-right text-muted"><small>2 hrs ago</small></div>
+                                                  <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
                                               </div>
+                                              <p className="text-sm mb-0">Le projet titre a été creé</p>
+                                          </div>
+                                          <div className="col-2 d-flex justify-content-end">
+                                              <div className="text-right text-muted"><small>2022-11-10</small></div>
                                           </div>
                                       </div>
                                   </DropdownItem>
-                                  {/*<DropdownItem divider />*/}
+                                  <DropdownItem tag="div" style={{width: '495px'}}>
+                                      <div className="align-items-center d-flex row clickable">
+                                          <div className="col-2">
+                                              <span className="avatar rounded-circle bg-translucent-warning">
+                                                  <i className="fa fa-c"/>
+                                              </span>
+                                          </div>
+                                          <div className="col-8 ml--2">
+                                              <div className="d-flex justify-content-between align-items-center">
+                                                  <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
+                                              </div>
+                                              <p className="text-sm mb-0">Le projet titre a été creé</p>
+                                          </div>
+                                          <div className="col-2 d-flex justify-content-end">
+                                              <div className="text-right text-muted"><small>2022-11-10</small></div>
+                                          </div>
+                                      </div>
+                                  </DropdownItem>
+                                  {/*<DropdownItem divider />*/}{/*<DropdownItem divider />*/}
                             </DropdownMenu>
                           </UncontrolledDropdown>
                           <UncontrolledDropdown nav>

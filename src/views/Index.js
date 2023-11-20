@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import classnames from "classnames";
 import Chart from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
@@ -7,16 +7,29 @@ import {Button, Card, CardHeader, CardBody, NavItem, NavLink, Nav, Progress, Tab
 import {
   chartOptions,
   parseOptions,
-  chartExample1,
-  chartExample2,
+  chartExample1, chartExample2,
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import StatistiqueDashbord from "../Model/StatistiqueDashbord.tsx";
 
 const Index = (props) => {
+  const utilisateur=JSON.parse(localStorage.getItem("user"))
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
 
+  const [year,setYear]=useState(2023)//à modifier .slice(startIndex,endIndex)
+  const [allData,setAllData]=useState([])
+  const [loading,setLoading]=useState(true)
+
+  useEffect(()=>{
+    setLoading(true)
+    StatistiqueDashbord.getNumberProject(utilisateur.token,year).then((response)=>{
+      setAllData(response)
+    }).finally(()=>{
+      setLoading(false)
+    })
+  },[year])
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }
@@ -26,7 +39,16 @@ const Index = (props) => {
     setActiveNav(index);
     setChartExample1Data("data" + index);
   };
+  const [orderMonth,setOrderMont]=useState(0)
+  const d=allData.slice(orderMonth,orderMonth+6)
+  const u=[]
+  const ul=[]
+  d.map(({valeur,label})=> {
+    u.push(valeur)
+    ul.push(label)
+  })
 
+  const dateNumberProject=chartExample2(ul,u)
   return (
       <>
         <Header />
@@ -91,19 +113,48 @@ const Index = (props) => {
                   <Row className="align-items-center">
                     <div className="col">
                       <h6 className="text-uppercase text-muted ls-1 mb-1">
-                        Performance
+                        Nombre de projet par mois
                       </h6>
-                      <h2 className="mb-0">Total orders</h2>
+                      <div className="mb-0 row p-0">
+                        <div className="col-5 d-flex justify-content-start">
+                          <div className="input-group-merge input-group">
+                              <input placeholder="année" type="number" onChange={(event)=>{
+                                event.preventDefault()
+                                setYear(parseInt(event.target.value))
+                              }} className="form-control"/>
+                          </div>
+                        </div>
+                        <div className="col-7 d-flex justify-content-end">
+                          <div className="btn-group w-100">
+                            <a href="#" className="btn btn-primary active btn-sm" onClick={(event)=>{
+                              event.preventDefault()
+                              setOrderMont(0)
+                            }}> semestre 1</a>
+                            <a href="#" className="btn btn-primary btn-sm" onClick={(event)=>{
+                              event.preventDefault()
+                              setOrderMont(6)
+                            }}>semestre 2</a>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </Row>
                 </CardHeader>
                 <CardBody>
                   {/* Chart */}
                   <div className="chart">
-                    <Bar
-                        data={chartExample2.data}
-                        options={chartExample2.options}
-                    />
+                    {d.length!==0 ? (
+                        <Bar
+                            data={dateNumberProject.data}
+                            options={dateNumberProject.options}
+                        />
+                    ): (
+                        <div className="d-flex justify-content-center">
+                          <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                    )}
                   </div>
                 </CardBody>
               </Card>

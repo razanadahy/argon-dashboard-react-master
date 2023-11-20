@@ -64,6 +64,7 @@ const Profile = () => {
                 setErreur(true)
                 setLoadFinal(false)
             }else{
+                onCancel()
                 setShowT(true)
             }
         }).finally(()=>{
@@ -270,8 +271,8 @@ const Profile = () => {
                 </Alert>
             </ModalLg>
             <div className="row m-0 p-0">
-                <div  className="p-3  my-2 col-3 position-absolute bottom-small-0 offset-9 rounded">
-                    <Toast transition={"fade"} fade={true} isOpen={showT}>
+                <div  className="p-3  my-2 col-3 bottom-small-0 offset-9 fixed-bottom rounded">
+                    <Toast  fade={true} isOpen={showT}>
                         <ToastHeader className="bg-lighter rounded-top p-2" icon="info" toggle={()=>setShowT(false)}>
                             Info
                         </ToastHeader>

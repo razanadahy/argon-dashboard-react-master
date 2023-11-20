@@ -7,6 +7,7 @@ import Tikets from "./views/Admin/Tikets";
 import ViewProject from "./views/Admin/ViewProject";
 import ViewSite from "./views/Admin/ViewSite";
 import MesTopPrios from "./views/Admin/MesTopPrios";
+import Calendrier from "./views/Admin/Calendrier";
 
 const routes = [
   {
@@ -169,6 +170,22 @@ const routes = [
     name: "Mes Top Prios",
     icon: "ni ni-single-02 text-yellow",
     component: <MesTopPrios author={"admin"}/>,
+    layout: "/admin",
+    hide: true,
+  },
+  {
+    path: "/nav/calendrier",
+    name: "calendrier",
+    icon: "ni ni-single-02 text-yellow",
+    component: <Calendrier author={"auth"}/>,
+    layout: "/auth",
+    hide: true,
+  },
+  {
+    path: "/nav/calendrier",
+    name: "Calendrier",
+    icon: "ni ni-single-02 text-yellow",
+    component: <Calendrier author={"admin"}/>,
     layout: "/admin",
     hide: true,
   },

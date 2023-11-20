@@ -347,48 +347,50 @@ let chartExample1 = {
 };
 
 // Example 2 of Chart inside src/views/Index.js (Total orders - Card)
-let chartExample2 = {
-  options: {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            callback: function (value) {
-              if (!(value % 10)) {
-                //return '$' + value + 'k'
-                return value;
-              }
+function chartExample2 (label,data) {
+  return  {
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              callback: function (value) {
+                if (!(value % 5)) {
+                  //return '$' + value + 'k'
+                  return value;
+                }
+              },
             },
           },
+        ],
+      },
+      tooltips: {
+        callbacks: {
+          label: function (item, data) {
+            var label = data.datasets[item.datasetIndex].label || "";
+            var yLabel = item.yLabel;
+            var content = "";
+            if (data.datasets.length > 1) {
+              content += label;
+            }
+            content += yLabel;
+            return content;
+          },
+        },
+      },
+    },
+    data: {
+      labels: label,
+      datasets: [
+        {
+          label: "Sales",
+          data: data,
+          maxBarThickness: 10,
         },
       ],
     },
-    tooltips: {
-      callbacks: {
-        label: function (item, data) {
-          var label = data.datasets[item.datasetIndex].label || "";
-          var yLabel = item.yLabel;
-          var content = "";
-          if (data.datasets.length > 1) {
-            content += label;
-          }
-          content += yLabel;
-          return content;
-        },
-      },
-    },
-  },
-  data: {
-    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
-      {
-        label: "Sales",
-        data: [25, 20, 30, 22, 17, 29],
-        maxBarThickness: 10,
-      },
-    ],
-  },
-};
+  }
+}
 
 module.exports = {
   chartOptions, // used inside src/views/Index.js
