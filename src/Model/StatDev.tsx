@@ -1,16 +1,19 @@
+import InfoUtilisateur from "./InfoUtilisateur";
 import {UrlBase} from "../Config.ts";
 
-export default class StatistiqueDashbord {
-    label:string
-    valeur: number
+export default class StatDev {
+    dev: InfoUtilisateur
+    nbSite: number
+    pourcentage: number
 
-    constructor(label: string, valeur: number) {
-        this.label = label;
-        this.valeur = valeur;
+    constructor(dev: InfoUtilisateur, nbSite: number, pourcentage: number) {
+        this.dev = dev;
+        this.nbSite = nbSite;
+        this.pourcentage = pourcentage;
     }
-    static async getNumberProject(token,year) {
+    static async getByTicketRetour(token) {
         try {
-            const response = await fetch(UrlBase("statistique/statDashbord/projet/"+year), {
+            const response = await fetch(UrlBase("statistique/statDashbord/ticketRetour"), {
                 method: "get",
                 headers: {
                     'Content-Type': 'application/json',
@@ -18,16 +21,17 @@ export default class StatistiqueDashbord {
                 },
             });
             if (response.ok){
-                return await response.json() as StatistiqueDashbord[]
+                return await response.json() as StatDev[]
             }
             return []
         }catch (e) {
             return []
         }
     }
-    static async getByStade(token) {
+
+    static async getByAvgDev(token) {
         try {
-            const response = await fetch(UrlBase("statistique/statDashbord/stade"), {
+            const response = await fetch(UrlBase("statistique/statDashbord/avgDev"), {
                 method: "get",
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +39,7 @@ export default class StatistiqueDashbord {
                 },
             });
             if (response.ok){
-                return await response.json() as StatistiqueDashbord[]
+                return await response.json() as StatDev[]
             }
             return []
         }catch (e) {

@@ -303,7 +303,7 @@ les congés sont prix en charge lors de stat de dev
 
 page de visite dans dashbord est remplacé par des stat d'un developpeur(ok)
 Total orders en nombre de projet par mois(ok)
-Vue d'ensemble en temps de finishion de chaque stade(en cours)=>par projet(moyenne de chaque projet fini)
+Vue d'ensemble en temps de finishion de chaque stade(en cours)=>par projet(ok)
 Social traffic en retour de ticket(ticket bug) par developpeur
 
 statistique: projet fait avant le deadline
@@ -313,3 +313,12 @@ si on prend un congé,tous les tickets doivent terminer rehefa suspendu ve ny ti
 rehefa vita ny site rehetra de vita ny projet?
 
 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
+
+→ Par rapport au deadline : Projets finis avant deadline, Projets finis après
+
+Notification:  -lead est notifier si le dev a terminer son site
+               -quand un ticket lui a ete assigne
+
+
+stat: 4 restant avec:   -retour de ticket (ok)
+                        -moyenne de temps de chaque developpeur(activité)(nombre de tyket nataony)
