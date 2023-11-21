@@ -60,7 +60,7 @@ const Inscription = () => {
                 setResponse("Des erreurs se sont survenus")
             }else{
                 setOk(true)
-                setResponse("Votre demande a été pris en charge!")
+                setResponse("En attente de l'approbation par le lead")
             }
         }).finally(()=>{
             setUser('')

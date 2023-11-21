@@ -16,7 +16,6 @@ export default class Site {
     ticketBug:Jira[]
     finished:boolean
 
-
     constructor(idSite: number, nomSite: string, domaine: string, plugin: Plugin, traitement: TypeTraitement, protection: Protection, developpeur: InfoUtilisateur, ticketBug: Jira[], finished: boolean) {
         this.idSite = idSite;
         this.nomSite = nomSite;

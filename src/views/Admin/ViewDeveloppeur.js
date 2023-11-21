@@ -120,7 +120,7 @@ const ViewDeveloppeur = ({author}) => {
         setTempsTicket(updatedFilterItem);
     }
 
-    const perPage=5;
+    const perPage=3;
     const startIndex=(currentPage-1)*perPage
     const endIndex=startIndex+perPage
     const currentData=tempTicket.slice(startIndex,endIndex)
@@ -131,7 +131,7 @@ const ViewDeveloppeur = ({author}) => {
                 <>
                     <Row>
                         <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
-                            <Card className="card-profile shadow">
+                            <Card className="card-profile shadow h-100">
                                 <Row className="justify-content-center">
                                     <Col className="order-lg-2" lg="3">
                                         <div className="card-profile-image">
@@ -182,7 +182,7 @@ const ViewDeveloppeur = ({author}) => {
                                         </div>
                                     </Row>
                                     <div className="text-center">
-                                        <h3>
+                                        <h3 className="text-capitalize">
                                             {infoDev?infoDev.infoUtilisateur.nom :""}
                                         </h3>
                                         <div className="h5 font-weight-300">
@@ -197,7 +197,7 @@ const ViewDeveloppeur = ({author}) => {
                             </Card>
                         </Col>
                         <Col className="order-xl-1" xl="8">
-                            <Card className="bg-secondary shadow">
+                            <Card className="bg-secondary shadow h-100">
                                 <CardHeader className="border-0 row m-0">
                                     <div className="col-6 text-start">
                                         <h3 className="mb-0">Tickets</h3>

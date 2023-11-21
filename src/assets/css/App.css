@@ -70,3 +70,6 @@
     opacity: 0.5; 
     transition: opacity 0.3s ease; 
 }
+.z-index-100{
+    z-index: 18201 !important;
+}

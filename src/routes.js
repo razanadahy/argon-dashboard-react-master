@@ -67,16 +67,6 @@ const routes = [
     hide: true,
   },
   {
-    path: "/developpeurs/view",
-    name: "",
-    icon: "ni ni-single-02 text-yellow",
-    component: <ViewDeveloppeur author={"auth"}/>,
-    layout: "/auth",
-    hide: true,
-  },
-
-
-  {
     path: "/index",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
@@ -124,7 +114,14 @@ const routes = [
     layout: "/auth",
     hide: false,
   },
-
+  {
+    path: "/developpeurs/view",
+    name: "",
+    icon: "ni ni-single-02 text-yellow",
+    component: <ViewDeveloppeur author={"auth"}/>,
+    layout: "/auth",
+    hide: true,
+  },
   {
     path: "/projets/view/:id",
     name: "",

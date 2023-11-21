@@ -195,7 +195,8 @@ const Developpeur = ({author}) => {
                                             )}
                                         </td>
                                         <td className="text-right">
-                                            <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{Next("admin/developpeurs/view",{infoUtilisateur,enConge,pourcentageTacheFini},navigate)}}>
+                                            <button type={"button"} className="btn-icon-only btn text-darker"
+                                                    onClick={()=>{Next(`${author}/developpeurs/view`,{infoUtilisateur,enConge,pourcentageTacheFini},navigate)}}>
                                                 <i className="fas fa-eye" />
                                             </button>
                                         </td>

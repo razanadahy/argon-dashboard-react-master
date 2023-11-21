@@ -171,7 +171,7 @@ const ViewSite = ({author}) => {
                 <Col className="mb-4 order-xl-2" xl="5" xs="12">
                     <Card className="card-profile shadow rounded mb-3">
                         <CardHeader className="text-center border-0 pb-2">
-                            <h3 className="mb-0">Rapport sur le temps du projet</h3>
+                            <h3 className="mb-0">Avancement</h3>
                         </CardHeader>
                         <hr className="my-2" />
                         <CardBody className="m-0 p-0 py-3">
@@ -180,7 +180,7 @@ const ViewSite = ({author}) => {
                             <div className="text-center">
                                 {site ? (
                                     <div className="h5 mt-4">
-                                        <button className={`display-4 px-3 py-2 ${site.finished ? "bg-success": "bg-warning"} rounded btn text-capitalize`}>
+                                        <button className={`display-4 px-3 py-2 ${site.finished ? "bg-success": "bg-translucent-warning"} rounded btn text-capitalize`}>
                                             {site.finished ? "traitement terminé" : "traitement en cours"}
                                         </button>
                                     </div>
@@ -378,7 +378,7 @@ const ViewSite = ({author}) => {
                                 </h6>
                                 <div className="pl-lg-4">
                                     <Row>
-                                        {site ? (
+                                        {site ? !estVide(site.protection.nom) && (
                                             <>
                                                 <Col md="6">
                                                     <FormGroup>
@@ -421,7 +421,7 @@ const ViewSite = ({author}) => {
                                 <hr className="my-4" />
                                 <h6 className="heading-small text-muted mb-4">Remarque</h6>
                                 <div className="pl-lg-4">
-                                       {site ? (
+                                       {site ? !estVide(site.protection.description) &&(
                                            <FormGroup>
                                                <Input
                                                    className="form-control-alternative bg-white w-100"
@@ -530,10 +530,8 @@ const ViewSite = ({author}) => {
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
-
                             </Row>
                         </div>
-
                     </Form>
                     <Alert color="danger" isOpen={erreur} toggle={()=>setErreur(false)} >
                         Des erreurs inattendues empêchent de faire la rêquete

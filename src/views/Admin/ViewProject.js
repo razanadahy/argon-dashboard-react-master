@@ -274,10 +274,7 @@ function ViewProject({author}) {
             setValidNomSite(false)
             return
         }
-        if (estVide(domaine)){
-            setValidDomaine(false)
-            return
-        }if (estVide(plugin)){
+        if (estVide(plugin)){
             setValidPlugin(false)
             return
         }
@@ -293,10 +290,10 @@ function ViewProject({author}) {
             setValidUrl(false)
             return;
         }
-        if (estVide(protection)){
-            setValidProtection(false)
-            return
-        }
+        // if (estVide(protection)){
+        //     setValidProtection(false)
+        //     return
+        // }
         if (selectedOption===null){
             setValidDev(false)
             return
@@ -430,7 +427,7 @@ function ViewProject({author}) {
                                         <button type="button" className="btn btn-primary"
                                                 onClick={()=>getAllList()}>Nouveau Site </button>{''}
                                         <Button color="default" onClick={(e) => e.preventDefault()}>
-                                            Modifier
+                                            Modifier Site
                                         </Button>
                                     </Col>
                                 )}
@@ -598,7 +595,7 @@ function ViewProject({author}) {
                         <Col className="mb-4" xl="5" xs="12">
                             <Card className="card-profile shadow h-100 rounded">
                                 <CardHeader className="text-center border-0 pb-2">
-                                    <h3 className="mb-0">Rapport sur le temps du projet</h3>
+                                    <h3 className="mb-0">Avancement</h3>
                                 </CardHeader>
                                 <hr className="my-2" />
                                 <CardBody className="m-0 p-0 py-3">
@@ -647,7 +644,7 @@ function ViewProject({author}) {
                                             invalid={!validNomSite}
                                         />
                                         <FormFeedback tag="span" className="text-danger" valid={false}>
-                                            Invalide Nom
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
@@ -668,7 +665,7 @@ function ViewProject({author}) {
                                             invalid={!validDomaine}
                                         />
                                         <FormFeedback valid={false}>
-                                            Invalide Domaine
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
@@ -701,7 +698,7 @@ function ViewProject({author}) {
                                         )}
                                         {!validDev && (
                                             <span className="text-danger">
-                                            Invalide Developpeur
+                                            champ obligatoire
                                         </span>
                                         )}
                                     </FormGroup>
@@ -732,7 +729,7 @@ function ViewProject({author}) {
                                             invalid={!validPlug}
                                         />
                                         <FormFeedback valid={false}>
-                                            Invalide plugin
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
@@ -756,7 +753,7 @@ function ViewProject({author}) {
                                         )}
                                         {!validTraitement && (
                                             <span className="text-danger">
-                                            Invalide Developpeur
+                                            champ obligatoire
                                         </span>
                                         )}
                                     </FormGroup>
@@ -778,7 +775,7 @@ function ViewProject({author}) {
                                             invalid={!validSsh}
                                         />
                                         <FormFeedback valid={false}>
-                                            Invalide ssh
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
@@ -807,7 +804,7 @@ function ViewProject({author}) {
                                             invalid={!validRef}
                                         />
                                         <FormFeedback valid={false}>
-                                            Invalide Reference
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
@@ -828,7 +825,7 @@ function ViewProject({author}) {
                                             invalid={!validUrl}
                                         />
                                         <FormFeedback valid={false}>
-                                            Invalide URL
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>
@@ -858,7 +855,7 @@ function ViewProject({author}) {
                                             invalid={!validProtection}
                                         />
                                         <FormFeedback valid={false}>
-                                            Invalide Protection
+                                            champ obligatoire
                                         </FormFeedback>
                                     </FormGroup>
                                 </Col>

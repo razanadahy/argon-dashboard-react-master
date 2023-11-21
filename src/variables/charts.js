@@ -343,6 +343,9 @@ function chartExample2 (label,data) {
           {
             ticks: {
               callback: function (value) {
+                if (value<5 && value%(value.toFixed(0))===0){
+                  return value
+                }
                 if (!(value % 5)) {
                   return value;
                 }

@@ -36,8 +36,17 @@ const Admin = (props) => {
         });
     };
     const getBrandText = (path) => {
+        if (location?.pathname.includes("/projets/view/site/")){
+            return null
+        }
         for (let i = 0; i < routes.length; i++) {
             if (location?.pathname.indexOf(routes[i].layout + routes[i].path) !== -1) {
+                if (routes[i].name==='Dashboard'){
+                    return{
+                        path: null,
+                        name: `Hello ${userName}, Bienvenue`
+                    }
+                }
                 return routes[i];
             }
         }
@@ -59,6 +68,7 @@ const Admin = (props) => {
                     userName={userName}
                     navigate={navigate}
                     brandText={getBrandText(props?.location?.pathname)}
+                    utilisateur={"admin"}
                 />
                 <Routes>
                     {getRoutes(routes)}
@@ -68,12 +78,12 @@ const Admin = (props) => {
                     <AdminFooter />
                 </Container>
             </div>
-            <div className="position-fixed bottom-small-0 right-small-0">
-                <button type="button" className="btn btn-white rounded-circle" style={{width: '50px', height: '50px'}}>
-                    <span className="badge bg-translucent-danger rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(5px,5px)'}}><strong>5</strong></span>
-                    <i className="fa-solid fa-bolt mx-auto my-auto"/>
-                </button>
-            </div>
+            {/*<div className="position-fixed bottom-small-0 right-small-0">*/}
+            {/*    <button type="button" className="btn btn-white rounded-circle" style={{width: '50px', height: '50px'}}>*/}
+            {/*        <span className="badge bg-translucent-danger rounded-pill position-absolute" style={{height: '20px',width: '30px' , transform: 'translate(5px,5px)'}}><strong>5</strong></span>*/}
+            {/*        <i className="fa-solid fa-bolt mx-auto my-auto"/>*/}
+            {/*    </button>*/}
+            {/*</div>*/}
         </>
     );
 };
