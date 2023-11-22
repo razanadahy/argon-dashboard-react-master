@@ -426,9 +426,9 @@ function ViewProject({author}) {
                                     <Col className="text-right justify-content-end" xl={"7"} xs="4">
                                         <button type="button" className="btn btn-primary"
                                                 onClick={()=>getAllList()}>Nouveau Site </button>{''}
-                                        <Button color="default" onClick={(e) => e.preventDefault()}>
-                                            Modifier Site
-                                        </Button>
+                                        {/*<Button color="default" onClick={(e) => e.preventDefault()}>*/}
+                                        {/*    Modifier Site*/}
+                                        {/*</Button>*/}
                                     </Col>
                                 )}
                             </Row>

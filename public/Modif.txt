@@ -322,6 +322,7 @@ Notification:  -lead est notifier si le dev a terminer son site
 
 stat: 4 restant avec:   -retour de ticket (ok)
                         -moyenne de temps de chaque developpeur(activité)(nombre de tyket nataony)
+                        -modification de crud(operation et crud)
 
 
 
