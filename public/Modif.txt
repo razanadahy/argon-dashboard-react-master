@@ -322,3 +322,10 @@ Notification:  -lead est notifier si le dev a terminer son site
 
 stat: 4 restant avec:   -retour de ticket (ok)
                         -moyenne de temps de chaque developpeur(activité)(nombre de tyket nataony)
+
+
+
+
+Cette fonctionnalité permet aux développeurs inscrits d'accéder à leur compte en saisissant leurs identifiants (généralement nom d'utilisateur ou e-mail) et leur mot de passe. Une fois connectés, les utilisateurs ont accès aux fonctionnalités réservées aux membres et à son type(responsable d'equipe ou developpeur).
+
+Le but de connexion est de savoir qui se logge, quel est son role, et distribuer une clef (JWT ou Java Web Tokken)  qui sert une passage entre le spring boot et le front-end reactJS. Cela garantit que les utilisateurs autorisés peuvent accéder aux ressources et fonctionnalités spécifiques réservées que sa soit sur react,soit dans spring boot
