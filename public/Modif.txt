@@ -365,3 +365,4 @@ Extension et évolution de l’application :
 ---------------------------------------------------------------------------
 (objectif: avoir sa propre application dans l'entreprise)
 L'ajout de ticket bug est aussi une fonctionnalité offert à notre application en fournissant les developpeur responsable,le lien Jira.
+
