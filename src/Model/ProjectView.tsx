@@ -45,5 +45,20 @@ export default class ProjectView {
             return []
         }
     }
+    static async modif(token,idProjet,idEtat) {
+        try{
+            const response = await fetch(UrlBase(`traitement/projet/${idProjet}/${idEtat}`), {
+                method: "put",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            return response.ok
+
+        }catch (e) {
+            return false
+        }
+    }
 
 }

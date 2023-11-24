@@ -74,7 +74,6 @@ const AdminNavbar = (props) => {
                 stomp.disconnect();
             }
         };
-
     },[])
 
     const [typeAffichageNotif,setTypeAffichage]=useState(1)

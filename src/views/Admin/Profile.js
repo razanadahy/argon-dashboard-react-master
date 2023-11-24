@@ -264,7 +264,6 @@ const Profile = () => {
                             </Col>
                         </Row>
                     </div>
-
                 </Form>
                 <Alert color="danger" isOpen={erreur} toggle={()=>setErreur(false)} >
                     Invalide date

@@ -8,6 +8,7 @@ import ViewProject from "./views/Admin/ViewProject";
 import ViewSite from "./views/Admin/ViewSite";
 import MesTopPrios from "./views/Admin/MesTopPrios";
 import Calendrier from "./views/Admin/Calendrier";
+import ValidationUser from "./views/Admin/ValidationUser";
 
 const routes = [
   {
@@ -55,6 +56,14 @@ const routes = [
     name: "Profile",
     icon: "ni ni-single-02 text-yellow",
     component: <Profile/>,
+    layout: "/admin",
+    hide: false,
+  },
+  {
+    path: "/validateUser",
+    name: "Gestion d'utilisateur",
+    icon: "ni fa-solid fa-person-circle-plus text-cyan",
+    component: <ValidationUser author={"admin"}/>,
     layout: "/admin",
     hide: false,
   },

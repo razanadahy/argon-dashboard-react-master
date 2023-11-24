@@ -36,6 +36,7 @@ import TypeTraitement from "../../Model/TypeTraitement.tsx";
 import InfoSite from "../../Model/InfoSite.tsx";
 import Plugin from "../../Model/Plugin.tsx";
 import Protection from "../../Model/Protection.tsx";
+import Confiramation from "../../variables/Confiramation";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -48,7 +49,7 @@ function ViewProject({author}) {
         new Etat(3,'Suspendu',100),
         new Etat(4,'Terminé',1000),
     ])
-    const [stades,setStades]=useState([]) 
+    const [stades,setStades]=useState([])
     const [loadStade,setLoad]=useState(true)
     const utilisateur=JSON.parse(localStorage.getItem("user"))
     const [erreur,setErreur]=useState(false)
@@ -121,7 +122,13 @@ function ViewProject({author}) {
         })
         return i;
     }
-    function updateEtat(idTicket,idStade,idEtat) {
+    function updateEtat(idTicket,idStade,idEtat,idEtatTicket) {
+        if (idEtat===4 && idEtatTicket!==4){
+            setShowNotif(true)
+            setIStadeClicked(idStade)
+            setTicketClicked(idTicket)
+            return
+        }
         EtatStade.updateEtatTicket(utilisateur.token,idTicket,idStade,idEtat).then((resp)=>{
             if (!resp){
                 setErreur(true)
@@ -409,6 +416,25 @@ function ViewProject({author}) {
     const handleChange = (selectedOptions) => {
         setSelectedOptions(selectedOptions);
     };
+
+    const [showNotif,setShowNotif]=useState(false)
+    const [etat,setEtat]=useState(-100)
+    const [idStadeClickedClicked,setIStadeClicked]=useState(0)
+    const [idTicketClickedClicked,setTicketClicked]=useState(0)
+    function upEtat(number){
+        if (number===1){
+            EtatStade.updateEtatTicket(utilisateur.token,idTicketClickedClicked,idStadeClickedClicked,4).then((resp)=>{
+                if (!resp){
+                    setErreur(true)
+                }
+            }).finally(()=>{
+                setUpdate.toggle()
+            })
+        }
+    }
+    function destroyNotif(){
+        setShowNotif(false)
+    }
     return(
         <>
             <HeaderProject name={projet ? projet.nomProjet : ""}/>
@@ -514,27 +540,33 @@ function ViewProject({author}) {
                                         </td>
                                         {element.etatStade.map(({etat,stade})=>(
                                             <td key={stade.id} className="text-center">
-                                                <UncontrolledDropdown>
-                                                    <DropdownToggle
-                                                        className={`clickable ${getClassEtat(etat.nom)}`}
-                                                        role="button"
-                                                        size="sm"
-                                                        color=""
-                                                        tag ="span"
-                                                    >
-                                                        {etat.nom}
-                                                    </DropdownToggle>
-                                                    <DropdownMenu className="dropdown-menu-arrow" right>
-                                                        {etats.filter(et=>et.id!==etat.id).map((etatModifier)=>(
-                                                            <DropdownItem key={etatModifier.id} onClick={(e) =>{
-                                                                e.preventDefault()
-                                                                updateEtat(element.idTiket,stade.id,etatModifier.id)
-                                                            }}>
-                                                                {etatModifier.nom}
-                                                            </DropdownItem>
-                                                        ))}
-                                                    </DropdownMenu>
-                                                </UncontrolledDropdown>
+                                                {utilisateur.type===2 ? (
+                                                    <span className={getClassEtat(etat.nom)}>
+                                                     {etat.nom}
+                                                </span>
+                                                ) : (
+                                                    <UncontrolledDropdown>
+                                                        <DropdownToggle
+                                                            className={`clickable ${getClassEtat(etat.nom)}`}
+                                                            role="button"
+                                                            size="sm"
+                                                            color=""
+                                                            tag ="span"
+                                                        >
+                                                            {etat.nom}
+                                                        </DropdownToggle>
+                                                        <DropdownMenu className="dropdown-menu-arrow" right>
+                                                            {etats.filter(et=>et.id!==etat.id).map((etatModifier)=>(
+                                                                <DropdownItem key={etatModifier.id} onClick={(e) =>{
+                                                                    e.preventDefault()
+                                                                    updateEtat(element.idTiket,stade.id,etatModifier.id,element.ticket.etat.id)
+                                                                }}>
+                                                                    {etatModifier.nom}
+                                                                </DropdownItem>
+                                                            ))}
+                                                        </DropdownMenu>
+                                                    </UncontrolledDropdown>
+                                                )}
                                             </td>
                                         ))}
                                         <td>
@@ -620,286 +652,289 @@ function ViewProject({author}) {
                 </Col>
             </Row>
             {utilisateur.type===1 && (
-                <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau Site"} hide={()=>setModalShow(false)}>
-                    <Form  autoComplete="off">
-                        <h6 className="heading-small text-muted mb-4">
-                            Site
-                        </h6>
-                        <div className="pl-lg-3">
-                            <Row>
-                                <Col lg="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-nomSite"
-                                        >
-                                            Nom Site
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={nomSite}
-                                            type="text"
-                                            id="input-nomSite"
-                                            onChange={(event)=>setNomSite(event.target.value)}
-                                            invalid={!validNomSite}
-                                        />
-                                        <FormFeedback tag="span" className="text-danger" valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
-                                <Col lg="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-domaine"
-                                        >
-                                            Domaine
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={domaine}
-                                            type="text"
-                                            id="input-domaine"
-                                            onChange={(event)=>setDomaine(event.target.value)}
-                                            invalid={!validDomaine}
-                                        />
-                                        <FormFeedback valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                        </div>
-                        <hr className="my-4" />
-                        <h6 className="heading-small text-muted mb-4">
-                            Responsable
-                        </h6>
-                        <div className="pl-lg-3">
-                            <Row>
-                                <Col lg="12">
-                                    <FormGroup>
-                                        <label className="form-control-label">
-                                            Developpeur
-                                        </label>
-                                        {optionDev.length===0 ? (
-                                            <div className="skeleton mb-3 p-4 rounded"/>
-                                        ):(
-                                            <Select
-                                                value={selectedOption}
-                                                onChange={handleSelectChange}
-                                                options={optionDev}
-                                                isSearchable={true}
-                                                styles={customStyles}
-                                                placeholder="Selectionner le responsable"
-                                                className="text-capitalize"
-                                                components={{ Option: ({ innerProps, label, isFocused, isSelected, data }) => <CustomOption innerProps={innerProps} label={label} isSelected={isSelected} isFocused={isFocused} data={data} /> }}
+                <>
+                    <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau Site"} hide={()=>setModalShow(false)}>
+                        <Form  autoComplete="off">
+                            <h6 className="heading-small text-muted mb-4">
+                                Site
+                            </h6>
+                            <div className="pl-lg-3">
+                                <Row>
+                                    <Col lg="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-nomSite"
+                                            >
+                                                Nom Site
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={nomSite}
+                                                type="text"
+                                                id="input-nomSite"
+                                                onChange={(event)=>setNomSite(event.target.value)}
+                                                invalid={!validNomSite}
                                             />
-                                        )}
-                                        {!validDev && (
-                                            <span className="text-danger">
+                                            <FormFeedback tag="span" className="text-danger" valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-domaine"
+                                            >
+                                                Domaine
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={domaine}
+                                                type="text"
+                                                id="input-domaine"
+                                                onChange={(event)=>setDomaine(event.target.value)}
+                                                invalid={!validDomaine}
+                                            />
+                                            <FormFeedback valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <hr className="my-4" />
+                            <h6 className="heading-small text-muted mb-4">
+                                Responsable
+                            </h6>
+                            <div className="pl-lg-3">
+                                <Row>
+                                    <Col lg="12">
+                                        <FormGroup>
+                                            <label className="form-control-label">
+                                                Developpeur
+                                            </label>
+                                            {optionDev.length===0 ? (
+                                                <div className="skeleton mb-3 p-4 rounded"/>
+                                            ):(
+                                                <Select
+                                                    value={selectedOption}
+                                                    onChange={handleSelectChange}
+                                                    options={optionDev}
+                                                    isSearchable={true}
+                                                    styles={customStyles}
+                                                    placeholder="Selectionner le responsable"
+                                                    className="text-capitalize"
+                                                    components={{ Option: ({ innerProps, label, isFocused, isSelected, data }) => <CustomOption innerProps={innerProps} label={label} isSelected={isSelected} isFocused={isFocused} data={data} /> }}
+                                                />
+                                            )}
+                                            {!validDev && (
+                                                <span className="text-danger">
                                             champ obligatoire
                                         </span>
-                                        )}
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                        </div>
-                        <hr className="my-4" />
-                        <h6 className="heading-small text-muted mb-4">
-                            Plugin
-                        </h6>
-                        <div className="pl-lg-4">
-                            <Row>
+                                            )}
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <hr className="my-4" />
+                            <h6 className="heading-small text-muted mb-4">
+                                Plugin
+                            </h6>
+                            <div className="pl-lg-4">
+                                <Row>
 
-                                <Col lg="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-plugin"
-                                        >
-                                            Nom plugin
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={plugin}
-                                            type="text"
-                                            id="input-plugin"
-                                            onChange={(event)=>setplugin(event.target.value)}
-                                            invalid={!validPlug}
-                                        />
-                                        <FormFeedback valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
-                                <Col lg="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-last-name"
-                                        >
-                                            Type de traitement
-                                        </label>
-                                        {typetraitementOption.length===0 ? (<div className="skeleton mb-3 p-4 rounded"/>):(
-                                            <CreatableSelect
-                                                onChange={handleChange}
-                                                onCreateOption={handleCreateOption}
-                                                options={typetraitementOption}
-                                                value={selectedOptions}
-                                                styles={customStyles}
-                                                placeholder=" type de...."
+                                    <Col lg="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-plugin"
+                                            >
+                                                Nom plugin
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={plugin}
+                                                type="text"
+                                                id="input-plugin"
+                                                onChange={(event)=>setplugin(event.target.value)}
+                                                invalid={!validPlug}
                                             />
-                                        )}
-                                        {!validTraitement && (
-                                            <span className="text-danger">
+                                            <FormFeedback valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-last-name"
+                                            >
+                                                Type de traitement
+                                            </label>
+                                            {typetraitementOption.length===0 ? (<div className="skeleton mb-3 p-4 rounded"/>):(
+                                                <CreatableSelect
+                                                    onChange={handleChange}
+                                                    onCreateOption={handleCreateOption}
+                                                    options={typetraitementOption}
+                                                    value={selectedOptions}
+                                                    styles={customStyles}
+                                                    placeholder=" type de...."
+                                                />
+                                            )}
+                                            {!validTraitement && (
+                                                <span className="text-danger">
                                             champ obligatoire
                                         </span>
-                                        )}
-                                    </FormGroup>
-                                </Col>
-                                <Col lg="12">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-ssh"
-                                        >
-                                            SSH Git
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={ssh}
-                                            type="text"
-                                            id="input-ssh"
-                                            onChange={(event)=>setSsh(event.target.value)}
-                                            invalid={!validSsh}
-                                        />
-                                        <FormFeedback valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                        </div>
-                        <hr className="my-4" />
-                        <h6 className="heading-small text-muted mb-4">
-                            Ticket
-                        </h6>
-                        <div className="pl-lg-4">
-                            <Row>
-                                <Col md="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-reference"
-                                        >
-                                            Reference
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={reference}
-                                            type="text"
-                                            id="input-reference"
-                                            onChange={(event)=>setReference(event.target.value)}
-                                            invalid={!validRef}
-                                        />
-                                        <FormFeedback valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
-                                <Col lg="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-url"
-                                        >
-                                            Url
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={url}
-                                            type="text"
-                                            id="input-url"
-                                            onChange={(event)=>setUrl(event.target.value)}
-                                            invalid={!validUrl}
-                                        />
-                                        <FormFeedback valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
+                                            )}
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg="12">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-ssh"
+                                            >
+                                                SSH Git
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={ssh}
+                                                type="text"
+                                                id="input-ssh"
+                                                onChange={(event)=>setSsh(event.target.value)}
+                                                invalid={!validSsh}
+                                            />
+                                            <FormFeedback valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <hr className="my-4" />
+                            <h6 className="heading-small text-muted mb-4">
+                                Ticket
+                            </h6>
+                            <div className="pl-lg-4">
+                                <Row>
+                                    <Col md="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-reference"
+                                            >
+                                                Reference
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={reference}
+                                                type="text"
+                                                id="input-reference"
+                                                onChange={(event)=>setReference(event.target.value)}
+                                                invalid={!validRef}
+                                            />
+                                            <FormFeedback valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-url"
+                                            >
+                                                Url
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={url}
+                                                type="text"
+                                                id="input-url"
+                                                onChange={(event)=>setUrl(event.target.value)}
+                                                invalid={!validUrl}
+                                            />
+                                            <FormFeedback valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
 
-                            </Row>
-                        </div>
-                        <hr className="my-4" />
-                        <h6 className="heading-small text-muted mb-4">
-                            Information sur la protection
-                        </h6>
-                        <div className="pl-lg-4">
-                            <Row>
-                                <Col md="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-protection"
-                                        >
-                                            Protection
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white"
-                                            value={protection}
-                                            type="text"
-                                            id="input-protection"
-                                            onChange={(event)=>setProtection(event.target.value)}
-                                            invalid={!validProtection}
-                                        />
-                                        <FormFeedback valid={false}>
-                                            champ obligatoire
-                                        </FormFeedback>
-                                    </FormGroup>
-                                </Col>
-                                <Col lg="6">
-                                    <FormGroup>
-                                        <label
-                                            className="form-control-label"
-                                            htmlFor="input-dif"
-                                        >
-                                            Difficulté
-                                        </label>
-                                        <Input
-                                            className="form-control-alternative bg-white text-capitalize"
-                                            id="input-dif"
-                                            type="select" value={dif ? dif.id : 1} onChange={(event)=>{
-                                            setDif(difficult.find(element=>element.id===parseInt(event.target.value)))
-                                        }}>
-                                            {difficult.map(({id,nom})=>(
-                                                <option key={id} value={id}>{nom}</option>
-                                            ))}
-                                        </Input>
-                                    </FormGroup>
-                                </Col>
+                                </Row>
+                            </div>
+                            <hr className="my-4" />
+                            <h6 className="heading-small text-muted mb-4">
+                                Information sur la protection
+                            </h6>
+                            <div className="pl-lg-4">
+                                <Row>
+                                    <Col md="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-protection"
+                                            >
+                                                Protection
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white"
+                                                value={protection}
+                                                type="text"
+                                                id="input-protection"
+                                                onChange={(event)=>setProtection(event.target.value)}
+                                                invalid={!validProtection}
+                                            />
+                                            <FormFeedback valid={false}>
+                                                champ obligatoire
+                                            </FormFeedback>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col lg="6">
+                                        <FormGroup>
+                                            <label
+                                                className="form-control-label"
+                                                htmlFor="input-dif"
+                                            >
+                                                Difficulté
+                                            </label>
+                                            <Input
+                                                className="form-control-alternative bg-white text-capitalize"
+                                                id="input-dif"
+                                                type="select" value={dif ? dif.id : 1} onChange={(event)=>{
+                                                setDif(difficult.find(element=>element.id===parseInt(event.target.value)))
+                                            }}>
+                                                {difficult.map(({id,nom})=>(
+                                                    <option key={id} value={id}>{nom}</option>
+                                                ))}
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
 
-                            </Row>
-                        </div>
-                        <hr className="my-4" />
-                        <h6 className="heading-small text-muted mb-4">Remarque</h6>
-                        <div className="pl-lg-4">
-                            <FormGroup>
-                                <Input
-                                    className="form-control-alternative bg-white w-100"
-                                    rows="4"
-                                    value={remarque}
-                                    onChange={(event)=>setRemarque(event.target.value)}
-                                    type="textarea"
-                                />
-                            </FormGroup>
-                        </div>
-                    </Form>
-                    <Alert color="danger" isOpen={erreur} toggle={()=>setErreur(false)} >
-                        Des erreurs inattendues empêchent de faire la rêquete
-                    </Alert>
-                </ModalLg>
+                                </Row>
+                            </div>
+                            <hr className="my-4" />
+                            <h6 className="heading-small text-muted mb-4">Remarque</h6>
+                            <div className="pl-lg-4">
+                                <FormGroup>
+                                    <Input
+                                        className="form-control-alternative bg-white w-100"
+                                        rows="4"
+                                        value={remarque}
+                                        onChange={(event)=>setRemarque(event.target.value)}
+                                        type="textarea"
+                                    />
+                                </FormGroup>
+                            </div>
+                        </Form>
+                        <Alert color="danger" isOpen={erreur} toggle={()=>setErreur(false)} >
+                            Des erreurs inattendues empêchent de faire la rêquete
+                        </Alert>
+                    </ModalLg>
+                    <Confiramation show={showNotif} hide={destroyNotif} etat={upEtat} text={"Voulez-vous terminer ce stade?"}/>
+                </>
             )}
         </>
     )

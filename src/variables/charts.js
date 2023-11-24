@@ -297,8 +297,8 @@ function chartExample1 (label,data) {
               },
               ticks: {
                 callback: function (value) {
-                  if (!(value % 4)) {
-                    return  value ;
+                  if (value%(value.toFixed(0))===0){
+                    return value
                   }
                 },
               },

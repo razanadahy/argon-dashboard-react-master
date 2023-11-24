@@ -1,5 +1,3 @@
-//https://docs.google.com/document/d/1v_d5NnLB_6SHEkrNZcW8iRDHM4pKt7fv/edit?pli=1#heading=h.1ci93xb
-
 import {
     Card,
     CardHeader,
@@ -10,7 +8,7 @@ import {
     FormGroup,
     Input,
     Col,
-    Form, FormFeedback,
+    Form, FormFeedback, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem,
 } from "reactstrap";
 
 import {useEffect, useState} from "react";
@@ -25,6 +23,7 @@ import ModalLg from "../../variables/Modal";
 import TypeProjet from "../../Model/TypeProjet.tsx";
 import Plateforme from "../../Model/Plateforme.tsx";
 import Projet from "../../Model/Projet.tsx";
+import Etat from "../../Model/Etat.tsx";
 
 const Projets = ({type}) => {
     const [listProjet,setListProjet]=useState([])
@@ -246,6 +245,19 @@ const Projets = ({type}) => {
         setUrl("")
         setLimite(new Date())
     }
+    const [etats,setEtats]=useState([
+        new Etat(1,'A faire',0),
+        new Etat(2,'En cours',10),
+        new Etat(3,'Suspendu',100),
+        new Etat(4,'Terminé',1000),
+    ])
+    function modif(idProjet,idEtat) {
+        ProjectView.modif(user.token,idProjet,idEtat).then((resp)=>{
+            if (resp){
+                setInsert(!insert)
+            }
+        })
+    }
     return (
         <>
             <Header/>
@@ -348,9 +360,33 @@ const Projets = ({type}) => {
                                             <pre className="m-0 p-0 fs-14">{ProjectView.deadlines}</pre>
                                         </td>
                                         <td>
-                                            <span className={getClassEtat(ProjectView.nomEtat)}>
-                                                {ProjectView.nomEtat}
-                                            </span>
+                                            {user.type===1 ? (
+                                                <UncontrolledDropdown>
+                                                    <DropdownToggle
+                                                        className={`clickable ${getClassEtat(ProjectView.nomEtat)}`}
+                                                        role="button"
+                                                        size="sm"
+                                                        color=""
+                                                        tag ="span"
+                                                    >
+                                                        {ProjectView.nomEtat}
+                                                    </DropdownToggle>
+                                                    <DropdownMenu className="dropdown-menu-arrow" right>
+                                                        {etats.filter(et=>et.nom.toLowerCase()!==ProjectView.nomEtat.toLowerCase()).map((etatModifier)=>(
+                                                            <DropdownItem key={etatModifier.id} onClick={(e) =>{
+                                                                e.preventDefault()
+                                                                modif(ProjectView.idProjet,etatModifier.id)
+                                                            }}>
+                                                                {etatModifier.nom}
+                                                            </DropdownItem>
+                                                        ))}
+                                                    </DropdownMenu>
+                                                </UncontrolledDropdown>
+                                            ): (
+                                                <span className={getClassEtat(ProjectView.nomEtat)}>
+                                                     {ProjectView.nomEtat}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="text-center">
                                             <pre className="m-0 p-0 fs-14">

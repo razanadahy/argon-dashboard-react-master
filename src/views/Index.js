@@ -34,7 +34,23 @@ const Index = (props) => {
     const [statDevRetour,setStatDevRetour]=useState([])
     const [allStade,setAllStade]=useState([])
     const [allAgv,setAllAvg]=useState([])
+    const [orderMonth,setOrderMont]=useState(0)
+    const [year,setYear]=useState(0)
+    function anneeEtSemestreActuels() {
+        const dateActuelle = new Date();
+        const annee = dateActuelle.getFullYear();
+        const mois = dateActuelle.getMonth() + 1;
+        const semestre = mois < 7 ? 0 : 6;
+
+        return { annee, semestre };
+    }
     useEffect(()=>{
+        const getNow=anneeEtSemestreActuels();
+        setYear(getNow.annee)
+        setOrderMont(getNow.semestre)
+        StatistiqueDashbord.getNumberProject(utilisateur.token,getNow.annee).then((response)=>{
+            setAllData(response)
+        })
         StatistiqueDashbord.getByStade(utilisateur.token).then((response)=>{
             setAllStade(response)
         })
@@ -47,12 +63,11 @@ const Index = (props) => {
     },[])
 
 
-    const [year,setYear]=useState(2023)
     const [allData,setAllData]=useState([])
 
     useEffect(()=>{
         StatistiqueDashbord.getNumberProject(utilisateur.token,year).then((response)=>{
-          setAllData(response)
+            setAllData(response)
         })
     },[year])
 
@@ -60,7 +75,6 @@ const Index = (props) => {
         parseOptions(Chart, chartOptions());
     }
 
-    const [orderMonth,setOrderMont]=useState(6)
     const d=allData.slice(orderMonth,orderMonth+6)
     const extractData = (data) => {
         const values = [];
@@ -341,7 +355,7 @@ const Index = (props) => {
                                       ): (
                                           <div className="d-flex justify-content-center">
                                               <div className="spinner-border" role="status">
-                                                  <span className="visually-hidden">Loading...</span>
+                                                  <span className="sr-only">Loading...</span>
                                               </div>
                                           </div>
                                       )}
