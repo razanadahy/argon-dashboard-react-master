@@ -111,35 +111,17 @@ const AdminNavbar = (props) => {
                               <DropdownMenu className="dropdown-menu-arrow" right>
                                   <DropdownItem className="text-sm text-muted m-0" header tag="div">
                                       <div className="row">
-                                          <div className="col-4 d-flex justify-content-start">
-                                              <button type="button" className="btn btn-outline-primary btn-sm">Nouvelle notification</button>
+                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
+                                              <button type="button" className="btn btn-outline-primary btn-sm col-11 text-center">Ticket Assigné</button>
                                           </div>
-                                          <div className="col-4 d-flex justify-content-start">
-                                              <button type="button" className="btn btn-outline-primary btn-sm">Type de notification</button>
+                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
+                                              <button type="button" className="btn btn-outline-primary btn-sm col-11 text-center">Projet</button>
                                           </div>
-                                          <div className="col-4 d-flex justify-content-start">
-                                              <button type="button" className="btn btn-primary btn-sm">Toute notification</button>
+                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
+                                              <button type="button" className="btn btn-outline-primary btn-sm col-11 text-center">Ticket terminé</button>
                                           </div>
-                                      </div>
-                                      {/*<h3 className="text-start text-sm text-capitalize m-0">
-                                          Vous avez <strong className="text-danger ">{lenNotif}</strong> nouvelle notification(s)
-                                      </h3>*/}
-                                  </DropdownItem>
-                                  <DropdownItem tag="div" style={{width: '495px'}}>
-                                      <div className="align-items-center d-flex row clickable">
-                                          <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-warning">
-                                                  <i className="fa fa-c"/>
-                                              </span>
-                                          </div>
-                                          <div className="col-8 ml--2">
-                                              <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
-                                              </div>
-                                              <p className="text-sm mb-0">Le projet titre a été creé</p>
-                                          </div>
-                                          <div className="col-2 d-flex justify-content-end">
-                                              <div className="text-right text-muted"><small>2022-11-10</small></div>
+                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
+                                              <button type="button" className="btn btn-primary btn-sm col-11 text-center">Inscription</button>
                                           </div>
                                       </div>
                                   </DropdownItem>
@@ -150,36 +132,88 @@ const AdminNavbar = (props) => {
                                                   <i className="fa fa-c"/>
                                               </span>
                                           </div>
-                                          <div className="col-8 ml--2">
+                                          <div className="col-10 ml--2">
                                               <div className="d-flex justify-content-between align-items-center">
                                                   <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
                                               </div>
-                                              <p className="text-sm mb-0">Le projet titre a été creé</p>
-                                          </div>
-                                          <div className="col-2 d-flex justify-content-end">
-                                              <div className="text-right text-muted"><small>2022-11-10</small></div>
+                                              <p className="text-sm mb-0 container-message">Le projet titre a été creé </p>
                                           </div>
                                       </div>
                                   </DropdownItem>
                                   <DropdownItem tag="div" style={{width: '495px'}}>
                                       <div className="align-items-center d-flex row clickable">
                                           <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-warning">
-                                                  <i className="fa fa-c"/>
+                                              <span className="avatar rounded-circle bg-translucent-danger">
+                                                  <i className="fa fa-d"/>
                                               </span>
                                           </div>
-                                          <div className="col-8 ml--2">
+                                          <div className="col-10 ml--2">
                                               <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
+                                                  <div><h4 className="mb-0 text-sm">Deadline du projet</h4></div>
                                               </div>
-                                              <p className="text-sm mb-0">Le projet titre a été creé</p>
-                                          </div>
-                                          <div className="col-2 d-flex justify-content-end">
-                                              <div className="text-right text-muted"><small>2022-11-10</small></div>
+                                              <p className="text-sm mb-0">Le deadline de titre s'expire dans n jours</p>
                                           </div>
                                       </div>
                                   </DropdownItem>
-                                  {/*<DropdownItem divider />*/}{/*<DropdownItem divider />*/}
+                                  <DropdownItem tag="div" style={{width: '495px'}}>
+                                      <div className="align-items-center d-flex row clickable">
+                                          <div className="col-2">
+                                              <span className="avatar rounded-circle bg-translucent-primary">
+                                                  <i className="fa fa-a"/>
+                                              </span>
+                                          </div>
+                                          <div className="col-10 ml--2">
+                                              <div className="d-flex justify-content-between align-items-center">
+                                                  <div><h4 className="mb-0 text-sm">Ticket assigné</h4></div>
+                                              </div>
+                                              <p className="text-sm mb-0">Vous êtes assigné à un ticket <a
+                                                  className="font-weight-bold ml-1"
+                                                  href="#"
+                                                  rel="noopener noreferrer"
+                                                  target="_blank"
+                                              >
+                                                  PPP-675
+                                              </a></p>
+                                          </div>
+                                      </div>
+                                  </DropdownItem>
+                                  <DropdownItem tag="div" style={{width: '495px'}}>
+                                      <div className="align-items-center d-flex row clickable">
+                                          <div className="col-2">
+                                              <span className="avatar rounded-circle bg-translucent-info">
+                                                  <i className="fa fa-n"/>
+                                              </span>
+                                          </div>
+                                          <div className="col-10 ml--2">
+                                              <div className="d-flex justify-content-between align-items-center">
+                                                  <div><h4 className="mb-0 text-sm">Nouvelle Developpeur</h4></div>
+                                              </div>
+                                              <p className="text-sm mb-0">Nom  tente de s'inscrire</p>
+                                          </div>
+                                      </div>
+                                  </DropdownItem>
+                                  <DropdownItem tag="div" style={{width: '495px'}}>
+                                      <div className="align-items-center d-flex row clickable">
+                                          <div className="col-2">
+                                              <span className="avatar rounded-circle bg-translucent-success">
+                                                  <i className="fa fa-e"/>
+                                              </span>
+                                          </div>
+                                          <div className="col-10 ml--2">
+                                              <div className="d-flex justify-content-between align-items-center">
+                                                  <div><h4 className="mb-0 text-sm">Etat ticket</h4></div>
+                                              </div>
+                                              <p className="text-sm mb-0">Le ticket  <a
+                                                  className="font-weight-bold ml-1"
+                                                  href="#"
+                                                  rel="noopener noreferrer"
+                                                  target="_blank"
+                                              >
+                                                  PPP-675
+                                              </a> est terminé</p>
+                                          </div>
+                                      </div>
+                                  </DropdownItem>
                             </DropdownMenu>
                           </UncontrolledDropdown>
                           <UncontrolledDropdown nav>
