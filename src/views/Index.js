@@ -28,6 +28,8 @@ import Header from "components/Headers/Header.js";
 import StatistiqueDashbord from "../Model/StatistiqueDashbord.tsx";
 import StatDev from "../Model/StatDev.tsx";
 import PaginateObject from "../components/Sidebar/PaginateObject";
+import InfoDev from "../Model/InfoDev.tsx";
+import unidecode from "unidecode";
 
 const Index = (props) => {
     const utilisateur=JSON.parse(localStorage.getItem("user"))
@@ -44,6 +46,10 @@ const Index = (props) => {
 
         return { annee, semestre };
     }
+    const [nmTicket,setNbTicket]=useState([])
+    const [nbTicketAll,setNbTicketAll]=useState([])
+    const[search,setSearch]=useState('')
+    const [filter,setFilter]=useState(true)
     useEffect(()=>{
         const getNow=anneeEtSemestreActuels();
         setYear(getNow.annee)
@@ -60,6 +66,10 @@ const Index = (props) => {
         StatDev.getByAvgDev(utilisateur.token).then((response)=>{
             setAllAvg(response)
         })
+        InfoDev.numberTicket(utilisateur.token).then((resp)=>{
+            setNbTicketAll(resp)
+            setNbTicket(resp)
+        })
     },[])
 
 
@@ -74,7 +84,15 @@ const Index = (props) => {
     if (window.Chart) {
         parseOptions(Chart, chartOptions());
     }
+    function nombreAleatoireEntreDeuxEtSept() {
+        // Générer un nombre aléatoire entre 0 (inclus) et 1 (exclus)
+        const nombreAleatoire = Math.random();
 
+        // Transformer ce nombre pour qu'il soit entre 2 et 7
+        const nombreEntreDeuxEtSept = Math.floor(nombreAleatoire * 6) + 2;
+
+        return nombreEntreDeuxEtSept;
+    }
     const d=allData.slice(orderMonth,orderMonth+6)
     const extractData = (data) => {
         const values = [];
@@ -82,6 +100,7 @@ const Index = (props) => {
 
         data.forEach(({ valeur, label }) => {
             values.push(valeur.toFixed(1));
+            //values.push(nombreAleatoireEntreDeuxEtSept());
             labels.push(label);
         });
         return { values, labels };
@@ -119,177 +138,89 @@ const Index = (props) => {
     const startAgv=(currentAgv-1)*perPage
     const endAvg=startAgv+perPage
     const currentDataAvg=allAgv.slice(startAgv,endAvg)
+
+
+    const [cur,setCur]=useState(1)
+
+    function onPageChangeTicket(number) {
+        setCur(number)
+    }
+    const startTicket=(cur-1)*perPage
+    const endTicket=startTicket+perPage
+    const currentDataTicket=nmTicket.slice(startTicket,endTicket)
+
+    useEffect(()=>{
+        const text=search.toLowerCase();
+        const byRef = nbTicketAll.filter((projet) => {
+            const normalizedReference = unidecode(projet.infoUtilisateur.nom).toLowerCase();
+            return normalizedReference.includes(text);
+        });
+        setNbTicket(byRef)
+    },[nbTicketAll,search])
+
+    function fil(){
+        const updatedFilterItem = [...nmTicket];
+        if (filter){
+            updatedFilterItem.sort((a, b) => b.pourcentageTacheFini - a.pourcentageTacheFini)
+        }else{
+            updatedFilterItem.sort((a, b) => a.pourcentageTacheFini - b.pourcentageTacheFini)
+        }
+        setNbTicket(updatedFilterItem);
+    }
+
     return (
           <>
               <Header />
               <Container className="mt--7" fluid>
-                  {/*<Row >*/}
-                  {/*    <Col className="mb-5 mb-xl-0" xl="8">*/}
-                  {/*        <Card className="shadow">*/}
-                  {/*            <CardHeader className="border-0">*/}
-                  {/*                <Row className="align-items-center">*/}
-                  {/*                    <div className="col">*/}
-                  {/*                        <h3 className="mb-0">Page visits</h3>*/}
-                  {/*                    </div>*/}
-                  {/*                    <div className="col text-right">*/}
-                  {/*                        <Button color="primary" onClick={(e) => e.preventDefault()} size="sm">*/}
-                  {/*                            See all*/}
-                  {/*                        </Button>*/}
-                  {/*                    </div>*/}
-                  {/*                </Row>*/}
-                  {/*            </CardHeader>*/}
-                  {/*            <Table className="align-items-center table-flush" responsive>*/}
-                  {/*                <thead className="thead-light">*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="col">Page name</th>*/}
-                  {/*                    <th scope="col">Visitors</th>*/}
-                  {/*                    <th scope="col">Unique users</th>*/}
-                  {/*                    <th scope="col">Bounce rate</th>*/}
-                  {/*                </tr>*/}
-                  {/*                </thead>*/}
-                  {/*                <tbody>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">/argon/</th>*/}
-                  {/*                    <td>4,569</td>*/}
-                  {/*                    <td>340</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <i className="fas fa-arrow-up text-success mr-3" /> 46,53%*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">/argon/index.html</th>*/}
-                  {/*                    <td>3,985</td>*/}
-                  {/*                    <td>319</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <i className="fas fa-arrow-down text-warning mr-3" />{" "}*/}
-                  {/*                        46,53%*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">/argon/charts.html</th>*/}
-                  {/*                    <td>3,513</td>*/}
-                  {/*                    <td>294</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <i className="fas fa-arrow-down text-warning mr-3" />{" "}*/}
-                  {/*                        36,49%*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">/argon/tables.html</th>*/}
-                  {/*                    <td>2,050</td>*/}
-                  {/*                    <td>147</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <i className="fas fa-arrow-up text-success mr-3" /> 50,87%*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">/argon/profile.html</th>*/}
-                  {/*                    <td>1,795</td>*/}
-                  {/*                    <td>190</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <i className="fas fa-arrow-down text-danger mr-3" />{" "}*/}
-                  {/*                        46,53%*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                </tbody>*/}
-                  {/*            </Table>*/}
-                  {/*        </Card>*/}
-                  {/*    </Col>*/}
-                  {/*    <Col xl="4">*/}
-                  {/*        <Card className="shadow">*/}
-                  {/*            <CardHeader className="border-0">*/}
-                  {/*                <Row className="align-items-center">*/}
-                  {/*                    <div className="col">*/}
-                  {/*                        <h3 className="mb-0">Retour de ticket(ticket bug)</h3>*/}
-                  {/*                    </div>*/}
-                  {/*                </Row>*/}
-                  {/*            </CardHeader>*/}
-                  {/*            <Table className="align-items-center table-flush" responsive>*/}
-                  {/*                <thead className="thead-light">*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="col">Referral</th>*/}
-                  {/*                    <th scope="col">Visitors</th>*/}
-                  {/*                    <th scope="col" />*/}
-                  {/*                </tr>*/}
-                  {/*                </thead>*/}
-                  {/*                <tbody>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">Facebook</th>*/}
-                  {/*                    <td>1,480</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <div className="d-flex align-items-center">*/}
-                  {/*                            <span className="mr-2">60%</span>*/}
-                  {/*                            <div>*/}
-                  {/*                                <Progress*/}
-                  {/*                                    max="100"*/}
-                  {/*                                    value="60"*/}
-                  {/*                                    barClassName="bg-gradient-danger"*/}
-                  {/*                                />*/}
-                  {/*                            </div>*/}
-                  {/*                        </div>*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">Facebook</th>*/}
-                  {/*                    <td>5,480</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <div className="d-flex align-items-center">*/}
-                  {/*                            <span className="mr-2">70%</span>*/}
-                  {/*                            <div>*/}
-                  {/*                                <Progress max="100" value="70" barClassName="bg-gradient-success"/>*/}
-                  {/*                            </div>*/}
-                  {/*                        </div>*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">Google</th>*/}
-                  {/*                    <td>4,807</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <div className="d-flex align-items-center">*/}
-                  {/*                            <span className="mr-2">80%</span>*/}
-                  {/*                            <div>*/}
-                  {/*                                <Progress max="100" value="80" />*/}
-                  {/*                            </div>*/}
-                  {/*                        </div>*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">Instagram</th>*/}
-                  {/*                    <td>3,678</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <div className="d-flex align-items-center">*/}
-                  {/*                            <span className="mr-2">75%</span>*/}
-                  {/*                            <div>*/}
-                  {/*                                <Progress*/}
-                  {/*                                    max="100"*/}
-                  {/*                                    value="75"*/}
-                  {/*                                    barClassName="bg-gradient-info"*/}
-                  {/*                                />*/}
-                  {/*                            </div>*/}
-                  {/*                        </div>*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                <tr>*/}
-                  {/*                    <th scope="row">twitter</th>*/}
-                  {/*                    <td>2,645</td>*/}
-                  {/*                    <td>*/}
-                  {/*                        <div className="d-flex align-items-center">*/}
-                  {/*                            <span className="mr-2">30%</span>*/}
-                  {/*                            <div>*/}
-                  {/*                                <Progress*/}
-                  {/*                                    max="100"*/}
-                  {/*                                    value="30"*/}
-                  {/*                                    barClassName="bg-gradient-warning"*/}
-                  {/*                                />*/}
-                  {/*                            </div>*/}
-                  {/*                        </div>*/}
-                  {/*                    </td>*/}
-                  {/*                </tr>*/}
-                  {/*                </tbody>*/}
-                  {/*            </Table>*/}
-                  {/*        </Card>*/}
-                  {/*    </Col>*/}
-                  {/*</Row>*/}
+                  <Row className="mt-5">
+                      <Col className="mb-5 mb-xl-0" xl="12">
+                          <Card className="shadow">
+                              <CardHeader className="border-0">
+                                  <Row className="align-items-center">
+                                      <div className="col-4">
+                                          <h3 className="mb-0">Ticket actif par dev</h3>
+                                      </div>
+                                      <div className="col-8 d-flex align-items-end">
+                                          <div className="input-group-merge input-group">
+                                              <input placeholder="search" type="search" onChange={(event)=>setSearch(event.target.value)} className="form-control"/>
+                                          </div>
+                                      </div>
+                                  </Row>
+                              </CardHeader>
+                              <Table className="align-items-center table-flush" responsive>
+                                  <thead className="thead-light font">
+                                  <tr>
+                                      <th  scope="col">Dev</th>
+                                      <th className="clickable" onClick={()=>{
+                                          setFilter(!filter)
+                                          fil()
+                                      }}  scope="col">Nombre de ticket actif  <i className="fa fa-sort"/></th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  {currentDataTicket.map(({infoUtilisateur,pourcentageTacheFini},index)=>(
+                                      <tr key={index}>
+                                          <th scope="row">
+                                              <div >
+                                                  <div className="d-flex justify-content-between align-items-center">
+                                                      <div><h4 className="mb-0 text-sm">{infoUtilisateur.nom}</h4></div>
+                                                  </div>
+                                                  <p className="text-sm mb-0">{infoUtilisateur.email}</p>
+                                              </div>
+                                          </th>
+                                          <td>{pourcentageTacheFini}</td>
+                                      </tr>
+                                  ))}
+                                  </tbody>
+                              </Table>
+                              <CardFooter className="py-4">
+                                  <nav aria-label="...">
+                                      <PaginateObject currentPage={cur} list={nmTicket} perPage={perPage} onPageChange={onPageChangeTicket}/>
+                                  </nav>
+                              </CardFooter>
+                          </Card>
+                      </Col>
+                  </Row>
                   <Row className="mt-5">
                       <Col className="mb-5 mb-xl-0" xl="8">
                           <Card className="bg-gradient-default shadow h-100">

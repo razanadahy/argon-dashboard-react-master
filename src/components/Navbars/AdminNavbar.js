@@ -5,13 +5,13 @@ import {useEffect, useState} from "react";
 import {Stomp} from "@stomp/stompjs";
 import {UrlBase} from "../../Config.ts";
 import SockJS from 'sockjs-client';
-
+import Notification from "../../Model/Notification.tsx";
 const AdminNavbar = (props) => {
     function getFirstLetter(userName) {
         userName = userName.toLowerCase();
         return userName.substring(0, 1);
     }
-
+    const user=JSON.parse(localStorage.getItem("user"))
     function logOut(event) {
         event.preventDefault()
         props.navigate("/login")
@@ -19,53 +19,34 @@ const AdminNavbar = (props) => {
 
     const [lenNotif,setLenNotif]=useState(0)
     const [socket,setSocket]=useState(null)
-    const [view,setView]=useState(false)
-
+    const [notifs,setNotifs]=useState([])
     useEffect(()=>{
-        //select de tous les notification
+        Notification.notifications(user.token).then((res)=>{
+            console.log(res)
+            setNotifs(res)
+        })
         const stomp = Stomp.over(new SockJS(UrlBase('ws')));
         stomp.debug=()=>{}
         stomp.connect({}, () => {
-            stomp.subscribe(`/client/messages/1`,(f)=>{
+            stomp.subscribe(`/client/notif/${user.token}`,(f)=>{
                 const body = f.body;
-                console.log(body)
-                const messagesData = JSON.parse(body);
-                if (Array.isArray(messagesData)) {
-                    // const messagesArray = messagesData.map(data => {
-                    //     return new Message(
-                    //         data.idMessage ,
-                    //         data.typeMessage ,
-                    //         data.dateMessage ,
-                    //         data.sender ,
-                    //         data.receiver ,
-                    //         data.texte,
-                    //         data.vue ,
-                    //         data.tompony
-                    //     );
-                    // });
-                    // setMessages(messagesArray);
+                const not = JSON.parse(body);
+                if (Array.isArray(not)) {
+                     const messagesArray = not.map(data => {
+                         return new Notification(
+                             data.idObjectNotif ,
+                             data.type ,
+                             data.nom ,
+                             data.url ,
+                             data.dateNotif ,
+                             data.idIDentifiant,
+                             data.vue ,
+                             data.titre
+                         );
+                     });
+                    setNotifs(messagesArray);
                 }
             })
-
-            // stomp.subscribe(`/client/allMessage/${utilisateur.id}/${utilisateur.type}`,(mes)=>{
-            //     const body = mes.body;
-            //     const messagesData = JSON.parse(body);
-            //     if (Array.isArray(messagesData)) {
-            //         const messagesArray = messagesData.map(data => {
-            //             return new Message(
-            //                 data.idMessage ,
-            //                 data.typeMessage ,
-            //                 data.dateMessage ,
-            //                 data.sender ,
-            //                 data.receiver ,
-            //                 data.texte,
-            //                 data.vue ,
-            //                 data.tompony
-            //             );
-            //         });
-            //         setAllMessage(messagesArray);
-            //     }
-            // })
         });
 
         setSocket(stomp);
@@ -76,12 +57,119 @@ const AdminNavbar = (props) => {
         };
     },[])
 
-    const [typeAffichageNotif,setTypeAffichage]=useState(1)
-
     useEffect(()=>{
+        let i=0;
+        notifs.map((element)=>{
+            if (!element.vue){
+                i++;
+            }
+        })
+        setLenNotif(i)
+    },[notifs])
+    function assertNotif() {
+        Notification.assertVue(user.token).then((resp)=>{
+            setLenNotif(0)
+        })
+    }
+    function displayTetxte(type,url,reference) {
+        if (type===1){
+            return (
+                <p className="text-sm mb-0 container-message">Le projet <a
+                    className="font-weight-bold ml-1"
+                    href={url}
+                >
+                    {reference}
+                </a> a été creé </p>
+            )
+        }
+        if (type===2){
+            return (
+                <p className="text-sm mb-0 container-message">Le deadline de  <a
+                    className="font-weight-bold ml-1"
+                    href={url}
+                >
+                    {reference}
+                </a> va s'expirer </p>
+            )
+        }
+        if (type===3){
+            return (
+                <p className="text-sm mb-0 container-message">Vous êtes assigné à un ticket <a
+                    className="font-weight-bold ml-1"
+                    href={url}
+                >
+                    {reference}
+                </a> </p>
+            )
+        }
+        if (type===4){
+            return (
+                <p className="text-sm mb-0"><a
+                    className="font-weight-bold ml-1"
+                    href={url}
+                >
+                    {reference}
+                </a>  tente de s'inscrire</p>
+            )
+        }
+        if (type===5){
+            return (
+                <p className="text-sm mb-0">Le ticket  <a
+                    className="font-weight-bold ml-1"
+                    href={url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                >
+                    {reference}
+                </a> est terminé</p>
+            )
+        }
+    }
 
-    },[typeAffichageNotif])
-    
+    const[typeFilter,setTypeFilter]=useState(1)
+    const [displayNotif,setDisplayNotif]=useState([])
+    useEffect(()=>{
+        if (typeFilter===1){
+            const d=notifs.filter((element)=>element.type<=2)
+            setDisplayNotif(d)
+        }else{
+            const d=notifs.filter((element)=>element.type===typeFilter)
+            setDisplayNotif(d)
+        }
+    },[typeFilter,notifs])
+    function getClassIcon(type) {
+        if (type===1){
+            return (
+                <span className="avatar rounded-circle bg-translucent-info">
+                    <i className="fa fa-c"/>
+                </span>
+            )
+        }if(type===2){
+            return (
+                <span className="avatar rounded-circle bg-translucent-danger">
+                    <i className="fa fa-d"/>
+                </span>
+            )
+        }if (type===3){
+            return (
+                <span className="avatar rounded-circle bg-translucent-primary">
+                    <i className="fa fa-a"/>
+                </span>
+            )
+        }if(type===4){
+            return (
+                <span className="avatar rounded-circle bg-translucent-warning">
+                    <i className="fa fa-n"/>
+                </span>
+            )
+        }if(type===5){
+            return (
+                <span className="avatar rounded-circle bg-translucent-success">
+                    <i className="fa fa-e"/>
+                </span>
+            )
+        }
+    }
     return (
           <>
               <Navbar className="navbar-top navbar-dark navbar" expand="md" id="navbar-main">
@@ -92,14 +180,14 @@ const AdminNavbar = (props) => {
                               {props?.brandText?.name}
                           </Link>
                       ): (
-                          <Link className="h3 mb-0 text-white text-capitalize dis-none d-none d-lg-inline-block">
+                          <Link className="h3 mb-0 text-white text-capitalize dis-none d-none d-lg-inline-block" to={""}>
                               {props?.brandText?.name}
                           </Link>
                       )}
                       <Nav className="align-items-center d-none d-md-flex" navbar>
                           <UncontrolledDropdown nav>
                               <DropdownToggle className="pr-0" nav>
-                                  <Media className="align-items-center pr-3">
+                                  <Media className="align-items-center pr-3" onClick={()=>assertNotif()}>
                                       <span className="avatar avatar-sm bg-white rounded-circle">
                                           <i className="fa-solid fa-bell text-default fs-16"/>
                                       </span>
@@ -111,109 +199,45 @@ const AdminNavbar = (props) => {
                               <DropdownMenu className="dropdown-menu-arrow" right>
                                   <DropdownItem className="text-sm text-muted m-0" header tag="div">
                                       <div className="row">
-                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
-                                              <button type="button" className="btn btn-outline-primary btn-sm col-11 text-center">Ticket Assigné</button>
+                                          <div className={`${user.type===1 ? "col-3" :  "col-6"} d-flex justify-content-center row m-0 p-0`}>
+                                              <button type="button"
+                                                      onClick={()=>setTypeFilter(3)}
+                                                      className={`btn ${typeFilter===3 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}
+                                              >Ticket Assigné</button>
                                           </div>
-                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
-                                              <button type="button" className="btn btn-outline-primary btn-sm col-11 text-center">Projet</button>
+                                          <div className={`${user.type===1 ? "col-3" :  "col-6"} d-flex justify-content-center row m-0 p-0`}>
+                                              <button type="button" onClick={()=>setTypeFilter(1)} className={`btn ${typeFilter===1 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Projet</button>
                                           </div>
-                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
-                                              <button type="button" className="btn btn-outline-primary btn-sm col-11 text-center">Ticket terminé</button>
-                                          </div>
-                                          <div className="col-3 d-flex justify-content-center row m-0 p-0">
-                                              <button type="button" className="btn btn-primary btn-sm col-11 text-center">Inscription</button>
-                                          </div>
+                                          {user.type===1 && (
+                                              <>
+                                                  <div className={`${user.type===1 ? "col-3" :  "col-4"} d-flex justify-content-center row m-0 p-0`}>
+                                                      <button type="button" onClick={()=>setTypeFilter(5)}
+                                                              className={`btn ${typeFilter===5 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Ticket terminé</button>
+                                                  </div>
+
+                                                  <div className="col-3 d-flex justify-content-center row m-0 p-0">
+                                                      <button type="button" onClick={()=>setTypeFilter(4)}
+                                                              className={`btn ${typeFilter===4 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Inscription</button>
+                                                  </div>
+                                              </>
+                                          )}
                                       </div>
                                   </DropdownItem>
-                                  <DropdownItem tag="div" style={{width: '495px'}}>
-                                      <div className="align-items-center d-flex row clickable">
-                                          <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-warning">
-                                                  <i className="fa fa-c"/>
-                                              </span>
-                                          </div>
-                                          <div className="col-10 ml--2">
-                                              <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Nouvelle projet</h4></div>
+                                  {displayNotif.map((element)=>(
+                                      <DropdownItem key={element.idObjectNotif} tag="div" style={{width: '495px'}}>
+                                          <div className="align-items-center d-flex row clickable">
+                                              <div className="col-2">
+                                                  {getClassIcon(element.type)}
                                               </div>
-                                              <p className="text-sm mb-0 container-message">Le projet titre a été creé </p>
-                                          </div>
-                                      </div>
-                                  </DropdownItem>
-                                  <DropdownItem tag="div" style={{width: '495px'}}>
-                                      <div className="align-items-center d-flex row clickable">
-                                          <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-danger">
-                                                  <i className="fa fa-d"/>
-                                              </span>
-                                          </div>
-                                          <div className="col-10 ml--2">
-                                              <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Deadline du projet</h4></div>
+                                              <div className="col-10 ml--2">
+                                                  <div className="d-flex justify-content-between align-items-center">
+                                                      <div><h4 className="mb-0 text-sm text-capitalize">{element.titre}</h4></div>
+                                                  </div>
+                                                  {displayTetxte(element.type,element.url,element.nom)}
                                               </div>
-                                              <p className="text-sm mb-0">Le deadline de titre s'expire dans n jours</p>
                                           </div>
-                                      </div>
-                                  </DropdownItem>
-                                  <DropdownItem tag="div" style={{width: '495px'}}>
-                                      <div className="align-items-center d-flex row clickable">
-                                          <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-primary">
-                                                  <i className="fa fa-a"/>
-                                              </span>
-                                          </div>
-                                          <div className="col-10 ml--2">
-                                              <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Ticket assigné</h4></div>
-                                              </div>
-                                              <p className="text-sm mb-0">Vous êtes assigné à un ticket <a
-                                                  className="font-weight-bold ml-1"
-                                                  href="#"
-                                                  rel="noopener noreferrer"
-                                                  target="_blank"
-                                              >
-                                                  PPP-675
-                                              </a></p>
-                                          </div>
-                                      </div>
-                                  </DropdownItem>
-                                  <DropdownItem tag="div" style={{width: '495px'}}>
-                                      <div className="align-items-center d-flex row clickable">
-                                          <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-info">
-                                                  <i className="fa fa-n"/>
-                                              </span>
-                                          </div>
-                                          <div className="col-10 ml--2">
-                                              <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Nouvelle Developpeur</h4></div>
-                                              </div>
-                                              <p className="text-sm mb-0">Nom  tente de s'inscrire</p>
-                                          </div>
-                                      </div>
-                                  </DropdownItem>
-                                  <DropdownItem tag="div" style={{width: '495px'}}>
-                                      <div className="align-items-center d-flex row clickable">
-                                          <div className="col-2">
-                                              <span className="avatar rounded-circle bg-translucent-success">
-                                                  <i className="fa fa-e"/>
-                                              </span>
-                                          </div>
-                                          <div className="col-10 ml--2">
-                                              <div className="d-flex justify-content-between align-items-center">
-                                                  <div><h4 className="mb-0 text-sm">Etat ticket</h4></div>
-                                              </div>
-                                              <p className="text-sm mb-0">Le ticket  <a
-                                                  className="font-weight-bold ml-1"
-                                                  href="#"
-                                                  rel="noopener noreferrer"
-                                                  target="_blank"
-                                              >
-                                                  PPP-675
-                                              </a> est terminé</p>
-                                          </div>
-                                      </div>
-                                  </DropdownItem>
+                                      </DropdownItem>
+                                  ))}
                             </DropdownMenu>
                           </UncontrolledDropdown>
                           <UncontrolledDropdown nav>

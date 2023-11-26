@@ -29,4 +29,22 @@ export default class InfoDev {
             return []
         }
     }
+
+    static async numberTicket(token) {
+        try {
+            const response = await fetch(UrlBase("main/ticketDev"), {
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok){
+                return  await response.json() as InfoDev[]
+            }
+            return []
+        }catch (e) {
+            return []
+        }
+    }
 }
