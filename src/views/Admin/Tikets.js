@@ -8,6 +8,8 @@ import TicketAssignedDev from "../../Model/TicketAssignedDev.tsx";
 import Etat from "../../Model/Etat.tsx";
 import PaginateObject from "../../components/Sidebar/PaginateObject";
 import unidecode from "unidecode";
+import {GetObjectFromURL} from "../../Config.ts";
+import {useLocation} from "react-router-dom";
 
 const Tikets = ({author}) => {
     const user=JSON.parse(localStorage.getItem("user"))
@@ -15,15 +17,25 @@ const Tikets = ({author}) => {
     const [loading,setLoading]=useBoolean(false)
     const [allTicket,setAllTicket]=useState([])
     const [upd,setUpd]=useBoolean()
+    const suspendu = GetObjectFromURL();
+    const location=useLocation()
     useEffect(()=>{
        setLoading.on()
         TicketAssignedDev.getTicketAssigned(user.token).then((response)=>{
-            setTicketsAssigned(response)
-            setAllTicket(response)
+            if (suspendu){
+                const list=response.filter((element)=>{
+                    return element.jira.etat.id!== 3
+                })
+                setTicketsAssigned(list)
+                setAllTicket(list)
+            }else {
+                setTicketsAssigned(response)
+                setAllTicket(response)
+            }
         }).finally(()=>{
             setLoading.off()
         })
-    },[upd])
+    },[upd,location])
 
     function getClassEtat(etat) {
         etat = etat.toLowerCase();

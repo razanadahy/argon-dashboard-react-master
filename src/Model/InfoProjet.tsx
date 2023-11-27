@@ -35,4 +35,19 @@ export default class InfoProjet {
             return null
         }
     }
+
+    static async deleteProjet(token,idProjet) {
+        try {
+            const response = await fetch(UrlBase("traitement/projet/"+idProjet), {
+                method: "delete",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            return response.ok
+        }catch (e) {
+            return false
+        }
+    }
 }

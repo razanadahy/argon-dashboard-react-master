@@ -3,7 +3,7 @@
 import {Card, CardHeader, Container, Row, Table, CardFooter, Media, Button, Modal, FormGroup, Input,} from "reactstrap";
 import {useEffect, useState} from "react";
 import NoHeader from "../../components/Headers/NoHeader";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 import PaginateObject from "../../components/Sidebar/PaginateObject";
 import unidecode from "unidecode";
@@ -12,6 +12,7 @@ import InfoUtilisateur from "../../Model/InfoUtilisateur.tsx";
 
 const ValidationUser = ({author}) => {
     const navigate=useNavigate()
+    const location=useLocation()
     const [listAllDev,setDev]=useState([])
     const [tempAll,setTemp]=useState([])
     const [loading,setLoading]=useState(false)
@@ -37,7 +38,7 @@ const ValidationUser = ({author}) => {
                 setLoading(false)
             })
         }
-    },[enter])
+    },[enter,location])
     function deleteUser(idUser) {
         InfoUtilisateur.deleteUser(user.token,idUser).then((res)=>{
             if (res){

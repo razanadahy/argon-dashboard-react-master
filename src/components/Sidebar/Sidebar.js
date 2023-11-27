@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {NavLink as NavLinkRRD, Link, useNavigate} from "react-router-dom";
 import { PropTypes } from "prop-types";
 
 import {Collapse, NavbarBrand, Navbar, NavItem, NavLink, Nav, Container,} from "reactstrap";
@@ -12,9 +12,10 @@ const Sidebar = (props) => {
     const closeCollapse = () => {
         setCollapseOpen(false);
     };
-    const type=JSON.parse(localStorage.getItem("user")).type
+    const user=JSON.parse(localStorage.getItem("user"));
+    const navigate=useNavigate()
     let eg=''
-    if (type===1){
+    if (user.type===1){
         eg="/admin"
     }else{
         eg="/auth"

@@ -16,13 +16,16 @@ const AdminNavbar = (props) => {
         event.preventDefault()
         props.navigate("/login")
     }
-
+    const navigate=useNavigate()
     const [lenNotif,setLenNotif]=useState(0)
     const [socket,setSocket]=useState(null)
     const [notifs,setNotifs]=useState([])
     useEffect(()=>{
+        if (!user){
+            navigate("/")
+            return
+        }
         Notification.notifications(user.token).then((res)=>{
-            console.log(res)
             setNotifs(res)
         })
         const stomp = Stomp.over(new SockJS(UrlBase('ws')));
@@ -197,31 +200,33 @@ const AdminNavbar = (props) => {
                                   </Media>
                               </DropdownToggle>
                               <DropdownMenu className="dropdown-menu-arrow" right>
-                                  <DropdownItem className="text-sm text-muted m-0" header tag="div">
-                                      <div className="row">
-                                          <div className={`${user.type===1 ? "col-3" :  "col-6"} d-flex justify-content-center row m-0 p-0`}>
-                                              <button type="button"
-                                                      onClick={()=>setTypeFilter(3)}
-                                                      className={`btn ${typeFilter===3 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}
-                                              >Ticket Assigné</button>
-                                          </div>
-                                          <div className={`${user.type===1 ? "col-3" :  "col-6"} d-flex justify-content-center row m-0 p-0`}>
-                                              <button type="button" onClick={()=>setTypeFilter(1)} className={`btn ${typeFilter===1 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Projet</button>
-                                          </div>
-                                          {user.type===1 && (
-                                              <>
-                                                  <div className={`${user.type===1 ? "col-3" :  "col-4"} d-flex justify-content-center row m-0 p-0`}>
-                                                      <button type="button" onClick={()=>setTypeFilter(5)}
-                                                              className={`btn ${typeFilter===5 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Ticket terminé</button>
-                                                  </div>
+                                  <DropdownItem className="text-sm text-muted m-0" header tag="div" style={{width: '495px'}}>
+                                      {user && (
+                                          <div className="row">
+                                              <div className={`${user.type===1 ? "col-3" :  "col-6"} d-flex justify-content-center row m-0 p-0`}>
+                                                  <button type="button" onClick={()=>setTypeFilter(1)} className={`btn ${typeFilter===1 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Projet</button>
+                                              </div>
+                                              <div className={`${user.type===1 ? "col-3" :  "col-6"} d-flex justify-content-center row m-0 p-0`}>
+                                                  <button type="button"
+                                                          onClick={()=>setTypeFilter(3)}
+                                                          className={`btn ${typeFilter===3 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}
+                                                  >Ticket Assigné</button>
+                                              </div>
+                                              {user.type===1 && (
+                                                  <>
+                                                      <div className={`${user.type===1 ? "col-3" :  "col-4"} d-flex justify-content-center row m-0 p-0`}>
+                                                          <button type="button" onClick={()=>setTypeFilter(5)}
+                                                                  className={`btn ${typeFilter===5 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Ticket terminé</button>
+                                                      </div>
 
-                                                  <div className="col-3 d-flex justify-content-center row m-0 p-0">
-                                                      <button type="button" onClick={()=>setTypeFilter(4)}
-                                                              className={`btn ${typeFilter===4 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Inscription</button>
-                                                  </div>
-                                              </>
-                                          )}
-                                      </div>
+                                                      <div className="col-3 d-flex justify-content-center row m-0 p-0">
+                                                          <button type="button" onClick={()=>setTypeFilter(4)}
+                                                                  className={`btn ${typeFilter===4 ? "btn-primary" : "btn-outline-primary"} btn-sm col-11 text-center`}>Inscription</button>
+                                                      </div>
+                                                  </>
+                                              )}
+                                          </div>
+                                      )}
                                   </DropdownItem>
                                   {displayNotif.map((element)=>(
                                       <DropdownItem key={element.idObjectNotif} tag="div" style={{width: '495px'}}>

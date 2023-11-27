@@ -41,7 +41,6 @@ const Auth = (props) => {
     }
     for (let i = 0; i < routes.length; i++) {
       if (location?.pathname.indexOf(routes[i].layout + routes[i].path) !== -1) {
-        console.log(routes[i])
         if (routes[i].name==='Dashboard'){
           return{
             path: null,

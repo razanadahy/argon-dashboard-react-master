@@ -37,6 +37,7 @@ import InfoSite from "../../Model/InfoSite.tsx";
 import Plugin from "../../Model/Plugin.tsx";
 import Protection from "../../Model/Protection.tsx";
 import Confiramation from "../../variables/Confiramation";
+import Site from "../../Model/Site.tsx";
 
 function ViewProject({author}) {
     const {id}=useParams()
@@ -435,6 +436,29 @@ function ViewProject({author}) {
     function destroyNotif(){
         setShowNotif(false)
     }
+
+    const [showNotifDelete,setShowNotifDelete]=useState(false)
+    const [idSiteSelected,setIdSiteSelected]=useState(-100)
+    function showConfirmationDelete(idSite) {
+        setIdSiteSelected(idSite)
+        setShowNotifDelete(true)
+    }
+    function destroyDelete() {
+        setIdSiteSelected(-100)
+        setShowNotifDelete(false)
+    }
+    function getConfirmation(number) {
+        if (number===1){
+            Site.deleteSite(utilisateur.token,idSiteSelected).then((resp)=>{
+                if (!resp){
+                    setErreur(true)
+                }
+            }).finally(()=>{
+                setUpdate.toggle()
+            })
+        }
+        setIdSiteSelected(-100)
+    }
     return(
         <>
             <HeaderProject name={projet ? projet.nomProjet : ""}/>
@@ -452,9 +476,6 @@ function ViewProject({author}) {
                                     <Col className="text-right justify-content-end" xl={"7"} xs="4">
                                         <button type="button" className="btn btn-primary"
                                                 onClick={()=>getAllList()}>Nouveau Site </button>{''}
-                                        {/*<Button color="default" onClick={(e) => e.preventDefault()}>*/}
-                                        {/*    Modifier Site*/}
-                                        {/*</Button>*/}
                                     </Col>
                                 )}
                             </Row>
@@ -483,7 +504,9 @@ function ViewProject({author}) {
                                     ))}
 
                                     <th scope="col">Progression</th>
-                                    <th scope="col"/>
+                                    {utilisateur.type===1 && (
+                                        <th scope="col"/>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -527,7 +550,12 @@ function ViewProject({author}) {
                                 ): currentData.map((element)=>(
                                     <tr key={element.idStadeTiket}>
                                         <th scope="row">
-                                            {element.site.nomSite}
+                                            <a href="#" onClick={(event)=>{
+                                                event.preventDefault();
+                                                Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)
+                                            }}>
+                                                {element.site.nomSite}
+                                            </a>
                                         </th>
                                         <td>
                                             <a href={element.ticket.url} target="_blank" rel="noopener noreferrer">{element.ticket.reference}</a>
@@ -581,11 +609,19 @@ function ViewProject({author}) {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="text-right m-0 p-1">
-                                            <button type={"button"} onClick={()=>{Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)}} className="btn-icon-only btn text-darker" >
-                                                <i className="fas fa-eye" />
-                                            </button>
-                                        </td>
+                                        {utilisateur.type===1 && (
+                                            <td className="text-right m-0 p-1">
+                                                <button type={"button"} onClick={()=>{Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)}} className="btn-icon-only btn text-darker" >
+                                                    <i className="fas fa-edit text-cyan " />
+                                                </button>{''}
+                                                <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{
+                                                    showConfirmationDelete(element.site.idSite)
+                                                }} >
+                                                    <i className="fa-solid fa-trash text-danger"/>
+                                                </button>{''}
+                                            </td>
+                                        )}
+
                                     </tr>
                                 ))}
                             </tbody>
@@ -934,6 +970,7 @@ function ViewProject({author}) {
                         </Alert>
                     </ModalLg>
                     <Confiramation show={showNotif} hide={destroyNotif} etat={upEtat} text={"Voulez-vous terminer ce stade?"}/>
+                    <Confiramation show={showNotifDelete} hide={destroyDelete} etat={getConfirmation} text={"Voulez-vous vraiment ce site?"}/>
                 </>
             )}
         </>

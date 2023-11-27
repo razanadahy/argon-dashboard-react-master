@@ -46,4 +46,21 @@ export default class Site {
             return null
         }
     }
+
+    static async deleteSite(token,idSite) {
+        try {
+            const response = await fetch(UrlBase("traitement/site/"+idSite), {
+                method: "delete",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            return  response.ok;
+
+        }catch (e) {
+            return false
+        }
+    }
+
 }
