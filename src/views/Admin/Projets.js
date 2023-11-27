@@ -200,12 +200,16 @@ const Projets = ({type}) => {
 
     function getAllList() {
         setModalShow(true)
-        TypeProjet.getListTypeProjet(user.token).then((response)=>{
-            setListTypeProjet(response)
-        })
-        Plateforme.getListPlateforme(user.token).then((response)=>{
-            setListPlateforme(response)
-        })
+        if (listTypeProjet.length===0){
+            TypeProjet.getListTypeProjet(user.token).then((response)=>{
+                setListTypeProjet(response)
+            })
+        }
+        if (listPlateforme.length===0){
+            Plateforme.getListPlateforme(user.token).then((response)=>{
+                setListPlateforme(response)
+            })
+        }
     }
     function formatDate(date) {
         let mois = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -244,7 +248,7 @@ const Projets = ({type}) => {
         }
         const titreTrimmed = titre.trim();
         const typeProjetH = selectedTypeProjet === null ? listTypeProjet[0] : selectedTypeProjet;
-        const plate = selectedPlateforme === null ? listPlateforme[0] : selectedTypeProjet;
+        const plate = selectedPlateforme === null ? listPlateforme[0] : selectedPlateforme;
         const pro = new Projet(
             titreTrimmed,
             convertToHTML(consigne.trim()),
@@ -255,15 +259,27 @@ const Projets = ({type}) => {
             limite,
             plate
         );
-        Projet.insertProjet(user.token,pro).then((response)=>{
-            if (!response){
-                setErreur(true)
-                setLoadFinal(false)
-            }else{
-                setInsert(!insert)
-                onCancel()
-            }
-        }).finally(()=>{setLoadFinal(false)})
+        if (idProjectSelected<0){
+            Projet.insertProjet(user.token,pro).then((response)=>{
+                if (!response){
+                    setErreur(true)
+                    setLoadFinal(false)
+                }else{
+                    setInsert(!insert)
+                    onCancel()
+                }
+            }).finally(()=>{setLoadFinal(false)})
+        }else{
+            Projet.update(user.token,pro,idProjectSelected).then((response)=>{
+                if (!response){
+                    setErreur(true)
+                    setLoadFinal(false)
+                }else{
+                    setInsert(!insert)
+                    onCancel()
+                }
+            }).finally(()=>{setLoadFinal(false)})
+        }
     }
     function onCancel() {
         setModalShow(false)
@@ -272,6 +288,8 @@ const Projets = ({type}) => {
         setReference("")
         setUrl("")
         setLimite(new Date())
+        setCreation(new Date())
+        setIdProjectSelected(-100)
     }
     const [etats,setEtats]=useState([
         new Etat(1,'A faire',0),
@@ -310,6 +328,36 @@ const Projets = ({type}) => {
             })
         }
         setIdProjectSelected(-100)
+    }
+    function updateProjet(projectView){
+        setIdProjectSelected(projectView.idProjet)
+        setTitre(projectView.nomProjet)
+        setCreation(new Date(projectView.dateCreation))
+        setLimite(new Date(projectView.deadlines))
+        setUrl(projectView.jira.url)
+        setReference(projectView.jira.reference)
+        setConsigne("")
+        if (listTypeProjet.length===0){
+            TypeProjet.getListTypeProjet(user.token).then((response)=>{
+                const typ=response.find((element)=>element.type===projectView.nomType)
+                setSelectedTypeProjet(typ)
+                setListTypeProjet(response)
+            })
+        }else{
+            const typ=listTypeProjet.find((element)=>element.type===projectView.nomType)
+            setSelectedTypeProjet(typ)
+        }
+        if (listPlateforme.length===0){
+            Plateforme.getListPlateforme(user.token).then((response)=>{
+                const plat=response.find((element)=>element.nomPlateforme===projectView.plateforme)
+                setSelectedPlateforme(plat)
+                setListPlateforme(response)
+            })
+        }else{
+            const plat=listPlateforme.find((element)=>element.nomPlateforme===projectView.plateforme)
+            setSelectedPlateforme(plat)
+        }
+        setModalShow(true)
     }
     return (
         <>
@@ -453,7 +501,9 @@ const Projets = ({type}) => {
                                         </td>
                                         {user.type===1 && (
                                             <td className="text-right">
-                                                <button type={"button"} onClick={()=>{Next(type+"/projets/view/"+ProjectView.idProjet,null,navigate)}} className="btn-icon-only btn text-darker" >
+                                                <button type={"button"} onClick={()=>{
+                                                    updateProjet(ProjectView)
+                                                }} className="btn-icon-only btn text-darker" >
                                                     <i className="fas fa-edit text-cyan" />
                                                 </button>{''}
                                                 <button type={"button"} onClick={()=>{deleteProject(ProjectView.idProjet)}} className="btn-icon-only btn text-darker" >
@@ -476,7 +526,10 @@ const Projets = ({type}) => {
             </Container>
             {user.type===1 && (
                 <>
-                    <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau projet"} hide={()=>setModalShow(false)}>
+                    <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={idProjectSelected>0 ? "Modification de projet" : "Nouveau projet"} hide={()=> {
+                        setModalShow(false)
+                        onCancel()
+                    }}>
                         <Form className="font" autoComplete="off">
                             <div className="pl-lg-4">
                                 <Row>

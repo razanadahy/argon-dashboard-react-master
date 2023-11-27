@@ -1,21 +1,6 @@
 import { useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Row,
-    Table,
-    CardFooter,
-    Progress,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-    UncontrolledDropdown,
-    Form, FormGroup, Input, FormFeedback, Media, Alert
-} from "reactstrap";
+import {Button, Card, CardBody, CardHeader, Col, Row, Table, CardFooter, Progress, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledDropdown, Form, FormGroup, Input, FormFeedback, Media, Alert} from "reactstrap";
 import HeaderProject from "../../components/Headers/HeaderProject";
 import {Next} from "../../Config.ts";
 import StadeTicket from "../../Model/StadeTicket.tsx";
@@ -263,14 +248,18 @@ function ViewProject({author}) {
 
     function getAllList() {
         setModalShow(true)
-        InfoUtilisateur.getAllUser(utilisateur.token).then((response)=>{
-            setDevs(response)
-            setOptionDev(response.map((element, index) => ({ value: index, label: element.nom, hiddenValue: element.email })));
-        })
-        TypeTraitement.getTraitement(utilisateur.token).then((response)=>{
-            setTypeTraitement(response)
-            setTypetraitementOption(response.map((element)=>({value: element.id,label: element.traitement})))
-        })
+        if (devs.length===0){
+            InfoUtilisateur.getAllUser(utilisateur.token).then((response)=>{
+                setDevs(response)
+                setOptionDev(response.map((element, index) => ({ value: index, label: element.nom, hiddenValue: element.email })));
+            })
+        }
+        if (typeTraitement.length===0){
+            TypeTraitement.getTraitement(utilisateur.token).then((response)=>{
+                setTypeTraitement(response)
+                setTypetraitementOption(response.map((element)=>({value: element.id,label: element.traitement})))
+            })
+        }
     }
 
     function estVide(chaine) {
@@ -351,6 +340,7 @@ function ViewProject({author}) {
         setValidRef(true)
         setValidUrl(true)
         setValidProtection(true)
+        setIdSiteSelected(-100)
     }
 
     const [devs,setDevs] = useState([])
@@ -458,6 +448,39 @@ function ViewProject({author}) {
             })
         }
         setIdSiteSelected(-100)
+    }
+
+    function updateSite(idSite) {
+        setIdSiteSelected(idSite)
+        setNomSite('')
+        setDomaine('')
+        setSelectedOptions(null)
+        setSelectedOption(null)
+        setplugin("")
+        setSsh('')
+        setReference('')
+        setUrl('')
+        setProtection('')
+        setDif(null)
+        setRemarque('')
+        if (devs.length===0){
+            InfoUtilisateur.getAllUser(utilisateur.token).then((response)=>{
+                setDevs(response)
+                setOptionDev(response.map((element, index) => ({ value: index, label: element.nom, hiddenValue: element.email })));
+            })
+        }
+        if (typeTraitement.length===0){
+            TypeTraitement.getTraitement(utilisateur.token).then((response)=>{
+                setTypeTraitement(response)
+                setTypetraitementOption(response.map((element)=>({value: element.id,label: element.traitement})))
+            })
+        }
+        Site.getSiteById(utilisateur.token,idSiteSelected).then((response)=>{
+            setDomaine(response.domaine)
+            setNomSite(response.nomSite)
+            setSelectedOption({value: response.developpeur.id, label: response.developpeur.nom, hiddenValue: 'andrianiavo.vit@gmail.com1'})
+        })
+        setModalShow(true)
     }
     return(
         <>
@@ -611,7 +634,7 @@ function ViewProject({author}) {
                                         </td>
                                         {utilisateur.type===1 && (
                                             <td className="text-right m-0 p-1">
-                                                <button type={"button"} onClick={()=>{Next(`${author}/projets/view/site/${element.site.idSite}/${projet ? projet.nomProjet : ""}/${id}`,null,navigate)}} className="btn-icon-only btn text-darker" >
+                                                <button type={"button"} onClick={()=>{updateSite(element.site.idSite)}} className="btn-icon-only btn text-darker" >
                                                     <i className="fas fa-edit text-cyan " />
                                                 </button>{''}
                                                 <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{
@@ -689,7 +712,10 @@ function ViewProject({author}) {
             </Row>
             {utilisateur.type===1 && (
                 <>
-                    <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={"Nouveau Site"} hide={()=>setModalShow(false)}>
+                    <ModalLg show={modalShow} onSubmit={onSubmit} loading={loadFinal} onCancel={onCancel} title={idSiteSelected<0 ? "Nouveau Site" : "Modification de site"} hide={()=> {
+                        setModalShow(false)
+                        onCancel()
+                    }}>
                         <Form  autoComplete="off">
                             <h6 className="heading-small text-muted mb-4">
                                 Site

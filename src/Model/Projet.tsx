@@ -37,4 +37,19 @@ export default class Projet {
             return false
         }
     }
+    static async update(token,projet,idProjet) {
+        try {
+            const response = await fetch(UrlBase("traitement/projet/"+idProjet), {
+                method: "put",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body:JSON.stringify(projet),
+            });
+            return response.ok
+        }catch (e) {
+            return false
+        }
+    }
 }
