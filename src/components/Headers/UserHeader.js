@@ -11,7 +11,7 @@ const UserHeader = ({name}) => {
                         <Col lg="7" md="10">
                             <h3 className="display-2 text-white text-capitalize">Hello {name}</h3>
                             <p className="text-white mt-0 mb-5">
-                                Ceci est votre page de profil. Vous pouvez y voir les progrès que vous avez réalisés dans votre travail et gérer vos projets ou tâches assignées.
+                                Ceci est votre page de profil.
                             </p>
                         </Col>
                     </Row>

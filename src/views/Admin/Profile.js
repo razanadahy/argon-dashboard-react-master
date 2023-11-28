@@ -162,17 +162,17 @@ const Profile = () => {
                                     <Col xl="6" xs="6">
                                         <h3 className="mb-0">Mon Compte</h3>
                                     </Col>
-                                    <Col className="text-right" xl="6" xs="6">
-                                        <Button color="info" onClick={(e) => {
-                                            e.preventDefault()
-                                            setModalShow(true)
-                                        }}>
-                                            Prendre du congé
-                                        </Button>
-                                        <Button color="primary" onClick={(e) => e.preventDefault()} >
-                                            Modifier
-                                        </Button>
-                                    </Col>
+                                    {/*<Col className="text-right" xl="6" xs="6">*/}
+                                    {/*    <Button color="info" onClick={(e) => {*/}
+                                    {/*        e.preventDefault()*/}
+                                    {/*        setModalShow(true)*/}
+                                    {/*    }}>*/}
+                                    {/*        Prendre du congé*/}
+                                    {/*    </Button>*/}
+                                    {/*    <Button color="primary" onClick={(e) => e.preventDefault()} >*/}
+                                    {/*        Modifier*/}
+                                    {/*    </Button>*/}
+                                    {/*</Col>*/}
                                 </Row>
                             </CardHeader>
                             <CardBody>
