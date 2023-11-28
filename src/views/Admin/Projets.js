@@ -504,7 +504,7 @@ const Projets = ({type}) => {
                                                 <button type={"button"} onClick={()=>{
                                                     updateProjet(ProjectView)
                                                 }} className="btn-icon-only btn text-darker" >
-                                                    <i className="fas fa-edit text-cyan" />
+                                                    <i className="fas fa-edit text-gray" />
                                                 </button>{''}
                                                 <button type={"button"} onClick={()=>{deleteProject(ProjectView.idProjet)}} className="btn-icon-only btn text-darker" >
                                                     <i className="fa-solid fa-trash text-danger"/>

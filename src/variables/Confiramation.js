@@ -8,15 +8,15 @@ function Confirmation({text,etat,show,hide}) {
     return (
         <>
             <Modal className="modal-dialog-centered modal-danger"
-                   contentClassName="bg-gradient-danger" isOpen={show} toggle={hide} fullscreen="md" centered={true} size="sm" backdrop={true} fade>
+                   contentClassName="bg-white" isOpen={show} toggle={hide} fullscreen="md" centered={true} size="sm" backdrop={true} fade>
 
                 <div className="modal-header">
                     <h5 className="modal-title" id="modal-title-notification">
-                        Your attention is required
+                        {''}
                     </h5>
                     <button
                         aria-label="Close"
-                        className="close"
+                        className="close text-gray"
                         data-dismiss="modal"
                         type="button"
                         onClick={()=>setEtat(0)}
@@ -25,15 +25,15 @@ function Confirmation({text,etat,show,hide}) {
                     </button>
                 </div>
                 <div className="modal-body">
-                    <div className="text-center">
-                        <p>
+                    <div className="text-center text-danger">
+                        <p className="display-4">
                             {text}
                         </p>
                     </div>
                 </div>
                 <div className="modal-footer">
                     <Button className="btn-white" color="info" type="button" onClick={()=>setEtat(1)}>
-                        Oui , Je confirme
+                        Confirmer
                     </Button>
                     <Button
                         className="text-white ml-auto"
@@ -42,7 +42,7 @@ function Confirmation({text,etat,show,hide}) {
                         type="button"
                         onClick={()=>setEtat(0)}
                     >
-                        Annuller
+                        Annuler
                     </Button>
                 </div>
             </Modal>

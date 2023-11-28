@@ -41,4 +41,19 @@ export default class InfoSite {
             return false
         }
     }
+    static async updateSite(token,site,idSite) {
+        try {
+            const response = await fetch(UrlBase("traitement/site/"+idSite), {
+                method: "put",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body:JSON.stringify(site),
+            });
+            return response.ok
+        }catch (e) {
+            return false
+        }
+    }
 }

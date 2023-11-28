@@ -251,7 +251,7 @@ function ViewProject({author}) {
         if (devs.length===0){
             InfoUtilisateur.getAllUser(utilisateur.token).then((response)=>{
                 setDevs(response)
-                setOptionDev(response.map((element, index) => ({ value: index, label: element.nom, hiddenValue: element.email })));
+                setOptionDev(response.map((element) => ({ id: element.id,value: element.nom,type: element.type , label: element.nom, hiddenValue: element.email })));
             })
         }
         if (typeTraitement.length===0){
@@ -300,23 +300,35 @@ function ViewProject({author}) {
             return
         }
         setLoadFinal(true)
-        const infoDev=devs[selectedOption.value]
+        const infoDev=devs.find((element)=>element.id===selectedOption.id && element.type===selectedOption.type)
         const typeT=typeTraitement.find(element=>parseInt(selectedOptions.value)===element.id)
         const difT=dif ? dif : difficult[0]
         const site=new InfoSite(
             infoDev,nomSite,new Plugin(plugin,ssh),domaine,typeT,reference,url,
             new Protection(protection,remarque,difT,"",1),id
         )
+        if (idSiteSelected>0){
+            InfoSite.updateSite(utilisateur.token,site,idSiteSelected).then((response)=>{
+                if (!response){
+                    setErreur(true)
+                    setLoadFinal(false)
+                }else{
+                    setUpdate.toggle()
+                    onCancel()
+                }
+            }).finally(()=>{setLoadFinal(false)})
+        }else{
+            InfoSite.insertSite(utilisateur.token,site).then((response)=>{
+                if (!response){
+                    setErreur(true)
+                    setLoadFinal(false)
+                }else{
+                    setUpdate.toggle()
+                    onCancel()
+                }
+            }).finally(()=>{setLoadFinal(false)})
+        }
 
-        InfoSite.insertSite(utilisateur.token,site).then((response)=>{
-            if (!response){
-                setErreur(true)
-                setLoadFinal(false)
-            }else{
-                setUpdate.toggle()
-                onCancel()
-            }
-        }).finally(()=>{setLoadFinal(false)})
     }
     function onCancel() {
         setModalShow(false)
@@ -450,23 +462,25 @@ function ViewProject({author}) {
         setIdSiteSelected(-100)
     }
 
-    function updateSite(idSite) {
+    function updateSite(idSite,reference,url) {
+        setReference(reference)
+        setUrl(url)
         setIdSiteSelected(idSite)
-        setNomSite('')
-        setDomaine('')
-        setSelectedOptions(null)
-        setSelectedOption(null)
-        setplugin("")
-        setSsh('')
-        setReference('')
-        setUrl('')
-        setProtection('')
-        setDif(null)
-        setRemarque('')
+        Site.getSiteById(utilisateur.token,idSite).then((response)=>{
+            setDomaine(response.domaine)
+            setNomSite(response.nomSite)
+            setSelectedOption({id: response.developpeur.id,value: response.developpeur.nom,type: response.developpeur.type , label: response.developpeur.nom, hiddenValue: response.developpeur.email })
+            setplugin(response.plugin.nom)
+            setSsh(response.plugin.ssh)
+            setProtection(response.protection.nom)
+            setDif(response.protection.difficulte)
+            setRemarque(response.protection.description)
+            setSelectedOptions({value: response.traitement.id, label: response.traitement.traitement})
+        })
         if (devs.length===0){
             InfoUtilisateur.getAllUser(utilisateur.token).then((response)=>{
                 setDevs(response)
-                setOptionDev(response.map((element, index) => ({ value: index, label: element.nom, hiddenValue: element.email })));
+                setOptionDev(response.map((element) => ({ id: element.id,value: element.nom,type: element.type , label: element.nom, hiddenValue: element.email })));
             })
         }
         if (typeTraitement.length===0){
@@ -475,11 +489,6 @@ function ViewProject({author}) {
                 setTypetraitementOption(response.map((element)=>({value: element.id,label: element.traitement})))
             })
         }
-        Site.getSiteById(utilisateur.token,idSiteSelected).then((response)=>{
-            setDomaine(response.domaine)
-            setNomSite(response.nomSite)
-            setSelectedOption({value: response.developpeur.id, label: response.developpeur.nom, hiddenValue: 'andrianiavo.vit@gmail.com1'})
-        })
         setModalShow(true)
     }
     return(
@@ -634,8 +643,8 @@ function ViewProject({author}) {
                                         </td>
                                         {utilisateur.type===1 && (
                                             <td className="text-right m-0 p-1">
-                                                <button type={"button"} onClick={()=>{updateSite(element.site.idSite)}} className="btn-icon-only btn text-darker" >
-                                                    <i className="fas fa-edit text-cyan " />
+                                                <button type={"button"} onClick={()=>{updateSite(element.site.idSite,element.ticket.reference,element.ticket.url)}} className="btn-icon-only btn text-darker" >
+                                                    <i className="fas fa-edit text-gray" />
                                                 </button>{''}
                                                 <button type={"button"} className="btn-icon-only btn text-darker" onClick={()=>{
                                                     showConfirmationDelete(element.site.idSite)
@@ -644,7 +653,6 @@ function ViewProject({author}) {
                                                 </button>{''}
                                             </td>
                                         )}
-
                                     </tr>
                                 ))}
                             </tbody>
@@ -790,6 +798,7 @@ function ViewProject({author}) {
                                                     className="text-capitalize"
                                                     components={{ Option: ({ innerProps, label, isFocused, isSelected, data }) => <CustomOption innerProps={innerProps} label={label} isSelected={isSelected} isFocused={isFocused} data={data} /> }}
                                                 />
+
                                             )}
                                             {!validDev && (
                                                 <span className="text-danger">
