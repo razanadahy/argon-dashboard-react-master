@@ -23,12 +23,14 @@ function MesTopPrios({author}) {
     const [loading,setLoading]=useBoolean(false)
     const [allTicket,setAllTicket]=useState([])
     const [upd,setUpd]=useBoolean()
+    const [modifHeader,setModifHeader]=useState(new Date())
     useEffect(()=>{
         setLoading.on()
         TicketAssignedDev.getTicketPrios(user.token).then((response)=>{
             setTicketsAssigned(response)
             setAllTicket(response)
         }).finally(()=>{
+            setModifHeader(new Date())
             setLoading.off()
         })
     },[upd])
@@ -145,7 +147,7 @@ function MesTopPrios({author}) {
 
     return (
         <>
-            <Header/>
+            <Header modifHeader={modifHeader}/>
             <Container className="mt--7" fluid>
                 <Row>
                     <Col xl="12">

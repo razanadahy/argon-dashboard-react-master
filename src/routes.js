@@ -37,7 +37,7 @@ const routes = [
   },
   {
     path: "/tiket/me",
-    name: "Mes tikets",
+    name: "Mes tickets",
     icon: "ni fa-regular fa-bookmark text-blue",
     component: <Tikets author="admin"/>,
     layout: "/admin",
@@ -101,7 +101,7 @@ const routes = [
   },
   {
     path: "/tiket/me",
-    name: "Mes tikets",
+    name: "Mes tickets",
     icon: "ni fa-regular fa-bookmark text-blue",
     component: <Tikets author="auth"/>,
     layout: "/auth",

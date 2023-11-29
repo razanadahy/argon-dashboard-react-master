@@ -12,7 +12,7 @@ function Confirmation({text,etat,show,hide}) {
 
                 <div className="modal-header">
                     <h5 className="modal-title" id="modal-title-notification">
-                        {''}
+                        {''}0
                     </h5>
                     <button
                         aria-label="Close"

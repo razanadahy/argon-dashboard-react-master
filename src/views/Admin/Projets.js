@@ -29,7 +29,7 @@ import InfoProjet from "../../Model/InfoProjet.tsx";
 
 const Projets = ({type}) => {
     const location=useLocation()
-    const encours = GetObjectFromURL();
+    // const encours = GetObjectFromURL();
     const prios = GetObjectFromURL();
     const [listProjet,setListProjet]=useState([])
     const[filteritem,setFilterItem]=useState([])
@@ -37,6 +37,7 @@ const Projets = ({type}) => {
     const navigate=useNavigate()
     const user=JSON.parse(localStorage.getItem("user"))
     const [insert,setInsert]=useState(true)
+    const [modifHeader,setModifHeader]=useState(new Date())
     useEffect(()=>{
         if (user.type===1 && type!=='admin'){
             navigate("/")
@@ -47,32 +48,37 @@ const Projets = ({type}) => {
         }
         setLoading(true)
         ProjectView.all(user.token).then((response)=>{
+
             if (prios){
-                const list=response.filter((element)=>{
-                    if (unidecode(element.nomEtat.toLowerCase())!=='termine'){
-                        const deadlineTimestamp = new Date(element.deadlines).getTime();
-                        const nowTimestamp = new Date().getTime();
-                        const timeDifference = deadlineTimestamp - nowTimestamp;
-                        const timeDifferenceInDays = timeDifference / (1000 * 60 * 60 * 24);
-                        return timeDifferenceInDays < 2;
-                    }
-                    return false
-                })
-                setListProjet(list)
-                setFilterItem(list)
-            } else if (encours){
-                const list=response.filter((element)=>{
-                    const t=unidecode(element.nomEtat.toLowerCase())
-                    return t!=='termine'
-                })
-                setListProjet(list)
-                setFilterItem(list)
+                if (prios.prios){
+                    const list=response.filter((element)=>{
+                        if (unidecode(element.nomEtat.toLowerCase())!=='termine'){
+                            const deadlineTimestamp = new Date(element.deadlines).getTime();
+                            const nowTimestamp = new Date().getTime();
+                            const timeDifference = deadlineTimestamp - nowTimestamp;
+                            const timeDifferenceInDays = timeDifference / (1000 * 60 * 60 * 24);
+                            return timeDifferenceInDays < 2;
+                        }
+                        return false
+                    })
+                    setListProjet(list)
+                    setFilterItem(list)
+                } else {
+                    const list=response.filter((element)=>{
+                        const t=unidecode(element.nomEtat.toLowerCase())
+                        return t!=='termine'
+                    })
+                    setListProjet(list)
+                    setFilterItem(list)
+                }
+
             }
             else{
                 setListProjet(response)
                 setFilterItem(response)
             }
         }).finally(()=>{
+            setModifHeader(new Date())
             setLoading(false)
         })
     },[insert,location])
@@ -361,7 +367,7 @@ const Projets = ({type}) => {
     }
     return (
         <>
-            <Header/>
+            <Header modifHeader={modifHeader}/>
             <Container className="mt--7" fluid>
                 <Row>
                     <div className="col">

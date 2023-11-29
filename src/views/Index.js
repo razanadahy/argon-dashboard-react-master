@@ -203,7 +203,7 @@ const Index = (props) => {
                                           <th scope="row">
                                               <div >
                                                   <div className="d-flex justify-content-between align-items-center">
-                                                      <div><h4 className="mb-0 text-sm">{infoUtilisateur.nom}</h4></div>
+                                                      <div><h4 className="mb-0 text-sm text-capitalize">{infoUtilisateur.nom}</h4></div>
                                                   </div>
                                                   <p className="text-sm mb-0">{infoUtilisateur.email}</p>
                                               </div>

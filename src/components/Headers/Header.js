@@ -4,8 +4,8 @@ import {useLocation, useNavigate} from "react-router-dom";
 import StatistiqueHeader from "../../Model/StatistiqueHeader.tsx";
 import {Next} from "../../Config.ts";
 
-const Header = () => {
-    const location=useLocation()
+const Header = ({modifHeader}) => {
+    // const location=useLocation()
     const navigate=useNavigate()
     const [encours,setEncours]=useState(new StatistiqueHeader(0,0))
     const [prios,setPrios]=useState(new StatistiqueHeader(0,0))
@@ -46,7 +46,7 @@ const Header = () => {
                 return
             }
         })
-    },[location])
+    },[modifHeader])
 
     return (
         <>

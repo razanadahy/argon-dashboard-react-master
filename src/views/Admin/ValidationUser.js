@@ -189,7 +189,7 @@ const ValidationUser = ({author}) => {
                 </Row>
             </Container>
             <Modal className="modal-dialog-centered"
-                   contentClassName="bg-gradient-info" isOpen={show} toggle={hide} fullscreen="md" centered={true} size="sm" backdrop={true} fade>
+                   contentClassName="" isOpen={show} toggle={hide} fullscreen="md" centered={true} size="sm" backdrop={true} fade>
 
                 <div className="modal-header border-bottom py-3">
                     <h5 className="modal-title" id="modal-title-notification">

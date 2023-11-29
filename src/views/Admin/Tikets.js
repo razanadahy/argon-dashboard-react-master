@@ -149,7 +149,7 @@ const Tikets = ({author}) => {
 
     return (
         <>
-            <Header/>
+            <Header modifHeader={new Date()}/>
             <Container className="mt--7" fluid>
                 <Row>
                     <Col xl="12">
